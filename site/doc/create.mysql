@@ -1,0 +1,72 @@
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+
+    `name`      VARCHAR(32) NOT NULL,
+    
+    created     TIMESTAMP,
+    
+    PRIMARY KEY (`name`)
+
+) ENGINE=InnoDB, CHARACTER SET utf8;
+
+
+
+DROP TABLE IF EXISTS prints;
+
+CREATE TABLE prints (
+
+    id          VARCHAR(8) NOT NULL,
+    
+    north       DOUBLE,
+    south       DOUBLE,
+    east        DOUBLE,
+    west        DOUBLE,
+    
+    user_name   VARCHAR(32) NOT NULL,
+    created     TIMESTAMP NOT NULL,
+    
+    PRIMARY KEY (id),
+    INDEX `user` (user_name)
+
+) ENGINE=InnoDB, CHARACTER SET utf8;
+
+
+
+DROP TABLE IF EXISTS scans;
+
+CREATE TABLE scans (
+
+    id          VARCHAR(8) NOT NULL,
+
+    print_id    VARCHAR(8) NOT NULL,
+    last_step   INT NULL,
+
+    user_name   VARCHAR(32) NOT NULL,
+    created     TIMESTAMP,
+    
+    PRIMARY KEY (id),
+    INDEX print (print_id),
+    INDEX `user` (user_name)
+    INDEX step (last_step)
+
+) ENGINE=InnoDB, CHARACTER SET utf8;
+
+
+
+DROP TABLE IF EXISTS steps;
+
+CREATE TABLE steps (
+
+    scan_id     VARCHAR(8) NOT NULL,
+    number      INT NOT NULL,
+
+    description VARCHAR(255),
+
+    user_name   VARCHAR(32) NOT NULL,
+    created     TIMESTAMP,
+
+    PRIMARY KEY (scan_id, number),
+    INDEX `user` (user_name)
+
+) ENGINE=InnoDB, CHARACTER SET utf8;

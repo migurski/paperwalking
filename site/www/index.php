@@ -16,7 +16,7 @@
     } else {
     
         $dbh->query('START TRANSACTION');
-        $scan = create_scan($dbh);
+        $scan = add_scan($dbh);
         $dbh->query('COMMIT');
     
         $post = s3_get_post_details($scan['id'], time() + 300);

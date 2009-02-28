@@ -5,6 +5,7 @@
     require_once 'DB.php';
     require_once 'output.php';
     require_once 'Crypt/HMAC.php';
+    require_once 'HTTP/Request.php';
     
     function &get_db_connection()
     {
@@ -31,15 +32,18 @@
         return $id;
     }
     
-    function create_scan(&$dbh)
+    function add_scan(&$dbh)
     {
         while(true)
         {
             $scan_id = generate_id();
             
-            $q = sprintf('INSERT INTO scans SET id=%s, last_step=0',
+            $q = sprintf('INSERT INTO scans
+                          SET id = %s',
                          $dbh->quoteSmart($scan_id));
 
+            error_log(preg_replace('/\s+/', ' ', $q));
+    
             $res = $dbh->query($q);
             
             if(PEAR::isError($res)) 
@@ -50,17 +54,46 @@
                 die_with_code(500, "{$res->message}\n{$q}\n");
             }
             
-            $q = sprintf('INSERT INTO steps SET scan_id=%s, number=0, description=%s',
-                         $dbh->quoteSmart($scan_id),
-                         $dbh->quoteSmart('Getting ready to upload'));
-
-            $res = $dbh->query($q);
-            
-            if(PEAR::isError($res)) 
-                die_with_code(500, "{$res->message}\n{$q}\n");
+            add_step($dbh, $scan_id, 0, 'Getting ready to upload');
             
             return get_scan($dbh, $scan_id);
         }
+    }
+    
+    function add_step(&$dbh, $scan_id, $number, $description)
+    {
+        $q = sprintf('INSERT INTO steps
+                      SET scan_id = %s, number = %d, description = %s',
+                     $dbh->quoteSmart($scan_id),
+                     $number,
+                     $dbh->quoteSmart($description));
+
+        error_log(preg_replace('/\s+/', ' ', $q));
+
+        $res = $dbh->query($q);
+        
+        if(PEAR::isError($res)) 
+        {
+            if($res->getCode() == DB_ERROR_ALREADY_EXISTS)
+                return false;
+
+            die_with_code(500, "{$res->message}\n{$q}\n");
+        }
+
+        $q = sprintf('UPDATE scans
+                      SET last_step = %s
+                      WHERE id = %s',
+                     $number,
+                     $dbh->quoteSmart($scan_id));
+
+        error_log(preg_replace('/\s+/', ' ', $q));
+
+        $res = $dbh->query($q);
+        
+        if(PEAR::isError($res)) 
+            die_with_code(500, "{$res->message}\n{$q}\n");
+
+        return true;
     }
     
     function get_scan(&$dbh, $scan_id)
@@ -77,43 +110,61 @@
 
         return $res->fetchRow(DB_FETCHMODE_ASSOC);
     }
-
-   /**
-    * See: http://coreforge.org/snippet/detail.php?type=snippet&id=3
-    */
-    function uuid()
+    
+    function set_scan(&$dbh, $scan)
     {
-        // Use the server name (if present) in the generation of UUID
-        $base = strtoupper(
-            md5(
-                uniqid(
-                    isset($_SERVER['HTTP_HOST']) 
-                    ? $_SERVER['HTTP_HOST'] : '' . 
-                    rand(), 
-                true)
-            )
-        );
+        $old_scan = get_scan($dbh, $scan['id']);
+        
+        if(!$old_scan)
+            return false;
 
-        // Mark as "random" UUID, set version
-        $byte = hexdec(substr($base,12,2));
-        $byte = $byte & hexdec('0f');
-        $byte = $byte | hexdec('40');
-        $base = substr_replace($base, strtoupper(dechex($byte)), 12, 2);
+        $update_clauses = array();
 
-        // Set the variant
-        $byte = hexdec(substr($base,16,2));
-        $byte = $byte & hexdec('3f');
-        $byte = $byte | hexdec('80');
-        $base = substr_replace($base, strtoupper(dechex($byte)), 16, 2);
+        foreach(array('print_id', 'last_step', 'user_name') as $field)
+            if(!is_null($scan[$field]))
+                if($scan[$field] != $old_scan[$field])
+                    $update_clauses[] = sprintf('%s = %s', $field, $dbh->quoteSmart($scan[$field]));
 
-        // Format
-        return join('-', array(substr($base, 0, 8),
-                               substr($base, 8, 4),
-                               substr($base, 12, 4),
-                               substr($base, 16, 4),
-                               substr($base, 20, 12)));
+        if(empty($update_clauses))
+        {
+            error_log("skipping scan {$scan['id']} update since there's nothing to change");
+            return true;
+        }
+        
+        $update_clauses = join(', ', $update_clauses);
+        
+        $q = sprintf("UPDATE scans
+                      SET {$update_clauses}
+                      WHERE id = %s",
+                     $dbh->quoteSmart($scan['id']));
+
+        error_log(preg_replace('/\s+/', ' ', $q));
+
+        $res = $dbh->query($q);
+        
+        if(PEAR::isError($res))
+            die_with_code(500, "{$res->message}\n{$q}\n");
+
+        return get_scan($dbh, $scan['id']);
     }
     
+    function verify_s3_etag($object_id, $expected_etag)
+    {
+        $url = s3_signed_object_url($object_id, time() + 300, 'HEAD');
+        
+        $req = new HTTP_Request($url);
+        $req->setMethod('HEAD');
+        $res = $req->sendRequest();
+        
+        if(PEAR::isError($res)) 
+            die_with_code(500, "{$res->message}\n{$q}\n");
+
+        if($req->getResponseCode() == 200)
+            return $req->getResponseHeader('etag') == $expected_etag;
+
+        return false;
+    }
+
    /**
     * Sign a string with the AWS secret key, return it raw.
     */
@@ -162,5 +213,24 @@
 
         return compact('access', 'policy', 'signature', 'acl', 'key', 'redirect', 'bucket');
     }
-
+    
+   /**
+    * @param    string  object_id   S3 object ID
+    * @param    int     $expires    Expiration timestamp
+    * @param    string  $method     HTTP method, default GET
+    * @return   string  Signed URL
+    */
+    function s3_signed_object_url($object_id, $expires, $method='GET')
+    {
+        $object_id_scrubbed = str_replace('+', '%20', str_replace('%2F', '/', rawurlencode($object_id)));
+        $sign_string = s3_sign_auth_string(sprintf("%s\n\n\n%d\n/%s/%s", $method, $expires, S3_BUCKET_ID, $object_id_scrubbed));
+        
+        return sprintf('http://%s.s3.amazonaws.com/%s?Signature=%s&AWSAccessKeyId=%s&Expires=%d',
+                       S3_BUCKET_ID,
+                       $object_id_scrubbed,
+                       urlencode(base64_encode($sign_string)),
+                       urlencode(AWS_ACCESS_KEY),
+                       urlencode($expires));
+    }
+    
 ?>

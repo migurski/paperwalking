@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 import math
 import time
 import urllib
@@ -48,9 +49,15 @@ class Marker:
 
         self.anchor = Point(x, y)
 
-def main(url, markers):
+def main(url, markers, apibase):
     """
     """
+    url_pat = re.compile(r'^http://([^\.]+).s3.amazonaws.com/([^/]+)/(.+)$', re.I)
+    
+    if url_pat.match(url):
+        print url_pat.sub(r'\2', url)
+        return
+    
     image, features, scale = siftImage(url)
     
     for (name, marker) in markers.items():

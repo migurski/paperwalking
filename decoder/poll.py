@@ -9,7 +9,7 @@ if __name__ == '__main__':
     markers = {}
 
     for basename in ('Reader', 'Spout-1', 'Spout-2'):
-        basepath = os.path.dirname(os.path.realpath(__file__)) + '/Gargoyles/' + basename
+        basepath = os.path.dirname(os.path.realpath(__file__)) + '/gargoyles/' + basename
         markers[basename] = decode.Marker(basepath)
     
     #curl -s --form timeout=5 "http://www.paperwalking.com/paperwalking/site/www/dequeue.php
@@ -31,6 +31,6 @@ if __name__ == '__main__':
         pass
     else:
         print message_id
-        decode.main(url, markers)
+        decode.main(url, markers, 'http://www.paperwalking.com/paperwalking/site/www')
     
     

@@ -96,6 +96,22 @@
         return true;
     }
     
+    function add_message(&$dbh, $content)
+    {
+        $q = sprintf('INSERT INTO messages
+                      SET content = %s, available = NOW()',
+                     $dbh->quoteSmart($content));
+
+        error_log(preg_replace('/\s+/', ' ', $q));
+
+        $res = $dbh->query($q);
+        
+        if(PEAR::isError($res)) 
+            die_with_code(500, "{$res->message}\n{$q}\n");
+
+        return true;
+    }
+    
     function get_scan(&$dbh, $scan_id)
     {
         $q = sprintf('SELECT *
@@ -139,6 +155,57 @@
         return $res->fetchRow(DB_FETCHMODE_ASSOC);
     }
     
+    /*
+    function get_message(&$dbh, $message_id)
+    {
+        $q = sprintf('SELECT id, content
+                      FROM messages
+                      WHERE available < NOW()
+                        AND deleted = 0
+                        AND id = %d',
+                     $message_id);
+    
+        $res = $dbh->query($q);
+        
+        if(PEAR::isError($res)) 
+            die_with_code(500, "{$res->message}\n{$q}\n");
+
+        return $res->fetchRow(DB_FETCHMODE_ASSOC);
+    }
+    */
+    
+    function get_message(&$dbh, $timeout)
+    {
+        $res = $dbh->query('LOCK TABLES messages WRITE');
+        
+        if(PEAR::isError($res)) 
+            die_with_code(500, "{$res->message}\n{$q}\n");
+
+        $q = sprintf('SELECT id, content
+                      FROM messages
+                      WHERE available < NOW()
+                        AND deleted = 0');
+
+        $res = $dbh->query($q);
+        
+        if(PEAR::isError($res)) 
+            die_with_code(500, "{$res->message}\n{$q}\n");
+
+        if($msg = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+            postpone_message($dbh, $msg['id'], $timeout);
+
+        } else {
+            $msg = false;
+        }
+
+        $res = $dbh->query('UNLOCK TABLES');
+        
+        if(PEAR::isError($res)) 
+            die_with_code(500, "{$res->message}\n{$q}\n");
+        
+        return $msg;
+    }
+    
     function set_scan(&$dbh, $scan)
     {
         $old_scan = get_scan($dbh, $scan['id']);
@@ -174,6 +241,20 @@
             die_with_code(500, "{$res->message}\n{$q}\n");
 
         return get_scan($dbh, $scan['id']);
+    }
+    
+    function postpone_message(&$dbh, $message_id, $timeout)
+    {
+        $q = sprintf('UPDATE messages
+                      SET available = NOW() + INTERVAL %d SECOND
+                      WHERE id = %d',
+                     $timeout,
+                     $message_id);
+
+        $res = $dbh->query($q);
+        
+        if(PEAR::isError($res)) 
+            die_with_code(500, "{$res->message}\n{$q}\n");
     }
     
     function verify_s3_etag($object_id, $expected_etag)
@@ -259,6 +340,19 @@
                        urlencode(base64_encode($sign_string)),
                        urlencode(AWS_ACCESS_KEY),
                        urlencode($expires));
+    }
+    
+   /**
+    * @param    string  object_id   S3 object ID
+    * @return   string  Signed URL
+    */
+    function s3_unsigned_object_url($object_id)
+    {
+        $object_id_scrubbed = str_replace('+', '%20', str_replace('%2F', '/', rawurlencode($object_id)));
+        
+        return sprintf('http://%s.s3.amazonaws.com/%s',
+                       S3_BUCKET_ID,
+                       $object_id_scrubbed);
     }
     
 ?>

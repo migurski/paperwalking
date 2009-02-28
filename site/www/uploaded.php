@@ -22,10 +22,15 @@
         if($etag_match && $scan && $scan['last_step'] <= 1)
         {
             $dbh->query('START TRANSACTION');
-            add_step($dbh, $scan['id'], 1, 'Queued it up');
-            $dbh->query('COMMIT');
+
+            $added = add_step($dbh, $scan['id'], 1, 'Queued it up');
+            
+            if($added)
+                add_message($dbh, s3_unsigned_object_url($object_id));
             
             $scan = get_scan($dbh, $scan['id']);
+            
+            $dbh->query('COMMIT');
             
             header('Location: http://'.get_domain_name().get_base_dir().'/scan.php?id='.urlencode($scan['id']));
             exit();

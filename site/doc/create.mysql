@@ -47,7 +47,7 @@ CREATE TABLE scans (
     
     PRIMARY KEY (id),
     INDEX print (print_id),
-    INDEX `user` (user_name)
+    INDEX `user` (user_name),
     INDEX step (last_step)
 
 ) ENGINE=InnoDB, CHARACTER SET utf8;

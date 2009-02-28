@@ -19,6 +19,64 @@
             return $json->encode($value);
         }
     }
+    
+    function generate_id()
+    {
+        $chars = 'qwrtypsdfghjklzxcvbnm0123456789';
+        $id = '';
+        
+        while(strlen($id) < 8)
+            $id .= substr($chars, rand(0, strlen($chars) - 1), 1);
+
+        return $id;
+    }
+    
+    function create_scan(&$dbh)
+    {
+        while(true)
+        {
+            $scan_id = generate_id();
+            
+            $q = sprintf('INSERT INTO scans SET id=%s, last_step=0',
+                         $dbh->quoteSmart($scan_id));
+
+            $res = $dbh->query($q);
+            
+            if(PEAR::isError($res)) 
+            {
+                if($res->getCode() == DB_ERROR_ALREADY_EXISTS)
+                    continue;
+    
+                die_with_code(500, "{$res->message}\n{$q}\n");
+            }
+            
+            $q = sprintf('INSERT INTO steps SET scan_id=%s, number=0, description=%s',
+                         $dbh->quoteSmart($scan_id),
+                         $dbh->quoteSmart('Getting ready to upload'));
+
+            $res = $dbh->query($q);
+            
+            if(PEAR::isError($res)) 
+                die_with_code(500, "{$res->message}\n{$q}\n");
+            
+            return get_scan($dbh, $scan_id);
+        }
+    }
+    
+    function get_scan(&$dbh, $scan_id)
+    {
+        $q = sprintf('SELECT *
+                      FROM scans
+                      WHERE id = %s',
+                     $dbh->quoteSmart($scan_id));
+    
+        $res = $dbh->query($q);
+        
+        if(PEAR::isError($res)) 
+            die_with_code(500, "{$res->message}\n{$q}\n");
+
+        return $res->fetchRow(DB_FETCHMODE_ASSOC);
+    }
 
    /**
     * See: http://coreforge.org/snippet/detail.php?type=snippet&id=3
@@ -84,12 +142,11 @@
     *                   - "bucket": bucket ID
     *                   - "redirect": URL
     */
-    function s3_get_post_details($expires, $format=null)
+    function s3_get_post_details($scan_id, $expires, $format=null)
     {
         $acl = 'public-read';
-        $uuid = uuid();
-        $key = "{$uuid}/\${filename}";
-        $redirect = 'http://'.get_domain_name().get_base_href().'?ticket='.rawurlencode($uuid).(is_null($format) ? '' : "&format={$format}");
+        $key = "{$scan_id}/\${filename}";
+        $redirect = 'http://'.get_domain_name().get_base_href().'?scan='.rawurlencode($scan_id).(is_null($format) ? '' : "&format={$format}");
         $access = AWS_ACCESS_KEY;
         $bucket = S3_BUCKET_ID;
         
@@ -97,7 +154,7 @@
                         'conditions' => array(
                             array('bucket' => $bucket),
                             array('acl' => $acl),
-                            array('starts-with', '$key', "{$uuid}/"),
+                            array('starts-with', '$key', "{$scan_id}/"),
                             array('redirect' => $redirect)));
 
         $policy = base64_encode(json_encode($policy));

@@ -5,11 +5,23 @@
     require_once 'init.php';
     require_once 'data.php';
     
+    $scan_id = $_GET['scan'] ? $_GET['scan'] : null;
+    
     /**** ... ****/
     
     $dbh =& get_db_connection();
-
-    $post = s3_get_post_details(time() + 300);
+    
+    if($scan) {
+    
+    } else {
+    
+        $dbh->query('START TRANSACTION');
+        $scan = create_scan($dbh);
+        $dbh->query('COMMIT');
+    
+        $post = s3_get_post_details($scan['id'], time() + 300);
+    
+    }
 
 ?>
 <form action="http://<?= htmlspecialchars($post['bucket']) ?>.s3.amazonaws.com/" method="post" enctype="multipart/form-data">

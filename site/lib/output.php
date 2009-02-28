@@ -26,5 +26,11 @@
         return ($query_pos === false) ? $_SERVER['REQUEST_URI']
                                       : substr($_SERVER['REQUEST_URI'], 0, $query_pos);
     }
+    
+    function die_with_code($code, $message)
+    {
+        header("HTTP/1.1 {$code}");
+        die($message);
+    }
 
 ?>

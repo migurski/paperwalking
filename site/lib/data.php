@@ -111,6 +111,34 @@
         return $res->fetchRow(DB_FETCHMODE_ASSOC);
     }
     
+    function get_step(&$dbh, $scan_id, $number=false)
+    {
+        if(is_numeric($number)) {
+            $q = sprintf('SELECT *
+                          FROM steps
+                          WHERE scan_id = %s
+                            AND number = %d',
+                         $dbh->quoteSmart($scan_id),
+                         $number);
+
+        } else {
+            $q = sprintf('SELECT *
+                          FROM steps
+                          WHERE scan_id = %s
+                          ORDER BY created DESC
+                          LIMIT 1',
+                         $dbh->quoteSmart($scan_id));
+        }
+                     
+    
+        $res = $dbh->query($q);
+        
+        if(PEAR::isError($res)) 
+            die_with_code(500, "{$res->message}\n{$q}\n");
+
+        return $res->fetchRow(DB_FETCHMODE_ASSOC);
+    }
+    
     function set_scan(&$dbh, $scan)
     {
         $old_scan = get_scan($dbh, $scan['id']);

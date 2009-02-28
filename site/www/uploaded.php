@@ -26,6 +26,9 @@
             $dbh->query('COMMIT');
             
             $scan = get_scan($dbh, $scan['id']);
+            
+            header('Location: http://'.get_domain_name().get_base_dir().'/scan.php?id='.urlencode($scan['id']));
+            exit();
         }
         
         header('Content-Type: text/plain');

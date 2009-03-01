@@ -1,5 +1,29 @@
 <?php
 
+    require_once 'Smarty/Smarty.class.php';
+
+   /**
+    * @return   Smarty  Locally-usable Smarty instance.
+    */
+    function get_smarty_instance()
+    {
+        $s = new Smarty();
+
+        $s->compile_dir = join(DIRECTORY_SEPARATOR, array(dirname(__FILE__), '..', 'templates', 'cache'));
+        $s->cache_dir = join(DIRECTORY_SEPARATOR, array(dirname(__FILE__), '..', 'templates', 'cache'));
+
+        $s->template_dir = join(DIRECTORY_SEPARATOR, array(dirname(__FILE__), '..', 'templates'));
+        $s->config_dir = join(DIRECTORY_SEPARATOR, array(dirname(__FILE__), '..', 'templates'));
+        
+        $s->assign('domain', get_domain_name());
+        $s->assign('base_dir', get_base_dir());
+        $s->assign('base_href', get_base_href());
+        $s->assign('constants', get_defined_constants());
+        $s->assign('request', array('get' => $_GET));
+        
+        return $s;
+    }
+    
     function get_domain_name()
     {
         if(php_sapi_name() == 'cli')

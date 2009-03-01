@@ -34,13 +34,14 @@
         }
     }
     
-    header('Content-Type: text/plain');
-    print_r($scan);
-
     if($scan)
-    {
         $step = get_step($dbh, $scan['id']);
-        print_r($step);
-    }
+
+    $sm = get_smarty_instance();
+    $sm->assign('scan', $scan);
+    $sm->assign('step', $step);
+    
+    header("Content-Type: text/html; charset=UTF-8");
+    print $sm->fetch("scan.html.tpl");
 
 ?>

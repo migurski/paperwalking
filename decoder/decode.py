@@ -364,7 +364,7 @@ def extractCode(image, markers):
 def readCode(image):
     """
     """
-    for attempt in range(3):
+    for attempt in range(5):
         codebytes = StringIO.StringIO()
         image.save(codebytes, 'PNG')
         codebytes.seek(0)
@@ -378,7 +378,9 @@ def readCode(image):
         if res.status == 200 and decoded.startswith('uri='):
             return [float(val) for val in decoded[4:].split()]
 
-    raise Exception('Third attempt to read QR code failed')
+        time.sleep(attempt)
+
+    raise Exception('All attempts to read QR code failed')
 
 if __name__ == '__main__':
     url = sys.argv[1]

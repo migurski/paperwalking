@@ -17,23 +17,23 @@
         switch($step_number)
         {
             case 2:
-                $description = 'Sifted';
+                $description = 'Sifting';
                 break;
 
             case 3:
-                $description = 'Needles found';
+                $description = 'Finding needles';
                 break;
 
             case 4:
-                $description = 'QR code read';
+                $description = 'Reading QR code';
                 break;
 
             case 5:
-                $description = 'Tiled';
+                $description = 'Tiling and uploading';
                 break;
 
             case 6:
-                $description = 'Finished uploading';
+                $description = 'Finished';
                 break;
 
             case 99:

@@ -23,7 +23,7 @@
         {
             $dbh->query('START TRANSACTION');
 
-            $added = add_step($dbh, $scan['id'], 1, 'Queued it up');
+            $added = add_step($dbh, $scan['id'], 1, 'Queued for processing');
             
             if($added)
                 add_message($dbh, s3_unsigned_object_url($object_id));

@@ -13,12 +13,12 @@
     
     $scan = get_scan($dbh, $scan_id);
     
+    header('Content-Type: text/plain');
+    print_r($scan);
+
     if($scan)
     {
         $step = get_step($dbh, $scan['id']);
-
-        header('Content-Type: text/plain');
-        print_r($scan);
         print_r($step);
     }
 

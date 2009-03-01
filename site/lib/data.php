@@ -257,6 +257,19 @@
             die_with_code(500, "{$res->message}\n{$q}\n");
     }
     
+    function delete_message(&$dbh, $message_id)
+    {
+        $q = sprintf('UPDATE messages
+                      SET deleted = 1, available = NOW()
+                      WHERE id = %d',
+                     $message_id);
+
+        $res = $dbh->query($q);
+        
+        if(PEAR::isError($res)) 
+            die_with_code(500, "{$res->message}\n{$q}\n");
+    }
+    
     function verify_s3_etag($object_id, $expected_etag)
     {
         $url = s3_signed_object_url($object_id, time() + 300, 'HEAD');

@@ -41,6 +41,13 @@ CREATE TABLE scans (
 
     print_id    VARCHAR(8) NOT NULL,
     last_step   INT NULL,
+    
+    min_row     FLOAT,
+    min_column  FLOAT,
+    min_zoom    INT,
+    max_row     FLOAT,
+    max_column  FLOAT,
+    max_zoom    INT,
 
     user_name   VARCHAR(32) NOT NULL,
     created     TIMESTAMP,

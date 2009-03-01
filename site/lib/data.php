@@ -215,30 +215,29 @@
 
         $update_clauses = array();
 
-        foreach(array('print_id', 'last_step', 'user_name') as $field)
+        foreach(array('print_id', 'last_step', 'user_name', 'min_row', 'min_column', 'min_zoom', 'max_row', 'max_column', 'max_zoom') as $field)
             if(!is_null($scan[$field]))
                 if($scan[$field] != $old_scan[$field])
                     $update_clauses[] = sprintf('%s = %s', $field, $dbh->quoteSmart($scan[$field]));
 
-        if(empty($update_clauses))
-        {
+        if(empty($update_clauses)) {
             error_log("skipping scan {$scan['id']} update since there's nothing to change");
-            return true;
+
+        } else {
+            $update_clauses = join(', ', $update_clauses);
+            
+            $q = sprintf("UPDATE scans
+                          SET {$update_clauses}
+                          WHERE id = %s",
+                         $dbh->quoteSmart($scan['id']));
+    
+            error_log(preg_replace('/\s+/', ' ', $q));
+    
+            $res = $dbh->query($q);
+            
+            if(PEAR::isError($res))
+                die_with_code(500, "{$res->message}\n{$q}\n");
         }
-        
-        $update_clauses = join(', ', $update_clauses);
-        
-        $q = sprintf("UPDATE scans
-                      SET {$update_clauses}
-                      WHERE id = %s",
-                     $dbh->quoteSmart($scan['id']));
-
-        error_log(preg_replace('/\s+/', ' ', $q));
-
-        $res = $dbh->query($q);
-        
-        if(PEAR::isError($res))
-            die_with_code(500, "{$res->message}\n{$q}\n");
 
         return get_scan($dbh, $scan['id']);
     }

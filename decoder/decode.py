@@ -147,7 +147,12 @@ def updateStep(apibase, scan_id, step_number, message_id):
     
     assert res.status == 200
     
-    params = urllib.urlencode({'id': message_id, 'timeout': 60})
+    if step_number == 6:
+        # magic number for "finished"
+        params = urllib.urlencode({'id': message_id, 'delete': 'yes'})
+
+    else:
+        params = urllib.urlencode({'id': message_id, 'timeout': 60})
     
     req = httplib.HTTPConnection(host, 80)
     req.request('POST', path + '/dequeue.php', params, headers)
@@ -180,7 +185,7 @@ def tileZoomLevel(image, topleft, bottomright, markers, renders):
     
     local_renders = []
     
-    if .65 < magnification and magnification < 20:
+    if .5 < magnification and magnification < 20:
     
         print >> sys.stderr, zoom,
         
@@ -335,21 +340,21 @@ def extractCode(image, markers):
 def readCode(image):
     """
     """
-    codebytes = StringIO.StringIO()
-    image.save(codebytes, 'PNG')
-    codebytes.seek(0)
-    
-    req = httplib.HTTPConnection('127.0.0.1', 9955)
-    req.request('POST', '/decode', codebytes.read(), {'Content-Type': 'image/png'})
-    res = req.getresponse()
-    
-    assert res.status == 200
-    
-    decoded = res.read()
-    
-    assert decoded.startswith('uri=')
-    
-    return [float(val) for val in decoded[4:].split()]
+    for attempt in range(3):
+        codebytes = StringIO.StringIO()
+        image.save(codebytes, 'PNG')
+        codebytes.seek(0)
+        
+        req = httplib.HTTPConnection('127.0.0.1', 9955)
+        req.request('POST', '/decode', codebytes.read(), {'Content-Type': 'image/png'})
+        res = req.getresponse()
+        
+        decoded = res.read()
+        
+        if res.status == 200 and decoded.startswith('uri='):
+            return [float(val) for val in decoded[4:].split()]
+
+    raise Exception('Third attempt to read QR code failed')
 
 if __name__ == '__main__':
     url = sys.argv[1]

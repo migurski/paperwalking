@@ -66,7 +66,7 @@ CREATE TABLE steps (
     user_name   VARCHAR(32) NOT NULL,
     created     TIMESTAMP,
 
-    PRIMARY KEY (scan_id, number),
+    INDEX scan_step (scan_id, number),
     INDEX `user` (user_name)
 
 ) ENGINE=InnoDB, CHARACTER SET utf8;

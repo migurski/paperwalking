@@ -6,14 +6,41 @@
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>Untitled</title>
     <script type="text/javascript" src="modestmaps.js"></script>
+    <style type="text/css" title="text/css">
+    /* <![CDATA[{literal} */
+    
+        #sheet
+        {
+            position: relative;
+            background: white;
+            border: 1px solid black;
+            width: 360px;
+            height: 480px;
+            padding: 24px;
+        }
+        
+        #sheet .code
+        {
+            position: absolute;
+            background: white;
+            color: white;
+            width: 44px;
+            height: 44px;
+            top: 460px;
+            left: 340px;
+        }
+    
+    /* {/literal}]]> */
+    </style>
 </head>
 <body>
 
     <p><a href="javascript:map.zoomIn()">zoom in</a> | <a href="javascript:map.zoomOut()">zoom out</a>
     <br><a href="javascript:map.panLeft()">pan left</a> | <a href="javascript:map.panRight()">pan right</a> | <a href="javascript:map.panDown()">pan down</a> | <a href="javascript:map.panUp()">pan up</a></p>
 
-    <div id="sheet" style="background: white; border: 1px solid black; width: 360px; height: 480px; padding: 24px;">
+    <div id="sheet">
         <div id="map"></div>
+        <div class="code">&nbsp;</div>
     </div>
     
     <p id="info"></p>

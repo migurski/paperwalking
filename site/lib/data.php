@@ -319,7 +319,7 @@
     {
         $acl = 'public-read';
         $key = "{$scan_id}/\${filename}";
-        $redirect = 'http://'.get_domain_name().get_base_href().'?scan='.rawurlencode($scan_id).(is_null($format) ? '' : "&format={$format}");
+        $redirect = 'http://'.get_domain_name().get_base_dir().'/uploaded.php?scan='.rawurlencode($scan_id).(is_null($format) ? '' : "&format={$format}");
         $access = AWS_ACCESS_KEY;
         $bucket = S3_BUCKET_ID;
         

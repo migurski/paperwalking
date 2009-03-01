@@ -31,6 +31,6 @@ if __name__ == '__main__':
         pass
     else:
         print message_id
-        decode.main(url, markers, 'http://www.paperwalking.com/paperwalking/site/www')
+        decode.main(url, markers, 'http://www.paperwalking.com/paperwalking/site/www', message_id)
     
     

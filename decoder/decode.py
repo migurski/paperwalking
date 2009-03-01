@@ -6,6 +6,7 @@ import time
 import urllib
 import os.path
 import httplib
+import urlparse
 import tempfile
 import commands
 import StringIO
@@ -13,6 +14,7 @@ import PIL.Image
 import PIL.ImageFilter
 import matchup
 import ModestMaps
+import AWS
 
 class Point:
     def __init__(self, x, y):
@@ -49,97 +51,154 @@ class Marker:
 
         self.anchor = Point(x, y)
 
-def main(url, markers, apibase):
+def main(url, markers, apibase, message_id):
     """
     """
     url_pat = re.compile(r'^http://([^\.]+).s3.amazonaws.com/([^/]+)/(.+)$', re.I)
     
     if url_pat.match(url):
-        print url_pat.sub(r'\2', url)
+        scan_id = url_pat.sub(r'\2', url)
+
+    else:
+        print >> sys.stderr, url, "doesn't match expected form"
         return
-    
-    image, features, scale = siftImage(url)
-    
-    for (name, marker) in markers.items():
-        print >> sys.stderr, name, '...',
-        marker.locateInFeatures(features)
 
-        x, y = int(marker.anchor.x / scale), int(marker.anchor.y / scale)
-        print >> sys.stderr, '->', (x, y)
+    # shorthand
+    updateStepLocal = lambda step_number: updateStep(apibase, scan_id, step_number, message_id)
+    
+    try:
+        # sifting
+        updateStepLocal(2)
+        
+        image, features, scale = siftImage(url)
+        
+        # finding needles
+        updateStepLocal(3)
+        
+        for (name, marker) in markers.items():
+            print >> sys.stderr, name, '...',
+            marker.locateInFeatures(features)
+    
+            x, y = int(marker.anchor.x / scale), int(marker.anchor.y / scale)
+            print >> sys.stderr, '->', (x, y)
+    
+            marker.anchor = Point(x, y)
+        
+        # reading QR code
+        updateStepLocal(4)
+        
+        qrcode = extractCode(image, markers)
+    
+        north, west, south, east = readCode(qrcode)
+        print 'code contents:', (north, west, south, east)
+        
+        # tiling and uploading
+        updateStepLocal(5)
 
-        marker.anchor = Point(x, y)
-    
-    # scale = 3
-    # width, height = 540 * scale, 720 * scale
-    # 
-    # # transformation from ideal space to printed image space.
-    # # markers are positioned with Spout-2 at upper left, Spout-1 at upper right, and Reader at lower left
-    # 
-    # ax, bx, cx = linearSolution(0,      0, markers['Spout-2'].anchor.x,
-    #                             width,  0, markers['Spout-1'].anchor.x,
-    #                             0, height, markers['Reader'].anchor.x)
-    # 
-    # ay, by, cy = linearSolution(0,      0, markers['Spout-2'].anchor.y,
-    #                             width,  0, markers['Spout-1'].anchor.y,
-    #                             0, height, markers['Reader'].anchor.y)
-    #
-    # # extract the whole thing
-    # normalized = image.transform((width, height), PIL.Image.AFFINE, (ax, bx, cx, ay, by, cy), PIL.Image.BICUBIC)
-    # 
-    # #normalized.show()
-    
-    qrcode = extractCode(image, markers)
-    #qrcode.show()
+        gym = ModestMaps.OpenStreetMap.Provider()
+        
+        topleft = gym.locationCoordinate(ModestMaps.Geo.Location(north, west))
+        bottomright = gym.locationCoordinate(ModestMaps.Geo.Location(south, east))
+        
+        print topleft, bottomright
+        
+        renders = {}
+        s3 = AWS.Storage.Service('****', '****')
+        
+        for zoom in range(20, 0, -1):
+            localTopLeft = topleft.zoomTo(zoom)
+            localBottomRight = bottomright.zoomTo(zoom)
 
-    north, west, south, east = readCode(qrcode)
-    print 'code contents:', (north, west, south, east)
-    
-    gym = ModestMaps.OpenStreetMap.Provider()
-    
-    topleft = gym.locationCoordinate(ModestMaps.Geo.Location(north, west))
-    bottomright = gym.locationCoordinate(ModestMaps.Geo.Location(south, east))
-    
-    print topleft, bottomright
-    
-    renders = {}
-    
-    for zoom in range(20, 0, -1):
-        localTopLeft = topleft.zoomTo(zoom)
-        localBottomRight = bottomright.zoomTo(zoom)
-
-        # transformation from coordinate space to pixel space
-        
-        top, left, bottom, right = localTopLeft.row, localTopLeft.column, localBottomRight.row, localBottomRight.column
-        
-        ax, bx, cx = linearSolution(left,    top, markers['Spout-2'].anchor.x,
-                                    right,   top, markers['Spout-1'].anchor.x,
-                                    left, bottom, markers['Reader'].anchor.x)
-        
-        ay, by, cy = linearSolution(left,    top, markers['Spout-2'].anchor.y,
-                                    right,   top, markers['Spout-1'].anchor.y,
-                                    left, bottom, markers['Reader'].anchor.y)
-
-        magnification = math.hypot(ax, bx) / 256
-        
-        if .65 < magnification and magnification < 20:
-        
-            print zoom, (ax, bx, cx, ay, by, cy)
+            zoom_renders = tileZoomLevel(image, localTopLeft, localBottomRight, markers, renders)
             
-            coordinatePixel = lambda x, y: (ax * x + bx * y + cx, ay * x + by * y + cy)
+            for (coord, tile_image) in zoom_renders:
+                tile_name = '%(zoom)d-r%(row)d-c%(column)d.jpg' % coord.__dict__
+                
+                tile_bytes = StringIO.StringIO()
+                tile_image.save(tile_bytes, 'JPEG')
+                tile_bytes = tile_bytes.getvalue()
+
+                s3.putBucketObject('paperwalking-uploads', scan_id + '/' + tile_name, tile_bytes, 'image/jpeg', 'public-read')
             
-            for row in range(int(localTopLeft.container().row), int(localBottomRight.container().row) + 1):
-                for column in range(int(localTopLeft.container().column), int(localBottomRight.container().column) + 1):
-                    coord = ModestMaps.Core.Coordinate(row, column, zoom)
-                    
-                    # the tile image itself
-                    tile_name = 'out/%(zoom)d-r%(row)d-c%(column)d.jpg' % coord.__dict__
-                    tile_img = extractTile(image, coord, coordinatePixel, renders)
-                    tile_img.save(tile_name)
-                    
-                    # for future use
-                    renders[str(coord)] = tile_img
+                renders[str(coord)] = tile_image
+        
+        # finished!
+        updateStepLocal(6)
+
+    except:
+        # an error
+        updateStepLocal(99)
+
+        raise
 
     return 0
+
+def updateStep(apibase, scan_id, step_number, message_id):
+    """
+    """
+    s, host, path, p, q, f = urlparse.urlparse(apibase)
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    
+    params = urllib.urlencode({'scan': scan_id, 'step': step_number})
+    
+    req = httplib.HTTPConnection(host, 80)
+    req.request('POST', path + '/step.php', params, headers)
+    res = req.getresponse()
+    
+    assert res.status == 200
+    
+    params = urllib.urlencode({'id': message_id, 'timeout': 60})
+    
+    req = httplib.HTTPConnection(host, 80)
+    req.request('POST', path + '/dequeue.php', params, headers)
+    res = req.getresponse()
+    
+    assert res.status == 200
+    
+    return
+
+def tileZoomLevel(image, topleft, bottomright, markers, renders):
+    """
+    """
+    assert topleft.zoom == bottomright.zoom
+    
+    zoom = topleft.zoom
+    
+    # transformation from coordinate space to pixel space
+    
+    top, left, bottom, right = topleft.row, topleft.column, bottomright.row, bottomright.column
+    
+    ax, bx, cx = linearSolution(left,    top, markers['Spout-2'].anchor.x,
+                                right,   top, markers['Spout-1'].anchor.x,
+                                left, bottom, markers['Reader'].anchor.x)
+    
+    ay, by, cy = linearSolution(left,    top, markers['Spout-2'].anchor.y,
+                                right,   top, markers['Spout-1'].anchor.y,
+                                left, bottom, markers['Reader'].anchor.y)
+
+    magnification = math.hypot(ax, bx) / 256
+    
+    local_renders = []
+    
+    if .65 < magnification and magnification < 20:
+    
+        print >> sys.stderr, zoom,
+        
+        coordinatePixel = lambda x, y: (ax * x + bx * y + cx, ay * x + by * y + cy)
+        
+        for row in range(int(topleft.container().row), int(bottomright.container().row) + 1):
+            for column in range(int(topleft.container().column), int(bottomright.container().column) + 1):
+                coord = ModestMaps.Core.Coordinate(row, column, zoom)
+                
+                # the tile image itself
+                tile_img = extractTile(image, coord, coordinatePixel, renders)
+                local_renders.append((coord, tile_img))
+
+                print >> sys.stderr, '.',
+
+        print >> sys.stderr, ''
+
+    return local_renders
 
 def extractTile(image, coord, coordinatePixel, renders):
     """
@@ -151,23 +210,15 @@ def extractTile(image, coord, coordinatePixel, renders):
     axt, bxt, cxt = linearSolution(0, 0, left, 512, 0, right, 0, 512, left)
     ayt, byt, cyt = linearSolution(0, 0, top, 512, 0, top, 0, 512, bottom)
 
-    print coord, (int(left), int(top)), (int(right), int(bottom)), (axt, bxt, cxt, ayt, byt, cyt)
-    
+    # pull the original pixels out
     tile_pixels = image.transform((512, 512), PIL.Image.AFFINE, (axt, bxt, cxt, ayt, byt, cyt), PIL.Image.BICUBIC)
     tile_img = PIL.Image.new('L', tile_pixels.size, 0xCC).convert('RGB')
     tile_img.paste(tile_pixels, (0, 0), tile_pixels)
 
-    if renders.has_key(str(coord.zoomBy(1))):
-        tile_img.paste(renders[str(coord.zoomBy(1))], (0, 0))
-
-    if renders.has_key(str(coord.zoomBy(1).right())):
-        tile_img.paste(renders[str(coord.zoomBy(1).right())], (256, 0))
-
-    if renders.has_key(str(coord.zoomBy(1).down())):
-        tile_img.paste(renders[str(coord.zoomBy(1).down())], (0, 256))
-
-    if renders.has_key(str(coord.zoomBy(1).down().right())):
-        tile_img.paste(renders[str(coord.zoomBy(1).down().right())], (256, 256))
+    # interpolate in some of the previous renders; these may look better
+    for (x, y, c) in ((0, 0, coord.zoomBy(1)), (256, 0, coord.zoomBy(1).right()), (0, 256, coord.zoomBy(1).down()), (256, 256, coord.zoomBy(1).down().right())):
+        if renders.has_key(str(c)):
+            tile_img.paste(renders[str(c)], (x, y))
 
     tile_img = tile_img.resize((256, 256), PIL.Image.ANTIALIAS)
     
@@ -199,7 +250,7 @@ def siftImage(url):
     print >> sys.stderr, 'sift...', pgm_size,
     
     basedir = os.path.dirname(os.path.realpath(__file__))
-    status, output = commands.getstatusoutput("%(basedir)s/vlfeat/bin/mac/sift --peak-thresh=8 -o '%(sift_filename)s' '%(pgm_filename)s'" % locals())
+    status, output = commands.getstatusoutput("%(basedir)s/bin/sift --peak-thresh=8 -o '%(sift_filename)s' '%(pgm_filename)s'" % locals())
     data = open(sift_filename, 'r')
     
     assert status == 0

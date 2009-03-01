@@ -64,16 +64,16 @@ def main(url, markers, apibase, message_id):
         return
 
     # shorthand
-    updateStepLocal = lambda step_number: updateStep(apibase, scan_id, step_number, message_id)
+    updateStepLocal = lambda step_number, timeout: updateStep(apibase, scan_id, step_number, message_id, timeout)
     
     try:
         # sifting
-        updateStepLocal(2)
+        updateStepLocal(2, 60)
         
         image, features, scale = siftImage(url)
         
         # finding needles
-        updateStepLocal(3)
+        updateStepLocal(3, 30)
         
         for (name, marker) in markers.items():
             print >> sys.stderr, name, '...',
@@ -85,7 +85,7 @@ def main(url, markers, apibase, message_id):
             marker.anchor = Point(x, y)
         
         # reading QR code
-        updateStepLocal(4)
+        updateStepLocal(4, 10)
         
         qrcode = extractCode(image, markers)
     
@@ -93,7 +93,7 @@ def main(url, markers, apibase, message_id):
         print 'code contents:', (north, west, south, east)
         
         # tiling and uploading
-        updateStepLocal(5)
+        updateStepLocal(5, 180)
 
         gym = ModestMaps.OpenStreetMap.Provider()
         
@@ -104,6 +104,8 @@ def main(url, markers, apibase, message_id):
         
         renders = {}
         s3 = AWS.Storage.Service('****', '****')
+        
+        min_zoom, max_zoom = 20, 0
         
         for zoom in range(20, 0, -1):
             localTopLeft = topleft.zoomTo(zoom)
@@ -121,19 +123,26 @@ def main(url, markers, apibase, message_id):
                 s3.putBucketObject('paperwalking-uploads', scan_id + '/' + tile_name, tile_bytes, 'image/jpeg', 'public-read')
             
                 renders[str(coord)] = tile_image
+                
+                min_zoom = min(coord.zoom, min_zoom)
+                max_zoom = max(coord.zoom, max_zoom)
+        
+        print 'min:', topleft.zoomTo(min_zoom)
+        print 'max:', bottomright.zoomTo(max_zoom)
         
         # finished!
-        updateStepLocal(6)
+        updateScan(apibase, scan_id, topleft.zoomTo(min_zoom), bottomright.zoomTo(max_zoom))
+        updateStepLocal(6, None)
 
     except:
         # an error
-        updateStepLocal(99)
+        updateStepLocal(99, 300)
 
         raise
 
     return 0
 
-def updateStep(apibase, scan_id, step_number, message_id):
+def updateStep(apibase, scan_id, step_number, message_id, timeout):
     """
     """
     s, host, path, p, q, f = urlparse.urlparse(apibase)
@@ -152,7 +161,7 @@ def updateStep(apibase, scan_id, step_number, message_id):
         params = urllib.urlencode({'id': message_id, 'delete': 'yes'})
 
     else:
-        params = urllib.urlencode({'id': message_id, 'timeout': 60})
+        params = urllib.urlencode({'id': message_id, 'timeout': timeout})
     
     req = httplib.HTTPConnection(host, 80)
     req.request('POST', path + '/dequeue.php', params, headers)
@@ -162,8 +171,27 @@ def updateStep(apibase, scan_id, step_number, message_id):
     
     return
 
-def tileZoomLevel(image, topleft, bottomright, markers, renders):
+def updateScan(apibase, scan_id, min_coord, max_coord):
     """
+    """
+    s, host, path, p, q, f = urlparse.urlparse(apibase)
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    
+    query = urllib.urlencode({'id': scan_id})
+    params = urllib.urlencode({'min_row': min_coord.row, 'max_row': max_coord.row,
+                               'min_column': min_coord.column, 'max_column': max_coord.column,
+                               'min_zoom': min_coord.zoom, 'max_zoom': max_coord.zoom})
+    
+    req = httplib.HTTPConnection(host, 80)
+    req.request('POST', path + '/scan.php?' + query, params, headers)
+    res = req.getresponse()
+    
+    assert res.status == 200
+
+    return
+
+def tileZoomLevel(image, topleft, bottomright, markers, renders):
+    """ Generator of coord, tile tuples
     """
     assert topleft.zoom == bottomright.zoom
     
@@ -183,9 +211,7 @@ def tileZoomLevel(image, topleft, bottomright, markers, renders):
 
     magnification = math.hypot(ax, bx) / 256
     
-    local_renders = []
-    
-    if .5 < magnification and magnification < 20:
+    if .65 < magnification and magnification < 20:
     
         print >> sys.stderr, zoom,
         
@@ -197,13 +223,11 @@ def tileZoomLevel(image, topleft, bottomright, markers, renders):
                 
                 # the tile image itself
                 tile_img = extractTile(image, coord, coordinatePixel, renders)
-                local_renders.append((coord, tile_img))
+                yield (coord, tile_img)
 
                 print >> sys.stderr, '.',
 
         print >> sys.stderr, ''
-
-    return local_renders
 
 def extractTile(image, coord, coordinatePixel, renders):
     """

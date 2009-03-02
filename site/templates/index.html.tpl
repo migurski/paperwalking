@@ -19,15 +19,16 @@
             padding: 24px;
         }
         
-        #sheet .code
+        #sheet .dummy-code
         {
             position: absolute;
             background: white;
             color: white;
             width: 44px;
             height: 44px;
-            top: 460px;
-            left: 340px;
+            padding: 4px;
+            top: 456px;
+            left: 336px;
         }
     
     /* {/literal}]]> */
@@ -40,7 +41,7 @@
 
     <div id="sheet">
         <div id="map"></div>
-        <div class="code">&nbsp;</div>
+        <div class="dummy-code"><img src="http://chart.apis.google.com/chart?chs=44x44&amp;cht=qr&amp;chld=L%7C0&amp;chl=example" alt="" border="0" /></div>
     </div>
     
     <p id="info"></p>
@@ -52,8 +53,7 @@
         var mm = com.modestmaps;
         
         var tileURL = function(coord) {
-            // really f1fe9c2761a15118800b210c0eda823c
-            return 'http://tile.cloudmade.com/5888c1bc969c5579bb881c14e9a45562/997/256/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
+            return 'http://tile.cloudmade.com/f1fe9c2761a15118800b210c0eda823c/2/256/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
         }
     
         function onMapChanged(map)

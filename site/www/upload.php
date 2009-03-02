@@ -5,17 +5,20 @@
     require_once 'init.php';
     require_once 'data.php';
     
-    /*
-    $scan_id = $_GET['scan'] ? $_GET['scan'] : null;
-    */
-    
     /**** ... ****/
     
     $dbh =& get_db_connection();
     
+    $dbh->query('START TRANSACTION');
+    $scan = add_scan($dbh);
+    $dbh->query('COMMIT');
+
+    $post = s3_get_post_details($scan['id'], time() + 300);
+
     $sm = get_smarty_instance();
+    $sm->assign('post', $post);
     
     header("Content-Type: text/html; charset=UTF-8");
-    print $sm->fetch("index.html.tpl");
+    print $sm->fetch("upload.html.tpl");
 
 ?>

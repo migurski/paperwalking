@@ -4,6 +4,7 @@ all:
 	mkdir -p tmp
 	chmod a+rwX tmp
 	cd lib && make all
+	cd bin && make all
 
 clean:
 	rm -rf templates/cache

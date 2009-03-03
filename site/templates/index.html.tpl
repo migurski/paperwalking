@@ -45,6 +45,23 @@
     </div>
     
     <p id="info"></p>
+
+    <form action="index.php" method="post" name="bounds">
+        <input name="north" type="hidden" />
+        <input name="south" type="hidden" />
+        <input name="east" type="hidden" />
+        <input name="west" type="hidden" />
+
+        <input name="x" type="hidden" />
+        <input name="y" type="hidden" />
+        <input name="row" type="hidden" />
+        <input name="column" type="hidden" />
+        <input name="zoom" type="hidden" />
+        <input name="width" type="hidden" />
+        <input name="height" type="hidden" />
+
+        <input type="submit" />
+    </form>
     
     <script type="text/javascript">
     // <![CDATA[{literal}
@@ -58,11 +75,42 @@
     
         function onMapChanged(map)
         {
+            var printZoom = Math.min(18, map.coordinate.zoom + 2);
+            var scaleDiff = Math.pow(2, printZoom - map.coordinate.zoom);
+
+            var baseCoord = map.coordinate.zoomTo(printZoom).container();
+            var basePoint = map.coordinatePoint(baseCoord);
+            
+            while(basePoint.x > 0) {
+                baseCoord.column -= 1;
+                basePoint.x -= 256 / scaleDiff;
+            }
+            
+            while(basePoint.y > 0) {
+                baseCoord.row -= 1;
+                basePoint.y -= 256 / scaleDiff;
+            }
+            
             var northwest = map.pointLocation(new mm.Point(0, 0));
             var southeast = map.pointLocation(map.dimensions);
             
             var info = document.getElementById('info');
             info.innerHTML = northwest.toString() + ' - ' + southeast.toString() + ' @' + map.coordinate.zoom;
+            
+            var form = document.forms['bounds'];
+            
+            form.elements['north'].value = northwest.lat;
+            form.elements['south'].value = southeast.lat;
+            form.elements['east'].value = southeast.lon;
+            form.elements['west'].value = northwest.lon;
+            
+            form.elements['x'].value = basePoint.x;
+            form.elements['y'].value = basePoint.y;
+            form.elements['row'].value = baseCoord.row;
+            form.elements['column'].value = baseCoord.column;
+            form.elements['zoom'].value = baseCoord.zoom;
+            form.elements['width'].value = map.dimensions.x * scaleDiff;
+            form.elements['height'].value = map.dimensions.y * scaleDiff;
         }
 
         var map = new mm.Map('map', new mm.MapProvider(tileURL), new mm.Point(360, 480))

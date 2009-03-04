@@ -4,8 +4,10 @@
     require_once 'PEAR.php';
     require_once 'DB.php';
     require_once 'output.php';
+    require_once 'FPDF/fpdf.php';
     require_once 'Crypt/HMAC.php';
     require_once 'HTTP/Request.php';
+    require_once 'Net/URL.php';
     
     function &get_db_connection()
     {

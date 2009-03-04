@@ -34,6 +34,32 @@
         return $id;
     }
     
+    function add_print(&$dbh)
+    {
+        while(true)
+        {
+            $print_id = generate_id();
+            
+            $q = sprintf('INSERT INTO prints
+                          SET id = %s',
+                         $dbh->quoteSmart($print_id));
+
+            error_log(preg_replace('/\s+/', ' ', $q));
+    
+            $res = $dbh->query($q);
+            
+            if(PEAR::isError($res)) 
+            {
+                if($res->getCode() == DB_ERROR_ALREADY_EXISTS)
+                    continue;
+    
+                die_with_code(500, "{$res->message}\n{$q}\n");
+            }
+            
+            return get_print($dbh, $print_id);
+        }
+    }
+    
     function add_scan(&$dbh)
     {
         while(true)
@@ -112,6 +138,21 @@
             die_with_code(500, "{$res->message}\n{$q}\n");
 
         return true;
+    }
+    
+    function get_print(&$dbh, $print_id)
+    {
+        $q = sprintf('SELECT *
+                      FROM prints
+                      WHERE id = %s',
+                     $dbh->quoteSmart($print_id));
+    
+        $res = $dbh->query($q);
+        
+        if(PEAR::isError($res)) 
+            die_with_code(500, "{$res->message}\n{$q}\n");
+
+        return $res->fetchRow(DB_FETCHMODE_ASSOC);
     }
     
     function get_scan(&$dbh, $scan_id)
@@ -206,6 +247,42 @@
             die_with_code(500, "{$res->message}\n{$q}\n");
         
         return $msg;
+    }
+    
+    function set_print(&$dbh, $print)
+    {
+        $old_print = get_print($dbh, $print['id']);
+        
+        if(!$old_print)
+            return false;
+
+        $update_clauses = array();
+
+        foreach(array('north', 'south', 'east', 'west', 'user_name') as $field)
+            if(!is_null($print[$field]))
+                if($print[$field] != $old_print[$field])
+                    $update_clauses[] = sprintf('%s = %s', $field, $dbh->quoteSmart($print[$field]));
+
+        if(empty($update_clauses)) {
+            error_log("skipping print {$print['id']} update since there's nothing to change");
+
+        } else {
+            $update_clauses = join(', ', $update_clauses);
+            
+            $q = sprintf("UPDATE prints
+                          SET {$update_clauses}
+                          WHERE id = %s",
+                         $dbh->quoteSmart($print['id']));
+    
+            error_log(preg_replace('/\s+/', ' ', $q));
+    
+            $res = $dbh->query($q);
+            
+            if(PEAR::isError($res))
+                die_with_code(500, "{$res->message}\n{$q}\n");
+        }
+
+        return get_print($dbh, $print['id']);
     }
     
     function set_scan(&$dbh, $scan)

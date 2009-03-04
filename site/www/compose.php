@@ -11,8 +11,25 @@
     $west = is_numeric($_POST['west']) ? floatval($_POST['west']) : null;
     $zoom = is_numeric($_POST['zoom']) ? intval($_POST['zoom']) : null;
     
+    $dbh =& get_db_connection();
+    
     if($zoom && $north && $south && $east && $west)
     {
+        $dbh->query('START TRANSACTION');
+        
+        $print = add_print($dbh);
+        
+        $print['north'] = $north;
+        $print['south'] = $south;
+        $print['east'] = $east;
+        $print['west'] = $west;
+        
+        $print = set_print($dbh, $print);
+        
+        $dbh->query('COMMIT');
+        
+        $print_url = 'http://'.get_domain_name().get_base_dir().'/print.php?id='.urlencode($print['id']);
+    
         $width = 360;
         $height = 480;
         
@@ -25,16 +42,13 @@
             $height *= 2;
         }
 
-        $url = new Net_URL('http://osm.stamen.com:10010/?provider=CLOUDMADE_FINELINE');
-        $url->addQueryString('latitude', ($north + $south) / 2);
-        $url->addQueryString('longitude', ($east + $west) / 2);
-        $url->addQueryString('zoom', $zoom);
-        $url->addQueryString('width', $width);
-        $url->addQueryString('height', $height);
+        $req = new HTTP_Request('http://osm.stamen.com:10010/?provider=CLOUDMADE_FINELINE');
+        $req->addQueryString('latitude', ($north + $south) / 2);
+        $req->addQueryString('longitude', ($east + $west) / 2);
+        $req->addQueryString('zoom', $zoom);
+        $req->addQueryString('width', $width);
+        $req->addQueryString('height', $height);
         
-        $url = $url->getURL();
-        
-        $req = new HTTP_Request($url);
         $res = $req->sendRequest();
         
         if(PEAR::isError($res))
@@ -44,35 +58,37 @@
         $pdf->addPage();
         
         $map_img = imagecreatefromstring($req->getResponseBody());
-        $map_filename = tempnam('/tmp', 'composed-map-');
-        imagejpeg($map_img, $map_filename, 65);
+        $map_filename = tempnam(TMP_DIR, 'composed-map-');
+        imagejpeg($map_img, $map_filename, 75);
         $pdf->image($map_filename, 36, 36, 540, 720, 'jpg');
 
-        $size = 50;
+        $size = 64;
         $pad = 8;
         
         $pdf->setFillColor(0xFF);
         $pdf->rect(36 + 540 - $size - $pad, 36 + 720 - $size - $pad, $size + $pad * 2, $size + $pad * 2, 'F');
 
         $req = new HTTP_Request('http://chart.apis.google.com/chart?chs=264x264&cht=qr&chld=Q|0');
-        $req->addQueryString('chl', 'http://paperwalking/blahblahthisandthatandthese');
+        $req->addQueryString('chl', $print_url);
         $res = $req->sendRequest();
         
         if(PEAR::isError($res))
             die_with_code(500, "{$res->message}\n{$q}\n");
         
         $code_img = imagecreatefromstring($req->getResponseBody());
-        $code_filename = tempnam('/tmp', 'composed-code-');
+        $code_filename = tempnam(TMP_DIR, 'composed-code-');
         imagepng($code_img, $code_filename);
         $pdf->image($code_filename, 36 + 540 - $size, 36 + 720 - $size, $size, $size, 'png');
         
-        $pdf->output();
-        die();
+        $pdf->output(sprintf('%s/%s.pdf', TMP_DIR, $print['id']));
+        
+        unlink($map_filename);
+        unlink($code_filename);
+        
+        header("Location: {$print_url}");
     }
     
     /**** ... ****/
-    
-    $dbh =& get_db_connection();
     
     
     $sm = get_smarty_instance();

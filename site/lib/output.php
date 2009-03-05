@@ -21,6 +21,9 @@
         $s->assign('constants', get_defined_constants());
         $s->assign('request', array('get' => $_GET));
         
+        $s->register_modifier('nice_datetime', 'nice_datetime');
+        $s->register_modifier('nice_degree', 'nice_degree');
+        
         return $s;
     }
     
@@ -49,6 +52,40 @@
         
         return ($query_pos === false) ? $_SERVER['REQUEST_URI']
                                       : substr($_SERVER['REQUEST_URI'], 0, $query_pos);
+    }
+    
+    function nice_datetime($ts)
+    {
+        return date('D, M j Y, g:ia T', $ts);
+    }
+    
+    function nice_degree($str, $axis)
+    {
+        if(is_numeric($str))
+        {
+            $val = floatval($str);
+            
+            $dir = $val;
+            $val = abs($val);
+
+            $deg = floor($val);
+            $val = ($val - $deg) * 60;
+            
+            $min = floor($val);
+            $val = ($val - $min) * 60;
+            
+            $sec = floor($val);
+            
+            if($axis == 'lat') {
+                $dir = ($dir >= 0) ? 'N' : 'S';
+            } else {
+                $dir = ($dir >= 0) ? 'E' : 'W';
+            }
+            
+            return sprintf('%d°%02d\'%02d"%s', $deg, $min, $sec, $dir);
+        }
+
+        return $str;
     }
     
     function die_with_code($code, $message)

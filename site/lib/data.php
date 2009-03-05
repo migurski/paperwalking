@@ -142,7 +142,8 @@
     
     function get_print(&$dbh, $print_id)
     {
-        $q = sprintf('SELECT *
+        $q = sprintf('SELECT id, north, south, east, west,
+                             UNIX_TIMESTAMP(created) AS created
                       FROM prints
                       WHERE id = %s',
                      $dbh->quoteSmart($print_id));

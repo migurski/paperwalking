@@ -31,7 +31,7 @@
         $print_url = 'http://'.get_domain_name().get_base_dir().'/print.php?id='.urlencode($print['id']);
     
         $width = 360;
-        $height = 480;
+        $height = 456;
         
         $max_zoom = min(18, $zoom + 2);
         
@@ -57,10 +57,28 @@
         $pdf = new FPDF('P', 'pt', 'letter');
         $pdf->addPage();
         
+        $hand_filename = realpath(dirname(__FILE__).'/../lib/print/Hand.png');
+        $pdf->image($hand_filename, 510, 30, 72, 54);
+        
         $map_img = imagecreatefromstring($req->getResponseBody());
         $map_filename = tempnam(TMP_DIR, 'composed-map-');
         imagejpeg($map_img, $map_filename, 75);
-        $pdf->image($map_filename, 36, 36, 540, 720, 'jpg');
+        $pdf->image($map_filename, 36, 72, 540, 684, 'jpg');
+        
+        $pdf->setFont('Helvetica', 'B', 36);
+        $pdf->text(33.5, 72, 'Paper Route');
+        
+        $pdf->setFillColor(0xFF);
+        $pdf->rect(35, 729, 200, 28, 'F');
+        
+        $ccbysa_filename = realpath(dirname(__FILE__).'/../lib/print/CCBYSA.png');
+        $pdf->image($ccbysa_filename, 30, 732, 67, 30);
+
+        $pdf->setFont('Helvetica', '', 9);
+        $pdf->text(254, 58, 'Help improve OpenStreetMap by adding to this map, then visit');
+        $pdf->text(254, 69, $print_url);
+        $pdf->text(99, 744.5, 'Map data ©2009 CC-BY-SA');
+        $pdf->text(99, 755.5, 'OpenStreetMap.org contributors');
 
         $size = 64;
         $pad = 8;

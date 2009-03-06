@@ -83,7 +83,7 @@
             form.elements['zoom'].value = map.coordinate.zoom;
         }
 
-        var map = new mm.Map('map', new mm.MapProvider(tileURL), new mm.Point(360, 480))
+        var map = new mm.Map('map', new mm.MapProvider(tileURL), new mm.Point(360, 456))
         map.addCallback('zoomed',    function(m, a) { return onMapChanged(m); });
         map.addCallback('centered',  function(m, a) { return onMapChanged(m); });
         map.addCallback('extentset', function(m, a) { return onMapChanged(m); });

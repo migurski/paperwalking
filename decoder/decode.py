@@ -10,6 +10,7 @@ import urlparse
 import tempfile
 import commands
 import StringIO
+import xml.etree.ElementTree
 import PIL.Image
 import PIL.ImageFilter
 import matchup
@@ -136,7 +137,7 @@ def main(url, markers, apibase, message_id):
 
     except:
         # an error
-        updateStepLocal(99, 300)
+        updateStepLocal(99, 90)
 
         raise
 
@@ -201,13 +202,13 @@ def tileZoomLevel(image, topleft, bottomright, markers, renders):
     
     top, left, bottom, right = topleft.row, topleft.column, bottomright.row, bottomright.column
     
-    ax, bx, cx = linearSolution(left,    top, markers['Spout-2'].anchor.x,
-                                right,   top, markers['Spout-1'].anchor.x,
-                                left, bottom, markers['Reader'].anchor.x)
+    ax, bx, cx = linearSolution(left,    top, markers['Header'].anchor.x,
+                                right,   top, markers['Hand'].anchor.x,
+                                left, bottom, markers['CCBYSA'].anchor.x)
     
-    ay, by, cy = linearSolution(left,    top, markers['Spout-2'].anchor.y,
-                                right,   top, markers['Spout-1'].anchor.y,
-                                left, bottom, markers['Reader'].anchor.y)
+    ay, by, cy = linearSolution(left,    top, markers['Header'].anchor.y,
+                                right,   top, markers['Hand'].anchor.y,
+                                left, bottom, markers['CCBYSA'].anchor.y)
 
     magnification = math.hypot(ax, bx) / 256
     
@@ -322,21 +323,21 @@ def extractCode(image, markers):
     """
     """
     # transformation from ideal space to printed image space.
-    # markers are positioned with Spout-2 at upper left, Spout-1 at upper right, and Reader at lower left
+    # markers are positioned with Header at upper left, Hand at upper right, and CCBYSA at lower left
     
-    ax, bx, cx = linearSolution(0,   0, markers['Spout-2'].anchor.x,
-                                540, 0, markers['Spout-1'].anchor.x,
-                                0, 720, markers['Reader'].anchor.x)
+    ax, bx, cx = linearSolution(0,   0, markers['Header'].anchor.x,
+                                540, 0, markers['Hand'].anchor.x,
+                                0, 720, markers['CCBYSA'].anchor.x)
     
-    ay, by, cy = linearSolution(0,   0, markers['Spout-2'].anchor.y,
-                                540, 0, markers['Spout-1'].anchor.y,
-                                0, 720, markers['Reader'].anchor.y)
+    ay, by, cy = linearSolution(0,   0, markers['Header'].anchor.y,
+                                540, 0, markers['Hand'].anchor.y,
+                                0, 720, markers['CCBYSA'].anchor.y)
     
     # candidate location of the QR code on the printed image:
     # top-left, top-right, bottom-left corner of QR code.
     corners = [Point(ax * x + bx * y + cx, ay * x + by * y + cy)
                for (x, y)
-               in [(474, 654), (540, 654), (474, 720)]]
+               in [(477, 657), (540, 657), (477, 720)]]
 
     # projection from extracted QR code image space to source image space
     
@@ -364,7 +365,9 @@ def extractCode(image, markers):
 def readCode(image):
     """
     """
-    for attempt in range(5):
+    image.show()
+    
+    for attempt in range(4):
         codebytes = StringIO.StringIO()
         image.save(codebytes, 'PNG')
         codebytes.seek(0)
@@ -374,11 +377,29 @@ def readCode(image):
         res = req.getresponse()
         
         decoded = res.read()
+        print decoded
         
-        if res.status == 200 and decoded.startswith('uri='):
-            return [float(val) for val in decoded[4:].split()]
+        if res.status == 200 and decoded.startswith('http://'):
+        
+            html = xml.etree.ElementTree.parse(urllib.urlopen(decoded))
+            
+            north, west, south, east = None, None, None, None
+            
+            for span in html.findall('body/p/span'):
+                if re.search(r'\bbounding-box\b', span.get('class')):
+                    for subspan in span.findall('span'):
+                        if re.search(r'\bnorth\b', subspan.get('class')):
+                            north = float(subspan.text)
+                        elif re.search(r'\bsouth\b', subspan.get('class')):
+                            south = float(subspan.text)
+                        elif re.search(r'\beast\b', subspan.get('class')):
+                            east = float(subspan.text)
+                        elif re.search(r'\bwest\b', subspan.get('class')):
+                            west = float(subspan.text)
+        
+            return north, west, south, east
 
-        time.sleep(attempt)
+        time.sleep(math.pow(2, attempt))
 
     raise Exception('All attempts to read QR code failed')
 
@@ -386,8 +407,8 @@ if __name__ == '__main__':
     url = sys.argv[1]
     markers = {}
     
-    for basename in ('Reader', 'Spout-1', 'Spout-2'):
-        basepath = os.path.dirname(os.path.realpath(__file__)) + '/Gargoyles/' + basename
+    for basename in ('Header', 'Hand', 'CCBYSA'):
+        basepath = os.path.dirname(os.path.realpath(__file__)) + '/corners/' + basename
         markers[basename] = Marker(basepath)
     
     sys.exit(main(url, markers))

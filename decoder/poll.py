@@ -9,8 +9,8 @@ import decode
 if __name__ == '__main__':
     markers = {}
 
-    for basename in ('Reader', 'Spout-1', 'Spout-2'):
-        basepath = os.path.dirname(os.path.realpath(__file__)) + '/gargoyles/' + basename
+    for basename in ('Header', 'Hand', 'CCBYSA'):
+        basepath = os.path.dirname(os.path.realpath(__file__)) + '/corners/' + basename
         markers[basename] = decode.Marker(basepath)
     
     while True:

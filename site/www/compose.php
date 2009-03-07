@@ -57,16 +57,19 @@
         $pdf = new FPDF('P', 'pt', 'letter');
         $pdf->addPage();
         
+        $icon_filename = realpath(dirname(__FILE__).'/../lib/print/icon.png');
+        $pdf->image($icon_filename, 35.99, 42.87, 19.2, 25.6);
+        
         $hand_filename = realpath(dirname(__FILE__).'/../lib/print/Hand.png');
-        $pdf->image($hand_filename, 510, 30, 72, 54);
+        $pdf->image($hand_filename, 516, 30, 66, 48);
         
         $map_img = imagecreatefromstring($req->getResponseBody());
         $map_filename = tempnam(TMP_DIR, 'composed-map-');
         imagejpeg($map_img, $map_filename, 75);
         $pdf->image($map_filename, 36, 72, 540, 684, 'jpg');
         
-        $pdf->setFont('Helvetica', 'B', 36);
-        $pdf->text(33.5, 72, 'Paper Route');
+        $pdf->setFont('Helvetica', 'B', 24);
+        $pdf->text(62.61, 68.49, 'Walking Papers');
         
         $pdf->setFillColor(0xFF);
         $pdf->rect(35, 729, 200, 28, 'F');
@@ -75,8 +78,8 @@
         $pdf->image($ccbysa_filename, 30, 732, 67, 30);
 
         $pdf->setFont('Helvetica', '', 9);
-        $pdf->text(254, 58, 'Help improve OpenStreetMap by adding to this map, then visit');
-        $pdf->text(254, 69, $print_url);
+        $pdf->text(254, 57.74, 'Help improve OpenStreetMap by adding to this map, then visit');
+        $pdf->text(254, 68.74, $print_url);
         $pdf->text(99, 744.5, 'Map data ©2009 CC-BY-SA');
         $pdf->text(99, 755.5, 'OpenStreetMap.org contributors');
 

@@ -67,6 +67,17 @@
             top: -1px;
         }
         
+        #print-button
+        {
+            cursor: pointer;
+        	font-family: Chicago, Verdana, sans-serif;
+        	font-size: 12px;
+        	background: url('print-button.png');
+        	border: none;
+        	width: 50px;
+        	height: 20px;
+        }
+        
     /* {/literal}]]> */
     </style>
 </head>
@@ -118,7 +129,7 @@
         <input name="west" type="hidden" />
         <input name="zoom" type="hidden" />
 
-        <input type="submit" />
+        <input id="print-button" type="submit" name="action" value="Print" />
     </form>
     
     <script type="text/javascript">

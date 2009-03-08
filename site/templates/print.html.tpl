@@ -4,13 +4,15 @@
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>Untitled</title>
-    <script type="text/javascript" src="modestmaps.js"></script>
+	<title>Print (Walking Papers)</title>
+	<link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
 
+    <h1><img src="icon.png" border="0" align="bottom" alt="" /> Walking Papers</h1>
+    
     <p>
-        <a href="../tmp/{$print.id|escape}.pdf">Download a PDF</a>, created {$print.created|nice_datetime|escape}.
+        <a href="{$print.pdf_url|escape}">Download a PDF</a>, created {$print.created|nice_datetime|escape}.
         
         <span class="date-created" style="display: none;">{$print.created|escape}</span>
     </p>
@@ -25,6 +27,11 @@
             <span class="west">{$print.west|escape}</span>
         </span>
     </p>
+    <div class="sheet">
+        <img src="{$print.preview_url|escape}"/>
+        <div class="dummy-qrcode"><img src="http://chart.apis.google.com/chart?chs=44x44&amp;cht=qr&amp;chld=L%7C0&amp;chl=example" alt="" border="0" /></div>
+        <div class="dog-ear"> </div>
+    </div>
     
 </body>
 </html>

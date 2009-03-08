@@ -4,74 +4,17 @@
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>Untitled</title>
+	<title>Walking Papers</title>
+	<link rel="stylesheet" href="style.css" type="text/css" />
     <script type="text/javascript" src="modestmaps.js"></script>
     <style type="text/css" title="text/css">
     /* <![CDATA[{literal} */
     
-        body
-        {
-            font-size: 10px;
-            line-height: 2em;
-            font-family: Helvetica, Arial, sans-serif;
-        }
-    
-        h1, h2, p, #sheet, form
-        {
-            font-size: 1.5em;
-            margin: 1em auto;
-        }
-    
-        h1, h2, p, form
-        {
-            width: 408px;
-        }
-        
-        h1
-        {
-            font-size: 3em;
-            margin-top: 4em;
-        }
-    
-        #sheet
-        {
-        	position: relative;
-        	background: white;
-        	border: 1px solid black;
-        	width: 360px;
-        	height: 456px;
-        	padding: 24px;
-        }
-        
-        #sheet .dummy-qrcode
-        {
-            display: none;
-        
-            position: absolute;
-            background: white;
-            color: white;
-            width: 44px;
-            height: 44px;
-            padding: 4px;
-            top: 432px;
-            left: 336px;
-        }
-        
-        #sheet .dog-ear
-        {
-            background: url('dog-ear.png');
-            width: 30px;
-            height: 30px;
-            position: absolute;
-            left: 379px;
-            top: -1px;
-        }
-        
         #print-button
         {
             cursor: pointer;
         	font-family: Chicago, Verdana, sans-serif;
-        	font-size: 12px;
+        	font-size: 12px !important;
         	background: url('print-button.png');
         	border: none;
         	width: 50px;
@@ -90,7 +33,7 @@
         improve its coverage of local points of interests and street detail.
     </p>
     
-    <h2>...</h2>
+    <h2>Print a map</h2>
     
     <p>
         <a href="http://OpenStreetMap.org">OpenStreetMap</a> is a wiki-style map
@@ -108,9 +51,9 @@
         To get started, pan and zoom the map below to place you know:
     </p>
 
-    <div id="sheet">
+    <div class="sheet">
         <div id="map"></div>
-        <div class="dummy-qrcode"><img src="http://chart.apis.google.com/chart?chs=44x44&amp;cht=qr&amp;chld=L%7C0&amp;chl=example" alt="" border="0" /></div>
+        <!-- <div class="dummy-qrcode"><img src="http://chart.apis.google.com/chart?chs=44x44&amp;cht=qr&amp;chld=L%7C0&amp;chl=example" alt="" border="0" /></div> -->
         <div class="dog-ear"> </div>
     </div>
     

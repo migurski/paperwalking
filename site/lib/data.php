@@ -153,7 +153,12 @@
         if(PEAR::isError($res)) 
             die_with_code(500, "{$res->message}\n{$q}\n");
 
-        return $res->fetchRow(DB_FETCHMODE_ASSOC);
+        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+        
+        $row['pdf_url'] = sprintf('http://%s.s3.amazonaws.com/prints/%s/walking-paper-%s.pdf', S3_BUCKET_ID, $print_id, $print_id);
+        $row['preview_url'] = sprintf('http://%s.s3.amazonaws.com/prints/%s/preview.png', S3_BUCKET_ID, $print_id);
+        
+        return $row;
     }
     
     function get_scan(&$dbh, $scan_id)
@@ -362,6 +367,66 @@
 
         if($req->getResponseCode() == 200)
             return $req->getResponseHeader('etag') == $expected_etag;
+
+        return false;
+    }
+
+   /**
+    * @param    $object_id      Name to assigned
+    * @param    $content_bytes  Content of file
+    * @param    $mime_type      MIME/Type to assign
+    * @return   mixed   URL of uploaded file on success, false or PEAR_Error on failure.
+    */
+    function s3_post_file($object_id, $content_bytes, $mime_type)
+    {
+        $bucket_id = S3_BUCKET_ID;
+        
+        $content_md5_hex = md5($content_bytes);
+        $date = date('D, d M Y H:i:s T');
+        
+        $content_md5 = '';
+        
+        for($i = 0; $i < strlen($content_md5_hex); $i += 2)
+            $content_md5 .= chr(hexdec(substr($content_md5_hex, $i, 2)));
+
+        $content_md5 = base64_encode($content_md5);
+        
+        $sign_string = "PUT\n{$content_md5}\n{$mime_type}\n{$date}\nx-amz-acl:public-read\n/{$bucket_id}/{$object_id}";
+            
+        //error_log("String to sign: {$sign_string}");
+        
+        $crypt_hmac = new Crypt_HMAC(AWS_SECRET_KEY, 'sha1');
+        $hashed = $crypt_hmac->hash($sign_string);
+        
+        $signature = '';
+        
+        for($i = 0; $i < strlen($hashed); $i += 2)
+            $signature .= chr(hexdec(substr($hashed, $i, 2)));
+            
+        $authorization = sprintf('AWS %s:%s', AWS_ACCESS_KEY, base64_encode($signature));
+        
+        //error_log("Authorization header: {$authorization}");
+        
+        $url = "http://{$bucket_id}.s3.amazonaws.com/{$object_id}";
+        
+        $req = new HTTP_Request($url);
+
+        $req->setMethod('PUT');
+        $req->addHeader('Date', $date);
+        $req->addHeader('X-Amz-Acl', 'public-read');
+        $req->addHeader('Content-Type', $mime_type);
+        $req->addHeader('Content-MD5', $content_md5);
+        $req->addHeader('Content-Length', strlen($content_bytes));
+        $req->addHeader('Authorization', $authorization);
+        $req->setBody($content_bytes);
+        
+        $res = $req->sendRequest();
+        
+        if(PEAR::isError($res))
+            return $res;
+        
+        if($req->getResponseCode() == 200)
+            return $url;
 
         return false;
     }

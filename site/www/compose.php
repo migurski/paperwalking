@@ -28,10 +28,27 @@
         
         $dbh->query('COMMIT');
         
-        $print_url = 'http://'.get_domain_name().get_base_dir().'/print.php?id='.urlencode($print['id']);
-    
         $width = 360;
         $height = 456;
+        
+        $req = new HTTP_Request('http://osm.stamen.com:10010/?provider=CLOUDMADE_FINELINE');
+        $req->addQueryString('latitude', ($north + $south) / 2);
+        $req->addQueryString('longitude', ($east + $west) / 2);
+        $req->addQueryString('zoom', $zoom);
+        $req->addQueryString('width', $width);
+        $req->addQueryString('height', $height);
+        
+        $res = $req->sendRequest();
+        
+        if(PEAR::isError($res))
+            die_with_code(500, "{$res->message}\n{$q}\n");
+
+        // post a preview
+        $url = new Net_URL($print['preview_url']);
+        $res = s3_post_file(ltrim($url->path, '/'), $req->getResponseBody(), 'image/png');
+        
+        if(PEAR::isError($res))
+            die_with_code(500, "{$res->message}\n{$q}\n");
         
         $max_zoom = min(18, $zoom + 2);
         
@@ -54,6 +71,8 @@
         if(PEAR::isError($res))
             die_with_code(500, "{$res->message}\n{$q}\n");
 
+        $print_url = 'http://'.get_domain_name().get_base_dir().'/print.php?id='.urlencode($print['id']);
+    
         $pdf = new FPDF('P', 'pt', 'letter');
         $pdf->addPage();
         
@@ -101,7 +120,14 @@
         imagepng($code_img, $code_filename);
         $pdf->image($code_filename, 36 + 540 - $size, 36 + 720 - $size, $size, $size, 'png');
         
-        $pdf->output(sprintf('%s/%s.pdf', TMP_DIR, $print['id']));
+        $pdf_content = $pdf->output('', 'S');
+        
+        // post the PDF
+        $url = new Net_URL($print['pdf_url']);
+        $res = s3_post_file(ltrim($url->path, '/'), $pdf_content, 'application/pdf');
+        
+        if(PEAR::isError($res))
+            die_with_code(500, "{$res->message}\n{$q}\n");
         
         unlink($map_filename);
         unlink($code_filename);

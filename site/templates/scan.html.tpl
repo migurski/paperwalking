@@ -4,11 +4,12 @@
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>Scanned Walking Papers</title>
+	<link rel="stylesheet" href="style.css" type="text/css" />
+    <script type="text/javascript" src="modestmaps.js"></script>
 	{if $scan && $scan.last_step != 6}
         <meta http-equiv="refresh" content="5" />
     {/if}
-	<title>Untitled</title>
-    <script type="text/javascript" src="modestmaps.js"></script>
     <script type="text/javascript">
     // <![CDATA[{literal}
     
@@ -21,15 +22,36 @@
 
     // {/literal}]]>
     </script>
+    <style type="text/css" title="text/css">
+    /* <![CDATA[{literal} */
+    
+        #map
+        {
+            width: 408px;
+            height: 528px;
+            border: solid 1px black;
+        }
+    
+    /* {/literal}]]> */
+    </style>
 </head>
 <body>
 
+    <h1><img src="icon.png" border="0" align="bottom" alt="" /> Walking Papers</h1>
+    
+    <p>
+        <a href="print.php?id={$scan.print_id|escape}">Download more PDFs of this area</a>.
+    </p>
+
     {if $scan}
         {if $scan.last_step == 6}
-            <p><a href="javascript:map.zoomIn()">zoom in</a> | <a href="javascript:map.zoomOut()">zoom out</a>
-            <br><a href="javascript:map.panLeft()">pan left</a> | <a href="javascript:map.panRight()">pan right</a> | <a href="javascript:map.panDown()">pan down</a> | <a href="javascript:map.panUp()">pan up</a></p>
-            <div id="map">
-            </div>
+            <p>
+                <a href="javascript:map.zoomIn()">zoom in</a> | <a href="javascript:map.zoomOut()">zoom out</a>
+                <br>
+                <a href="javascript:map.panLeft()">pan left</a> | <a href="javascript:map.panRight()">pan right</a> | <a href="javascript:map.panDown()">pan down</a> | <a href="javascript:map.panUp()">pan up</a>
+            </p>
+
+            <p id="map"></p>
             
             <script type="text/javascript">
             // <![CDATA[
@@ -39,7 +61,7 @@
             
                 var provider = new mm.MapProvider(makeProviderFunction('{$constants.S3_BUCKET_ID|escape}', '{$scan.id|escape}'));
                 var map_el = document.getElementById('map');
-                var map = new mm.Map(map_el, provider, new mm.Point(640,480))
+                var map = new mm.Map(map_el, provider, new mm.Point(408, 528));
                 
                 var northwest = provider.coordinateLocation(new mm.Coordinate({$scan.min_row}, {$scan.min_column}, {$scan.min_zoom}));
                 var southeast = provider.coordinateLocation(new mm.Coordinate({$scan.max_row}, {$scan.max_column}, {$scan.max_zoom}));
@@ -58,10 +80,5 @@
         {/if}
     {/if}
 
-    <!--
-    {$scan|@print_r:1|escape}
-    {$step|@print_r:1|escape}
-    -->
-    
 </body>
 </html>

@@ -50,6 +50,15 @@ p
     left: 336px;
 }
 
+.sheet .slippy-nav
+{
+    width: 43px;
+    height: 57px;
+    position: absolute;
+    left: 8px;
+    top: 6px;
+}
+
 .sheet .dog-ear
 {
     background: url('dog-ear.png');

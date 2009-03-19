@@ -4,10 +4,17 @@
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>Untitled</title>
+	<title>Upload Walking Papers</title>
+	<link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
 
+    <h1><img src="icon.png" border="0" align="bottom" alt="" /> Walking Papers</h1>
+    
+    <p>
+        (explanation)
+    </p>
+    
     <form action="http://{$post.bucket|escape}.s3.amazonaws.com/" method="post" enctype="multipart/form-data">
         <input name="AWSAccessKeyId" type="hidden" value="{$post.access|escape}">
         <input name="acl" type="hidden" value="{$post.acl|escape}">

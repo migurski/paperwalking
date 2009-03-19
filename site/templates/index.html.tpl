@@ -54,15 +54,18 @@
     <div class="sheet">
         <div id="map"></div>
         <!-- <div class="dummy-qrcode"><img src="http://chart.apis.google.com/chart?chs=44x44&amp;cht=qr&amp;chld=L%7C0&amp;chl=example" alt="" border="0" /></div> -->
+        <img class="slippy-nav" src="slippy-nav.png" width="43" height="57" border="0" alt="up" usemap="#slippy_nav"/>
+        <map name="slippy_nav">
+            <area shape="rect" alt="out" coords="14,31,28,41" href="javascript:map.zoomOut()">
+            <area shape="rect" alt="in" coords="14,14,28,30" href="javascript:map.zoomIn()">
+            <area shape="rect" alt="right" coords="29,21,42,35" href="javascript:map.panRight()">
+            <area shape="rect" alt="down" coords="14,42,28,56" href="javascript:map.panDown()">
+            <area shape="rect" alt="up" coords="14,0,28,13" href="javascript:map.panUp()">
+            <area shape="rect" alt="left" coords="0,21,13,35" href="javascript:map.panLeft()">
+        </map>
         <div class="dog-ear"> </div>
     </div>
     
-    <p>
-        <a href="javascript:map.zoomIn()">zoom in</a> | <a href="javascript:map.zoomOut()">zoom out</a>
-        <br>
-        <a href="javascript:map.panLeft()">pan left</a> | <a href="javascript:map.panRight()">pan right</a> | <a href="javascript:map.panDown()">pan down</a> | <a href="javascript:map.panUp()">pan up</a>
-    </p>
-
     <p id="info"></p>
 
     <form action="compose.php" method="post" name="bounds">

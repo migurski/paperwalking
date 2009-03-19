@@ -90,7 +90,7 @@ def main(url, markers, apibase, message_id):
         
         qrcode = extractCode(image, markers)
     
-        north, west, south, east = readCode(qrcode)
+        print_id, north, west, south, east = readCode(qrcode)
         print 'code contents:', (north, west, south, east)
         
         # tiling and uploading
@@ -104,7 +104,7 @@ def main(url, markers, apibase, message_id):
         print topleft, bottomright
         
         renders = {}
-        s3 = AWS.Storage.Service('****', '****')
+        s3 = AWS.Storage.Service('0PSFV06R5Q25024R9X82', 'TloF5wslFofCrsEkatnok1d0iHuYoruB6YymhCcL')
         
         min_zoom, max_zoom = 20, 0
         
@@ -383,21 +383,23 @@ def readCode(image):
         
             html = xml.etree.ElementTree.parse(urllib.urlopen(decoded))
             
-            north, west, south, east = None, None, None, None
+            print_id, north, west, south, east = None, None, None, None, None
             
-            for span in html.findall('body/p/span'):
-                if re.search(r'\bbounding-box\b', span.get('class')):
+            for span in html.findall('body/span'):
+                if span.get('id') == 'print-info':
                     for subspan in span.findall('span'):
-                        if re.search(r'\bnorth\b', subspan.get('class')):
+                        if subspan.get('class') == 'print':
+                            print_id = int(subspan.text)
+                        elif subspan.get('class') == 'north':
                             north = float(subspan.text)
-                        elif re.search(r'\bsouth\b', subspan.get('class')):
+                        elif subspan.get('class') == 'south':
                             south = float(subspan.text)
-                        elif re.search(r'\beast\b', subspan.get('class')):
+                        elif subspan.get('class') == 'east':
                             east = float(subspan.text)
-                        elif re.search(r'\bwest\b', subspan.get('class')):
+                        elif subspan.get('class') == 'west':
                             west = float(subspan.text)
         
-            return north, west, south, east
+            return print_id, north, west, south, east
 
         time.sleep(math.pow(2, attempt))
 

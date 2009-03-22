@@ -16,7 +16,7 @@
         function makeProviderFunction(bucket_id, scan_id)
         {
             return function(coord) {
-                return 'http://' + bucket_id + '.s3.amazonaws.com/' + scan_id + '/' + coord.zoom +'-r'+ coord.row +'-c'+ coord.column + '.jpg';
+                return 'http://' + bucket_id + '.s3.amazonaws.com/scans/' + scan_id + '/' + coord.zoom +'/'+ coord.column +'/'+ coord.row + '.jpg';
             }
         }
 
@@ -31,6 +31,9 @@
             height: 528px;
             border: solid 1px black;
         }
+        
+        ol.steps li { color: silver; }
+        ol.steps li.on { color: black; }
     
     /* {/literal}]]> */
     </style>
@@ -39,12 +42,12 @@
 
     <h1><img src="icon.png" border="0" align="bottom" alt="" /> Walking Papers</h1>
     
-    <p>
-        <a href="print.php?id={$scan.print_id|escape}">Download more PDFs of this area</a>.
-    </p>
-
     {if $scan}
         {if $scan.last_step == 6}
+            <p>
+                <a href="print.php?id={$scan.print_id|escape}">Download more PDFs of this area</a>.
+            </p>
+        
             <p>
                 <a href="javascript:map.zoomIn()">zoom in</a> | <a href="javascript:map.zoomOut()">zoom out</a>
                 <br>
@@ -75,7 +78,21 @@
             </script>
         
         {else}
-            Please wait, currently {$step.description|lower|escape}.
+            <p>Processing your scanned image.</p>
+
+            <ol class="steps">
+                <li class="{if $step.number == 0}on{/if}">{0|step_description|escape}</li>
+                <li class="{if $step.number == 1}on{/if}">{1|step_description|escape}</li>
+                <li class="{if $step.number == 2}on{/if}">{2|step_description|escape}</li>
+                <li class="{if $step.number == 3}on{/if}">{3|step_description|escape}</li>
+                <li class="{if $step.number == 4}on{/if}">{4|step_description|escape}</li>
+                <li class="{if $step.number == 5}on{/if}">{5|step_description|escape}</li>
+                <li class="{if $step.number == 6}on{/if}">{6|step_description|escape}</li>
+            </ol>
+            
+            {if $step.number >= 7}
+                <p>Please stand by, currently {$step.number|step_description|lower|escape}.</p>
+            {/if}
         
         {/if}
     {/if}

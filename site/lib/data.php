@@ -9,6 +9,15 @@
     require_once 'HTTP/Request.php';
     require_once 'Net/URL.php';
     
+    define('STEP_UPLOADING', 0);
+    define('STEP_QUEUED', 1);
+    define('STEP_SIFTING', 2);
+    define('STEP_FINDING_NEEDLES', 3);
+    define('STEP_READING_QR_CODE', 4);
+    define('STEP_TILING_UPLOADING', 5);
+    define('STEP_FINISHED', 6);
+    define('STEP_ERROR', 99);
+
     function &get_db_connection()
     {
         return DB::connect(DB_DSN);
@@ -82,19 +91,18 @@
                 die_with_code(500, "{$res->message}\n{$q}\n");
             }
             
-            add_step($dbh, $scan_id, 0, 'Getting ready to upload');
+            add_step($dbh, $scan_id, 0);
             
             return get_scan($dbh, $scan_id);
         }
     }
     
-    function add_step(&$dbh, $scan_id, $number, $description)
+    function add_step(&$dbh, $scan_id, $number)
     {
         $q = sprintf('INSERT INTO steps
-                      SET scan_id = %s, number = %d, description = %s',
+                      SET scan_id = %s, number = %d',
                      $dbh->quoteSmart($scan_id),
-                     $number,
-                     $dbh->quoteSmart($description));
+                     $number);
 
         error_log(preg_replace('/\s+/', ' ', $q));
 
@@ -174,6 +182,38 @@
             die_with_code(500, "{$res->message}\n{$q}\n");
 
         return $res->fetchRow(DB_FETCHMODE_ASSOC);
+    }
+    
+    function get_step_description($number)
+    {
+        switch($number)
+        {
+            case STEP_UPLOADING:
+                return 'Preparing for upload';
+
+            case STEP_QUEUED:
+                return 'Queued for processing';
+
+            case STEP_SIFTING:
+                return 'Sifting';
+
+            case STEP_FINDING_NEEDLES:
+                return 'Finding needles';
+
+            case STEP_READING_QR_CODE:
+                return 'Reading QR code';
+
+            case STEP_TILING_UPLOADING:
+                return 'Tiling and uploading';
+
+            case STEP_FINISHED:
+                return 'Finished';
+
+            case STEP_ERROR:
+                return 'An error has occured';
+        }
+
+        return new PEAR_Error('dunno');
     }
     
     function get_step(&$dbh, $scan_id, $number=false)

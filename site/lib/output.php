@@ -23,6 +23,7 @@
         
         $s->register_modifier('nice_datetime', 'nice_datetime');
         $s->register_modifier('nice_degree', 'nice_degree');
+        $s->register_modifier('step_description', 'step_description');
         
         return $s;
     }
@@ -86,6 +87,11 @@
         }
 
         return $str;
+    }
+    
+    function step_description($number)
+    {
+        return get_step_description($number);
     }
     
     function die_with_code($code, $message)

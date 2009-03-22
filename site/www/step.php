@@ -14,37 +14,7 @@
     
     if($scan_id && $step_number)
     {
-        switch($step_number)
-        {
-            case 2:
-                $description = 'Sifting';
-                break;
-
-            case 3:
-                $description = 'Finding needles';
-                break;
-
-            case 4:
-                $description = 'Reading QR code';
-                break;
-
-            case 5:
-                $description = 'Tiling and uploading';
-                break;
-
-            case 6:
-                $description = 'Finished';
-                break;
-
-            case 99:
-                $description = 'An error has occured';
-                break;
-
-            default:
-                die_with_code(400, "Unrecognized step number, should be 2 - 6\n");
-        }
-        
-        add_step($dbh, $scan_id, $step_number, $description);
+        add_step($dbh, $scan_id, $step_number);
         echo "OK\n";
         exit();
     }

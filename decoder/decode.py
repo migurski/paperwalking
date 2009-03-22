@@ -17,6 +17,9 @@ import matchup
 import ModestMaps
 import AWS
 
+class CodeReadException(Exception):
+    pass
+
 class Point:
     def __init__(self, x, y):
         self.x = x
@@ -55,7 +58,7 @@ class Marker:
 def main(url, markers, apibase, message_id):
     """
     """
-    url_pat = re.compile(r'^http://([^\.]+).s3.amazonaws.com/([^/]+)/(.+)$', re.I)
+    url_pat = re.compile(r'^http://([^\.]+).s3.amazonaws.com/scans/([^/]+)/(.+)$', re.I)
     
     if url_pat.match(url):
         scan_id = url_pat.sub(r'\2', url)
@@ -91,7 +94,7 @@ def main(url, markers, apibase, message_id):
         qrcode = extractCode(image, markers)
     
         print_id, north, west, south, east = readCode(qrcode)
-        print 'code contents:', (north, west, south, east)
+        print 'code contents:', 'Print', print_id, (north, west, south, east)
         
         # tiling and uploading
         updateStepLocal(5, 180)
@@ -115,13 +118,14 @@ def main(url, markers, apibase, message_id):
             zoom_renders = tileZoomLevel(image, localTopLeft, localBottomRight, markers, renders)
             
             for (coord, tile_image) in zoom_renders:
-                tile_name = '%(zoom)d-r%(row)d-c%(column)d.jpg' % coord.__dict__
+                x, y, z = coord.column, coord.row, coord.zoom
+                tile_name = 'scans/%(scan_id)s/%(z)d/%(x)d/%(y)d.jpg' % locals()
                 
                 tile_bytes = StringIO.StringIO()
                 tile_image.save(tile_bytes, 'JPEG')
                 tile_bytes = tile_bytes.getvalue()
 
-                s3.putBucketObject('paperwalking-uploads', scan_id + '/' + tile_name, tile_bytes, 'image/jpeg', 'public-read')
+                s3.putBucketObject('paperwalking-uploads', tile_name, tile_bytes, 'image/jpeg', 'public-read')
             
                 renders[str(coord)] = tile_image
                 
@@ -132,8 +136,15 @@ def main(url, markers, apibase, message_id):
         print 'max:', bottomright.zoomTo(max_zoom)
         
         # finished!
-        updateScan(apibase, scan_id, topleft.zoomTo(min_zoom), bottomright.zoomTo(max_zoom))
+        updateScan(apibase, scan_id, print_id, topleft.zoomTo(min_zoom), bottomright.zoomTo(max_zoom))
         updateStepLocal(6, None)
+
+    except CodeReadException:
+        print 'Failed QR code, maybe will try again?'
+        updateStepLocal(99, 150)
+    
+    except KeyboardInterrupt:
+        raise
 
     except:
         # an error
@@ -172,14 +183,15 @@ def updateStep(apibase, scan_id, step_number, message_id, timeout):
     
     return
 
-def updateScan(apibase, scan_id, min_coord, max_coord):
+def updateScan(apibase, scan_id, print_id, min_coord, max_coord):
     """
     """
     s, host, path, p, q, f = urlparse.urlparse(apibase)
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     
     query = urllib.urlencode({'id': scan_id})
-    params = urllib.urlencode({'min_row': min_coord.row, 'max_row': max_coord.row,
+    params = urllib.urlencode({'print_id': print_id,
+                               'min_row': min_coord.row, 'max_row': max_coord.row,
                                'min_column': min_coord.column, 'max_column': max_coord.column,
                                'min_zoom': min_coord.zoom, 'max_zoom': max_coord.zoom})
     
@@ -356,7 +368,7 @@ def extractCode(image, markers):
     qrcode = PIL.Image.new('RGB', justcode.size, (0xCC, 0xCC, 0xCC))
     qrcode.paste(justcode, (0, 0), justcode)
     
-    # blur and raise contrast
+    # raise contrast
     lut = [0x00] * 112 + [0xFF] * 144 # [0x00] * 112 + range(0x00, 0xFF, 8) + [0xFF] * 112
     qrcode = qrcode.convert('L').filter(PIL.ImageFilter.BLUR).point(lut)
     
@@ -365,45 +377,43 @@ def extractCode(image, markers):
 def readCode(image):
     """
     """
-    image.show()
+    codebytes = StringIO.StringIO()
+    image.save(codebytes, 'PNG')
+    codebytes.seek(0)
     
-    for attempt in range(4):
-        codebytes = StringIO.StringIO()
-        image.save(codebytes, 'PNG')
-        codebytes.seek(0)
+    req = httplib.HTTPConnection('127.0.0.1', 9955)
+    req.request('POST', '/decode', codebytes.read(), {'Content-Type': 'image/png'})
+    res = req.getresponse()
+    
+    decoded = res.read()
+    print decoded
+    
+    if res.status == 200 and decoded.startswith('http://'):
+    
+        html = xml.etree.ElementTree.parse(urllib.urlopen(decoded))
         
-        req = httplib.HTTPConnection('127.0.0.1', 9955)
-        req.request('POST', '/decode', codebytes.read(), {'Content-Type': 'image/png'})
-        res = req.getresponse()
+        print_id, north, west, south, east = None, None, None, None, None
         
-        decoded = res.read()
-        print decoded
-        
-        if res.status == 200 and decoded.startswith('http://'):
-        
-            html = xml.etree.ElementTree.parse(urllib.urlopen(decoded))
-            
-            print_id, north, west, south, east = None, None, None, None, None
-            
-            for span in html.findall('body/span'):
-                if span.get('id') == 'print-info':
-                    for subspan in span.findall('span'):
-                        if subspan.get('class') == 'print':
-                            print_id = int(subspan.text)
-                        elif subspan.get('class') == 'north':
-                            north = float(subspan.text)
-                        elif subspan.get('class') == 'south':
-                            south = float(subspan.text)
-                        elif subspan.get('class') == 'east':
-                            east = float(subspan.text)
-                        elif subspan.get('class') == 'west':
-                            west = float(subspan.text)
-        
-            return print_id, north, west, south, east
+        for span in html.findall('body/span'):
+            if span.get('id') == 'print-info':
+                for subspan in span.findall('span'):
+                    if subspan.get('class') == 'print':
+                        print_id = subspan.text
+                    elif subspan.get('class') == 'north':
+                        north = float(subspan.text)
+                    elif subspan.get('class') == 'south':
+                        south = float(subspan.text)
+                    elif subspan.get('class') == 'east':
+                        east = float(subspan.text)
+                    elif subspan.get('class') == 'west':
+                        west = float(subspan.text)
+    
+        return print_id, north, west, south, east
 
-        time.sleep(math.pow(2, attempt))
+    else:
+        image.show()
 
-    raise Exception('All attempts to read QR code failed')
+        raise CodeReadException('Attempt to read QR code failed')
 
 if __name__ == '__main__':
     url = sys.argv[1]

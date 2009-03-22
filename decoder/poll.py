@@ -33,6 +33,9 @@ if __name__ == '__main__':
                 print >> sys.stderr, datetime.datetime.now(), 'Decoding message id', message_id, '-', url
                 decode.main(url, markers, 'http://www.paperwalking.com/paperwalking/site/www', message_id)
 
+        except KeyboardInterrupt:
+            raise
+
         except Exception, e:
             print >> sys.stderr, 'Something went wrong, authorities are being notified:', e
             raise

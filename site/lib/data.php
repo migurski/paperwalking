@@ -502,7 +502,7 @@
     function s3_get_post_details($scan_id, $expires, $format=null)
     {
         $acl = 'public-read';
-        $key = "{$scan_id}/\${filename}";
+        $key = "scans/{$scan_id}/\${filename}";
         $redirect = 'http://'.get_domain_name().get_base_dir().'/uploaded.php?scan='.rawurlencode($scan_id).(is_null($format) ? '' : "&format={$format}");
         $access = AWS_ACCESS_KEY;
         $bucket = S3_BUCKET_ID;
@@ -511,7 +511,7 @@
                         'conditions' => array(
                             array('bucket' => $bucket),
                             array('acl' => $acl),
-                            array('starts-with', '$key', "{$scan_id}/"),
+                            array('starts-with', '$key', "scans/{$scan_id}/"),
                             array('redirect' => $redirect)));
 
         $policy = base64_encode(json_encode($policy));

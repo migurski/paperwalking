@@ -93,7 +93,6 @@
             {if $step.number >= 7}
                 <p>Please stand by, currently {$step.number|step_description|lower|escape}.</p>
             {/if}
-        
         {/if}
     {/if}
 

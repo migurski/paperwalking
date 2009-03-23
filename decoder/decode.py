@@ -55,7 +55,7 @@ class Marker:
 
         self.anchor = Point(x, y)
 
-def main(url, markers, apibase, message_id):
+def main(url, markers, apibase, message_id, aws_access, aws_secret, password):
     """
     """
     url_pat = re.compile(r'^http://([^\.]+).s3.amazonaws.com/scans/([^/]+)/(.+)$', re.I)
@@ -68,7 +68,7 @@ def main(url, markers, apibase, message_id):
         return
 
     # shorthand
-    updateStepLocal = lambda step_number, timeout: updateStep(apibase, scan_id, step_number, message_id, timeout)
+    updateStepLocal = lambda step_number, timeout: updateStep(apibase, password, scan_id, step_number, message_id, timeout)
     
     try:
         # sifting
@@ -107,7 +107,7 @@ def main(url, markers, apibase, message_id):
         print topleft, bottomright
         
         renders = {}
-        s3 = AWS.Storage.Service('0PSFV06R5Q25024R9X82', 'TloF5wslFofCrsEkatnok1d0iHuYoruB6YymhCcL')
+        s3 = AWS.Storage.Service(aws_access, aws_secret)
         
         min_zoom, max_zoom = 20, 0
         
@@ -136,12 +136,12 @@ def main(url, markers, apibase, message_id):
         print 'max:', bottomright.zoomTo(max_zoom)
         
         # finished!
-        updateScan(apibase, scan_id, print_id, topleft.zoomTo(min_zoom), bottomright.zoomTo(max_zoom))
+        updateScan(apibase, password, scan_id, print_id, topleft.zoomTo(min_zoom), bottomright.zoomTo(max_zoom))
         updateStepLocal(6, None)
 
     except CodeReadException:
         print 'Failed QR code, maybe will try again?'
-        updateStepLocal(99, 150)
+        updateStepLocal(99, 10)
     
     except KeyboardInterrupt:
         raise
@@ -154,13 +154,13 @@ def main(url, markers, apibase, message_id):
 
     return 0
 
-def updateStep(apibase, scan_id, step_number, message_id, timeout):
+def updateStep(apibase, password, scan_id, step_number, message_id, timeout):
     """
     """
     s, host, path, p, q, f = urlparse.urlparse(apibase)
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     
-    params = urllib.urlencode({'scan': scan_id, 'step': step_number})
+    params = urllib.urlencode({'scan': scan_id, 'step': step_number, 'password': password})
     
     req = httplib.HTTPConnection(host, 80)
     req.request('POST', path + '/step.php', params, headers)
@@ -168,12 +168,12 @@ def updateStep(apibase, scan_id, step_number, message_id, timeout):
     
     assert res.status == 200
     
-    if step_number == 6:
+    if step_number == 6 or res.read().strip() == 'Too many errors':
         # magic number for "finished"
-        params = urllib.urlencode({'id': message_id, 'delete': 'yes'})
+        params = urllib.urlencode({'id': message_id, 'password': password, 'delete': 'yes'})
 
     else:
-        params = urllib.urlencode({'id': message_id, 'timeout': timeout})
+        params = urllib.urlencode({'id': message_id, 'password': password, 'timeout': timeout})
     
     req = httplib.HTTPConnection(host, 80)
     req.request('POST', path + '/dequeue.php', params, headers)
@@ -183,7 +183,7 @@ def updateStep(apibase, scan_id, step_number, message_id, timeout):
     
     return
 
-def updateScan(apibase, scan_id, print_id, min_coord, max_coord):
+def updateScan(apibase, password, scan_id, print_id, min_coord, max_coord):
     """
     """
     s, host, path, p, q, f = urlparse.urlparse(apibase)
@@ -191,6 +191,7 @@ def updateScan(apibase, scan_id, print_id, min_coord, max_coord):
     
     query = urllib.urlencode({'id': scan_id})
     params = urllib.urlencode({'print_id': print_id,
+                               'password': password,
                                'min_row': min_coord.row, 'max_row': max_coord.row,
                                'min_column': min_coord.column, 'max_column': max_coord.column,
                                'min_zoom': min_coord.zoom, 'max_zoom': max_coord.zoom})
@@ -411,7 +412,7 @@ def readCode(image):
         return print_id, north, west, south, east
 
     else:
-        image.show()
+        #image.show()
 
         raise CodeReadException('Attempt to read QR code failed')
 

@@ -35,7 +35,7 @@
     
     function generate_id()
     {
-        $chars = 'qwrtypsdfghjklzxcvbnm0123456789';
+        $chars = 'qwrtpsdfghklzxcvbnm23456789';
         $id = '';
         
         while(strlen($id) < 8)

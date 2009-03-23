@@ -7,7 +7,7 @@
 	<title>Scanned Walking Papers</title>
 	<link rel="stylesheet" href="style.css" type="text/css" />
     <script type="text/javascript" src="modestmaps.js"></script>
-	{if $scan && $scan.last_step != 6}
+	{if $scan && $scan.last_step != 6 && $scan.last_step != $constants.STEP_FATAL_ERROR}
         <meta http-equiv="refresh" content="5" />
     {/if}
     <script type="text/javascript">

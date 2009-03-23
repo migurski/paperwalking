@@ -5,6 +5,9 @@
     require_once 'init.php';
     require_once 'data.php';
     
+    if($_POST['password'] != API_PASSWORD)
+        die_with_code(401, 'Sorry, bad password');
+    
     $scan_id = $_POST['scan'] ? $_POST['scan'] : null;
     $step_number = is_numeric($_POST['step']) ? $_POST['step'] : null;
     

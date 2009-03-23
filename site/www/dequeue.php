@@ -5,6 +5,9 @@
     require_once 'init.php';
     require_once 'data.php';
     
+    if($_POST['password'] != API_PASSWORD)
+        die_with_code(401, 'Sorry, bad password');
+    
     $delete = ($_POST['delete'] == 'yes') ? true : false;
     $timeout = is_numeric($_POST['timeout']) ? $_POST['timeout'] : null;
     $message_id = is_numeric($_POST['id']) ? $_POST['id'] : null;

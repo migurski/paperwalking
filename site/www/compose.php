@@ -97,7 +97,7 @@
         $pdf->image($ccbysa_filename, 30, 732, 67, 30);
 
         $pdf->setFont('Helvetica', '', 9);
-        $pdf->text(254, 57.74, 'Help improve OpenStreetMap by adding to this map, then visit');
+        $pdf->text(254, 57.74, 'Help improve OpenStreetMap by drawing on this map, then visit');
         $pdf->text(254, 68.74, $print_url);
         $pdf->text(99, 744.5, 'Map data ©2009 CC-BY-SA');
         $pdf->text(99, 755.5, 'OpenStreetMap.org contributors');

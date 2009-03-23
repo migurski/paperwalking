@@ -17,6 +17,17 @@
     
     if($scan_id && $step_number)
     {
+        if($step_number == STEP_ERROR)
+        {
+            // sort of a magic number, presumably we've tried and tried and tried
+            if(count(get_steps($dbh, $scan_id, 31)) > 30)
+            {
+                add_step($dbh, $scan_id, STEP_FATAL_ERROR);
+                echo "Too many errors\n";
+                exit();
+            }
+        }
+        
         add_step($dbh, $scan_id, $step_number);
         echo "OK\n";
         exit();

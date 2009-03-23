@@ -17,6 +17,7 @@
     define('STEP_TILING_UPLOADING', 5);
     define('STEP_FINISHED', 6);
     define('STEP_ERROR', 99);
+    define('STEP_FATAL_ERROR', 100);
 
     function &get_db_connection()
     {
@@ -211,6 +212,9 @@
 
             case STEP_ERROR:
                 return 'An error has occured';
+
+            case STEP_FATAL_ERROR:
+                return 'A fatal error has occured';
         }
 
         return new PEAR_Error('dunno');
@@ -244,24 +248,28 @@
         return $res->fetchRow(DB_FETCHMODE_ASSOC);
     }
     
-    /*
-    function get_message(&$dbh, $message_id)
+    function get_steps(&$dbh, $scan_id, $limit=100)
     {
-        $q = sprintf('SELECT id, content
-                      FROM messages
-                      WHERE available < NOW()
-                        AND deleted = 0
-                        AND id = %d',
-                     $message_id);
+        $q = sprintf('SELECT *
+                      FROM steps
+                      WHERE scan_id = %s
+                      ORDER BY created DESC
+                      LIMIT %d',
+                     $dbh->quoteSmart($scan_id),
+                     $limit);
     
         $res = $dbh->query($q);
         
         if(PEAR::isError($res)) 
             die_with_code(500, "{$res->message}\n{$q}\n");
 
-        return $res->fetchRow(DB_FETCHMODE_ASSOC);
+        $steps = array();
+        
+        while($step = $res->fetchRow(DB_FETCHMODE_ASSOC))
+            $steps[] = $step;
+
+        return $steps;
     }
-    */
     
     function get_message(&$dbh, $timeout)
     {
@@ -273,7 +281,9 @@
         $q = sprintf('SELECT id, content
                       FROM messages
                       WHERE available < NOW()
-                        AND deleted = 0');
+                        AND deleted = 0
+                      ORDER BY available ASC
+                      LIMIT 1');
 
         $res = $dbh->query($q);
         

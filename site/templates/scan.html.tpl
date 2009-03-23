@@ -78,20 +78,25 @@
             </script>
         
         {else}
-            <p>Processing your scanned image.</p>
-
-            <ol class="steps">
-                <li class="{if $step.number == 0}on{/if}">{0|step_description|escape}</li>
-                <li class="{if $step.number == 1}on{/if}">{1|step_description|escape}</li>
-                <li class="{if $step.number == 2}on{/if}">{2|step_description|escape}</li>
-                <li class="{if $step.number == 3}on{/if}">{3|step_description|escape}</li>
-                <li class="{if $step.number == 4}on{/if}">{4|step_description|escape}</li>
-                <li class="{if $step.number == 5}on{/if}">{5|step_description|escape}</li>
-                <li class="{if $step.number == 6}on{/if}">{6|step_description|escape}</li>
-            </ol>
-            
-            {if $step.number >= 7}
-                <p>Please stand by, currently {$step.number|step_description|lower|escape}.</p>
+            {if $step.number == $constants.STEP_FATAL_ERROR}
+                <p>Giving up, {$step.number|step_description|lower|escape}.</p>
+                
+            {else}
+                <p>Processing your scanned image.</p>
+    
+                <ol class="steps">
+                    <li class="{if $step.number == 0}on{/if}">{0|step_description|escape}</li>
+                    <li class="{if $step.number == 1}on{/if}">{1|step_description|escape}</li>
+                    <li class="{if $step.number == 2}on{/if}">{2|step_description|escape}</li>
+                    <li class="{if $step.number == 3}on{/if}">{3|step_description|escape}</li>
+                    <li class="{if $step.number == 4}on{/if}">{4|step_description|escape}</li>
+                    <li class="{if $step.number == 5}on{/if}">{5|step_description|escape}</li>
+                    <li class="{if $step.number == 6}on{/if}">{6|step_description|escape}</li>
+                </ol>
+                
+                {if $step.number >= 7}
+                    <p>Please stand by, currently {$step.number|step_description|lower|escape}.</p>
+                {/if}
             {/if}
         {/if}
     {/if}

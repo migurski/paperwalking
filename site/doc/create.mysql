@@ -68,8 +68,6 @@ CREATE TABLE steps (
     scan_id     VARCHAR(8) NOT NULL,
     number      INT NOT NULL,
 
-    description VARCHAR(255),
-
     user_name   VARCHAR(32) NOT NULL,
     created     TIMESTAMP,
 
@@ -92,6 +90,7 @@ CREATE TABLE messages (
     created     TIMESTAMP,
     available   TIMESTAMP,
 
-    INDEX available (available)
+    INDEX available (available),
+    INDEX deleted (deleted)
 
 ) ENGINE=InnoDB, CHARACTER SET utf8;

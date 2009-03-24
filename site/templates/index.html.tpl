@@ -69,7 +69,7 @@
     
     <script type="text/javascript">
     // <![CDATA[
-        makeMap('map');
+        var map = makeMap('map');
     // ]]>
     </script>
     

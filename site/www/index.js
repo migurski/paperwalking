@@ -18,7 +18,7 @@ function formatDegree(value, axis)
     
     var sec = Math.floor(val);
     
-    var str = deg + '¡';
+    var str = deg + 'Â°';
     
     if(min <= 9)
         str += '0';

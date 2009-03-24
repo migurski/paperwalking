@@ -5,8 +5,8 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>Scanned Walking Papers</title>
-	<link rel="stylesheet" href="style.css" type="text/css" />
-    <script type="text/javascript" src="modestmaps.js"></script>
+	<link rel="stylesheet" href="{$base_dir}/style.css" type="text/css" />
+    <script type="text/javascript" src="{$base_dir}/modestmaps.js"></script>
 	{if $scan && $scan.last_step != 6 && $scan.last_step != $constants.STEP_FATAL_ERROR}
         <meta http-equiv="refresh" content="5" />
     {/if}
@@ -40,12 +40,12 @@
 </head>
 <body>
 
-    <h1><img src="icon.png" border="0" align="bottom" alt="" /> Walking Papers</h1>
+    <h1><a href="{$base_dir}/"><img src="{$base_dir}/icon.png" border="0" align="bottom" alt="" /> Walking Papers</a></h1>
     
     {if $scan}
         {if $scan.last_step == 6}
             <p>
-                <a href="print.php?id={$scan.print_id|escape}">Download more PDFs of this area</a>.
+                <a href="{$base_dir}/print.php?id={$scan.print_id|escape}">Download more PDFs of this area</a>.
             </p>
         
             <p>

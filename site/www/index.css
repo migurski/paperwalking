@@ -1,0 +1,10 @@
+#print-button
+{
+    cursor: pointer;
+    font-family: Chicago, Verdana, sans-serif;
+    font-size: 12px !important;
+    background: url('print-button.png');
+    border: none;
+    width: 50px;
+    height: 20px;
+}

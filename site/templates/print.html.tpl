@@ -5,7 +5,7 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>Print Walking Papers</title>
-	<link rel="stylesheet" href="style.css" type="text/css" />
+	<link rel="stylesheet" href="{$base_dir}/style.css" type="text/css" />
 </head>
 <body>
 
@@ -17,7 +17,7 @@
         <span class="west">{$print.west|escape}</span>
     </span>
 
-    <h1><img src="icon.png" border="0" align="bottom" alt="" /> Walking Papers</h1>
+    <h1><a href="{$base_dir}/"><img src="{$base_dir}/icon.png" border="0" align="bottom" alt="" /> Walking Papers</a></h1>
     
     <p>
         <a href="{$print.pdf_url|escape}">Download a PDF</a>, created {$print.created|nice_datetime|escape}.
@@ -31,7 +31,7 @@
 
     <p>
         Do you have a piece of paper that looks like the one below?
-        <a href="upload.php">Post a scan</a> and we’ll <small>mumblemumble</small>.
+        <a href="{$base_dir}/upload.php">Post a scan</a> and we’ll <small>mumblemumble</small>.
     </p>
 
     <div class="sheet">

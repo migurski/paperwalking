@@ -85,3 +85,11 @@ p, ol
     left: 379px;
     top: -1px;
 }
+
+#footer
+{
+    margin-top: 4em;
+    padding-top: 1em;
+    margin-bottom: 4em;
+    border-top: 1px solid gray;
+}

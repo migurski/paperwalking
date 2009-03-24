@@ -5,7 +5,6 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>Untitled</title>
-    <script type="text/javascript" src="modestmaps.js"></script>
 </head>
 <body>
 

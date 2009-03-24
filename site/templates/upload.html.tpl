@@ -28,5 +28,9 @@
         <input type="submit" value="Upload It!">
     </form>
     
+    <p id="footer">
+        &copy;2009 <a href="http://mike.teczno.com">Michal Migurski</a>, <a href="http://stamen.com">Stamen Design</a>
+    </p>
+    
 </body>
 </html>

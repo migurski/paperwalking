@@ -6,6 +6,7 @@
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>Scanned Walking Papers</title>
 	<link rel="stylesheet" href="{$base_dir}/style.css" type="text/css" />
+	<link rel="stylesheet" href="{$base_dir}/scan.css" type="text/css" />
     <script type="text/javascript" src="{$base_dir}/modestmaps.js"></script>
 	{if $scan && $scan.last_step != 6 && $scan.last_step != $constants.STEP_FATAL_ERROR}
         <meta http-equiv="refresh" content="5" />
@@ -22,28 +23,6 @@
 
     // {/literal}]]>
     </script>
-    <style type="text/css" title="text/css">
-    /* <![CDATA[{literal} */
-    
-        #map
-        {
-            width: 408px;
-            height: 528px;
-            border: solid 1px black;
-        }
-        
-        #editor
-        {
-        	width: 960px;
-        	height: 600px;
-        	border: 8px solid #ddd;
-        }
-        
-        ol.steps li { color: silver; }
-        ol.steps li.on { color: black; }
-    
-    /* {/literal}]]> */
-    </style>
 </head>
 <body>
 
@@ -86,23 +65,46 @@
             </script>
             *}
 
-            <p id="editor">
-                You need a Flash player to use Potlatch, the
-                OpenStreetMap Flash editor. You can <a href="http://www.adobe.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash">download Flash Player from Adobe.com</a>.
-                <a href="http://wiki.openstreetmap.org/index.php/Editing">Several other options</a> are also available
-                for editing OpenStreetMap.
-            </p>
+            <div id="editor">
+                <form onsubmit="return editInPotlatch(this.elements);">
+                    <p>
+                        You&rsquo;ll need to first log in to OpenStreetMap to do any editing,
+                        log in below or
+                        <a href="http://www.openstreetmap.org/user/new">create a new account</a>.
+                        <strong><i>Walking Papers</i> will not see or keep your password</strong>,
+                        it is passed directly to OpenStreetMap.
+                    </p>
+                    <p>
+                        <label for="username">Email Address or Username</label>
+                        <br />
+                        <input name="username" type="text" size="30" />
+                    </p>
+                    <p>
+                        <label for="password">Password</label>
+                        <br />
+                        <input name="password" type="password" size="30" />
+                        <br />
+                        (<a href="http://www.openstreetmap.org/user/forgot-password">Lost your password?</a>)
+                    </p>
+                    <p>
+                        <input id="edit-button" name="action" type="submit" value="Edit" />
+                        <input name="minrow" type="hidden" value="{$scan.min_row|escape}" />
+                        <input name="mincolumn" type="hidden" value="{$scan.min_column|escape}" />
+                        <input name="minzoom" type="hidden" value="{$scan.min_zoom|escape}" />
+                        <input name="maxrow" type="hidden" value="{$scan.max_row|escape}" />
+                        <input name="maxcolumn" type="hidden" value="{$scan.max_column|escape}" />
+                        <input name="maxzoom" type="hidden" value="{$scan.max_zoom|escape}" />
+
+                        <input name="bucket" type="hidden" value="{$constants.S3_BUCKET_ID|escape}" />
+                        <input name="scan" type="hidden" value="{$scan.id|escape}" />
+                    </p>
+                </form>
+            </div>
 
             <script src="http://www.openstreetmap.org/javascripts/swfobject.js?1218150545" type="text/javascript"></script>
             <script type="text/javascript" defer="defer">
             // <![CDATA[{literal}
             
-                //var brokenContentSize = $("content").offsetWidth == 0;
-                
-                var fo = new SWFObject("http://www.openstreetmap.org/potlatch/potlatch.swf?d="+Math.round(Math.random()*1000), "potlatch", "100%", "100%", "6", "#FFFFFF");
-                
-                // 700,600 for fixed size, 100%,100% for resizable
-                
                 var changesaved=true;
                 var isIE=false; if (document.all && window.print) { isIE=true; }
                 
@@ -115,37 +117,42 @@
                 
                 function markChanged(a) { alert('markChanged'); changesaved=a; }
                 
-                function doSWF(custombg, lat, lon, zoom)
+                function editInPotlatch(inputs)
                 {
-                    if(zoom < 11)
-                        zoom = 11;
+                    var minrow = parseFloat(inputs['minrow'].value);
+                    var maxrow = parseFloat(inputs['maxrow'].value);
+                    var mincolumn = parseFloat(inputs['mincolumn'].value);
+                    var maxcolumn = parseFloat(inputs['maxcolumn'].value);
+                    var minzoom = parseInt(inputs['minzoom'].value);
+                    var maxzoom = parseInt(inputs['maxzoom'].value);
+                    var bucket = inputs['bucket'].value;
+                    var scan = inputs['scan'].value;
+                
+                    var mm = com.modestmaps;
+                    var tl = (new mm.Coordinate(minrow, mincolumn, minzoom)).zoomTo(maxzoom).zoomBy(-1);
+                    var br = (new mm.Coordinate(maxrow, maxcolumn, maxzoom)).zoomBy(-1);
+                    var center = new mm.Coordinate((tl.row + br.row) / 2, (tl.column + br.column) / 2, tl.zoom)
+    
+                    var provider = new mm.MapProvider(makeProviderFunction(bucket, scan));
+                    var center = provider.coordinateLocation(center);
                     
-                    fo.addVariable('scale', zoom);
-                    fo.addVariable('token', 'user:pass');
-                    fo.addVariable('custombg', custombg);
-                    fo.addVariable('lat', lat);
-                    fo.addVariable('long', lon);
+                    var custombg = 'http://'+bucket+'.s3.amazonaws.com/scans/'+scan+'/!/!/!.jpg';
+                    var token = inputs['username'].value + ':' + inputs['password'].value;
                     
-                    fo.write("editor");
+                    var pl = new SWFObject("http://www.openstreetmap.org/potlatch/potlatch.swf?d="+Math.round(Math.random()*1000), "potlatch", "100%", "100%", "6", "#FFFFFF");
+
+                    pl.addVariable('scale', tl.zoom);
+                    pl.addVariable('token', token);
+                    pl.addVariable('custombg', custombg);
+                    pl.addVariable('lat', center.lat);
+                    pl.addVariable('long', center.lon);
+
+                    pl.write("editor");
+                    
+                    return false;
                 }
-                
-                //doSWF(37.780484, -122.477989, 17);
             
-                // {/literal}
-                
-                var mm = com.modestmaps;
-                var tl = (new mm.Coordinate({$scan.min_row}, {$scan.min_column}, {$scan.min_zoom})).zoomTo({$scan.max_zoom}).zoomBy(-1);
-                var br = (new mm.Coordinate({$scan.max_row}, {$scan.max_column}, {$scan.max_zoom})).zoomBy(-1);
-                var center = new mm.Coordinate((tl.row + br.row) / 2, (tl.column + br.column) / 2, tl.zoom)
-
-                var provider = new mm.MapProvider(makeProviderFunction('{$constants.S3_BUCKET_ID|escape}', '{$scan.id|escape}'));
-                var center = provider.coordinateLocation(center);
-                
-                var custombg = 'http://{$constants.S3_BUCKET_ID|escape}.s3.amazonaws.com/scans/{$scan.id|escape}/!/!/!.jpg';
-
-                doSWF(custombg, center.lat, center.lon, tl.zoom);
-                
-            // ]]>
+            // {/literal}]]>
             </script>
         {else}
             {if $step.number == $constants.STEP_FATAL_ERROR}

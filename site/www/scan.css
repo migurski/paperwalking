@@ -1,0 +1,29 @@
+#map
+{
+    width: 408px;
+    height: 528px;
+    border: solid 1px black;
+}
+
+#editor
+{
+    width: 960px;
+    height: 600px;
+    border: 8px solid #ddd;
+    background-color: #f8f8f8;
+    margin: 1em auto;
+}
+
+ol.steps li { color: silver; }
+ol.steps li.on { color: black; }
+
+#edit-button
+{
+    cursor: pointer;
+    font-family: Chicago, Verdana, sans-serif;
+    font-size: 12px !important;
+    background: url('print-button.png');
+    border: none;
+    width: 50px;
+    height: 20px;
+}

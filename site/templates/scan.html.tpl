@@ -32,6 +32,13 @@
             border: solid 1px black;
         }
         
+        #editor
+        {
+        	width: 960px;
+        	height: 600px;
+        	border: 8px solid #ddd;
+        }
+        
         ol.steps li { color: silver; }
         ol.steps li.on { color: black; }
     
@@ -48,6 +55,7 @@
                 <a href="{$base_dir}/print.php?id={$scan.print_id|escape}">Download more PDFs of this area</a>.
             </p>
         
+            {*
             <p>
                 <a href="javascript:map.zoomIn()">zoom in</a> | <a href="javascript:map.zoomOut()">zoom out</a>
                 <br>
@@ -76,7 +84,69 @@
         
             // ]]>
             </script>
-        
+            *}
+
+            <p id="editor">
+                You need a Flash player to use Potlatch, the
+                OpenStreetMap Flash editor. You can <a href="http://www.adobe.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash">download Flash Player from Adobe.com</a>.
+                <a href="http://wiki.openstreetmap.org/index.php/Editing">Several other options</a> are also available
+                for editing OpenStreetMap.
+            </p>
+
+            <script src="http://www.openstreetmap.org/javascripts/swfobject.js?1218150545" type="text/javascript"></script>
+            <script type="text/javascript" defer="defer">
+            // <![CDATA[{literal}
+            
+                //var brokenContentSize = $("content").offsetWidth == 0;
+                
+                var fo = new SWFObject("http://www.openstreetmap.org/potlatch/potlatch.swf?d="+Math.round(Math.random()*1000), "potlatch", "100%", "100%", "6", "#FFFFFF");
+                
+                // 700,600 for fixed size, 100%,100% for resizable
+                
+                var changesaved=true;
+                var isIE=false; if (document.all && window.print) { isIE=true; }
+                
+                window.onbeforeunload = function()
+                {
+                    if(!changesaved && !isIE) {
+                        return "You have unsaved changes.";
+                    }
+                }
+                
+                function markChanged(a) { alert('markChanged'); changesaved=a; }
+                
+                function doSWF(custombg, lat, lon, zoom)
+                {
+                    if(zoom < 11)
+                        zoom = 11;
+                    
+                    fo.addVariable('scale', zoom);
+                    fo.addVariable('token', 'user:pass');
+                    fo.addVariable('custombg', custombg);
+                    fo.addVariable('lat', lat);
+                    fo.addVariable('long', lon);
+                    
+                    fo.write("editor");
+                }
+                
+                //doSWF(37.780484, -122.477989, 17);
+            
+                // {/literal}
+                
+                var mm = com.modestmaps;
+                var tl = (new mm.Coordinate({$scan.min_row}, {$scan.min_column}, {$scan.min_zoom})).zoomTo({$scan.max_zoom}).zoomBy(-1);
+                var br = (new mm.Coordinate({$scan.max_row}, {$scan.max_column}, {$scan.max_zoom})).zoomBy(-1);
+                var center = new mm.Coordinate((tl.row + br.row) / 2, (tl.column + br.column) / 2, tl.zoom)
+
+                var provider = new mm.MapProvider(makeProviderFunction('{$constants.S3_BUCKET_ID|escape}', '{$scan.id|escape}'));
+                var center = provider.coordinateLocation(center);
+                
+                var custombg = 'http://{$constants.S3_BUCKET_ID|escape}.s3.amazonaws.com/scans/{$scan.id|escape}/!/!/!.jpg';
+
+                doSWF(custombg, center.lat, center.lon, tl.zoom);
+                
+            // ]]>
+            </script>
         {else}
             {if $step.number == $constants.STEP_FATAL_ERROR}
                 <p>Giving up, {$step.number|step_description|lower|escape}.</p>

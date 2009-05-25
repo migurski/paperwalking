@@ -7,22 +7,13 @@
 	<title>Scanned Walking Papers</title>
 	<link rel="stylesheet" href="{$base_dir}/style.css" type="text/css" />
 	<link rel="stylesheet" href="{$base_dir}/scan.css" type="text/css" />
-    <script type="text/javascript" src="{$base_dir}/modestmaps.js"></script>
 	{if $scan && $scan.last_step != 6 && $scan.last_step != $constants.STEP_FATAL_ERROR}
         <meta http-equiv="refresh" content="5" />
+    {else}
+        <script type="text/javascript" src="http://www.openstreetmap.org/javascripts/swfobject.js"></script>
+        <script type="text/javascript" src="{$base_dir}/modestmaps.js"></script>
+        <script type="text/javascript" src="{$base_dir}/scan.js"></script>
     {/if}
-    <script type="text/javascript">
-    // <![CDATA[{literal}
-    
-        function makeProviderFunction(bucket_id, scan_id)
-        {
-            return function(coord) {
-                return 'http://' + bucket_id + '.s3.amazonaws.com/scans/' + scan_id + '/' + coord.zoom +'/'+ coord.column +'/'+ coord.row + '.jpg';
-            }
-        }
-
-    // {/literal}]]>
-    </script>
 </head>
 <body>
 
@@ -77,8 +68,16 @@
                     <p>
                         <label for="username">Email Address or Username</label>
                         <br />
-                        <input name="username" type="text" size="30" />
+                        <input id="username-textfield" name="username" type="text" size="30" />
                     </p>
+                    <script type="text/javascript">
+                    // <![CDATA[{literal}
+                    
+                        if(readCookie('openstreetmap-username') && document.getElementById('username-textfield'))
+                            document.getElementById('username-textfield').value = readCookie('openstreetmap-username');
+                    
+                    // {/literal}]]>
+                    </script>
                     <p>
                         <label for="password">Password</label>
                         <br />
@@ -100,60 +99,6 @@
                     </p>
                 </form>
             </div>
-
-            <script src="http://www.openstreetmap.org/javascripts/swfobject.js?1218150545" type="text/javascript"></script>
-            <script type="text/javascript" defer="defer">
-            // <![CDATA[{literal}
-            
-                var changesaved=true;
-                var isIE=false; if (document.all && window.print) { isIE=true; }
-                
-                window.onbeforeunload = function()
-                {
-                    if(!changesaved && !isIE) {
-                        return "You have unsaved changes.";
-                    }
-                }
-                
-                function markChanged(a) { alert('markChanged'); changesaved=a; }
-                
-                function editInPotlatch(inputs)
-                {
-                    var minrow = parseFloat(inputs['minrow'].value);
-                    var maxrow = parseFloat(inputs['maxrow'].value);
-                    var mincolumn = parseFloat(inputs['mincolumn'].value);
-                    var maxcolumn = parseFloat(inputs['maxcolumn'].value);
-                    var minzoom = parseInt(inputs['minzoom'].value);
-                    var maxzoom = parseInt(inputs['maxzoom'].value);
-                    var bucket = inputs['bucket'].value;
-                    var scan = inputs['scan'].value;
-                
-                    var mm = com.modestmaps;
-                    var tl = (new mm.Coordinate(minrow, mincolumn, minzoom)).zoomTo(maxzoom).zoomBy(-1);
-                    var br = (new mm.Coordinate(maxrow, maxcolumn, maxzoom)).zoomBy(-1);
-                    var center = new mm.Coordinate((tl.row + br.row) / 2, (tl.column + br.column) / 2, tl.zoom)
-    
-                    var provider = new mm.MapProvider(makeProviderFunction(bucket, scan));
-                    var center = provider.coordinateLocation(center);
-                    
-                    var custombg = 'http://'+bucket+'.s3.amazonaws.com/scans/'+scan+'/!/!/!.jpg';
-                    var token = inputs['username'].value + ':' + inputs['password'].value;
-                    
-                    var pl = new SWFObject("http://www.openstreetmap.org/potlatch/potlatch.swf?d="+Math.round(Math.random()*1000), "potlatch", "100%", "100%", "6", "#FFFFFF");
-
-                    pl.addVariable('scale', tl.zoom);
-                    pl.addVariable('token', token);
-                    pl.addVariable('custombg', custombg);
-                    pl.addVariable('lat', center.lat);
-                    pl.addVariable('long', center.lon);
-
-                    pl.write("editor");
-                    
-                    return false;
-                }
-            
-            // {/literal}]]>
-            </script>
         {else}
             {if $step.number == $constants.STEP_FATAL_ERROR}
                 <p>Giving up, {$step.number|step_description|lower|escape}.</p>

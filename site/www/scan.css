@@ -3,7 +3,16 @@
     width: 408px;
     height: 528px;
     border: solid 1px black;
+    position: relative;
 }
+
+    #map .doc
+    {
+        z-index: 99;
+        position: absolute;
+        top: 112px;
+        left: 195px;
+    }
 
 #editor
 {

@@ -47,7 +47,7 @@ function onMapChanged(map)
     var warn = document.getElementById('zoom-warning');
 
     info.innerHTML = formatDegree(center.lat, 'lat') + ', ' + formatDegree(center.lon, 'lon') + ' at zoom level ' + map.coordinate.zoom + '.';
-    warn.style.display = (map.getZoom() < 16) ? 'inline' : 'none';
+    warn.style.display = (map.getZoom() < 14) ? 'inline' : 'none';
     
     var northwest = map.pointLocation(new mm.Point(0, 0));
     var southeast = map.pointLocation(map.dimensions);

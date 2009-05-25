@@ -8,3 +8,10 @@
     width: 50px;
     height: 20px;
 }
+
+#zoom-warning
+{
+    color: red;
+    background-color: #yellow;
+    padding: 0 .5em;
+}

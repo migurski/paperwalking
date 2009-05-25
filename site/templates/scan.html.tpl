@@ -22,7 +22,7 @@
     {if $scan}
         {if $scan.last_step == 6}
             <p>
-                <a href="{$base_dir}/print.php?id={$scan.print_id|escape}">Download more PDFs of this area</a>.
+                <a href="{$base_dir}/print.php?id={$scan.print_id|escape}">Download fresh maps of this area</a>.
             </p>
         
             {*
@@ -57,9 +57,46 @@
             *}
 
             <div id="editor">
+                <p>
+                    Scanned map of the area surrounding
+                    <a href="http://www.openstreetmap.org/?lat={$print.south/2+$print.north/2|escape}&amp;lon={$print.east/2+$print.east/2|escape}&amp;zoom=15&amp;layers=B000FTF">
+                        {$print.south/2+$print.north/2|nice_degree:"lat"|escape}, {$print.east/2+$print.east/2|nice_degree:"lon"|escape}</a>
+                </p>
+                
+                <p id="map">
+                    <img class="doc" src="{$base_dir}/c-thru-doc.png" />
+                </p>
+                
+                <script type="text/javascript">
+                // <![CDATA[
+            
+                    // "import" the namespace
+                    var mm = com.modestmaps;
+                
+                    // {literal}
+                    var provider = new mm.MapProvider(function(c) { return 'http://tile.cloudmade.com/f1fe9c2761a15118800b210c0eda823c/997/256/' + c.zoom +'/'+ c.column +'/'+ c.row + '.png'; });
+                    // {/literal}
+            
+                    var center = new mm.Location(({$print.south|escape} + {$print.north|escape}) / 2, ({$print.east|escape} + {$print.west|escape}) / 2);
+                    var map_el = document.getElementById('map');
+                    var map = new mm.Map(map_el, provider, new mm.Point(408, 252));
+                    
+                    map_el.style.backgroundColor = '#ccc';
+                    map.setCenterZoom(center, 9);
+                    
+                    map.draw();
+                    
+                    // we're not actually looking for an interactive map
+                    mm.removeEvent(map.parent, 'dblclick', map.getDoubleClick());
+                    mm.removeEvent(map.parent, 'mousedown', map.getMouseDown());
+                    mm.removeEvent(map.parent, 'mousewheel', map.getMouseWheel());
+            
+                // ]]>
+                </script>
+            
                 <form onsubmit="return editInPotlatch(this.elements);">
                     <p>
-                        You&rsquo;ll need to first log in to OpenStreetMap to do any editing,
+                        You’ll need to first log in to OpenStreetMap to do any editing,
                         log in below or
                         <a href="http://www.openstreetmap.org/user/new">create a new account</a>.
                         <strong><i>Walking Papers</i> will not see or keep your password</strong>,

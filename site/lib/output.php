@@ -21,6 +21,7 @@
         $s->assign('constants', get_defined_constants());
         $s->assign('request', array('get' => $_GET));
         
+        $s->register_modifier('nice_relativetime', 'nice_relativetime');
         $s->register_modifier('nice_datetime', 'nice_datetime');
         $s->register_modifier('nice_degree', 'nice_degree');
         $s->register_modifier('step_description', 'step_description');
@@ -57,7 +58,25 @@
     
     function nice_datetime($ts)
     {
-        return date('D, M j Y, g:ia T', $ts);
+        return date('l, M j Y, g:ia T', $ts);
+    }
+    
+    function nice_relativetime($seconds)
+    {
+        switch(true)
+        {
+            case abs($seconds) <= 90:
+                return 'moments ago';
+
+            case abs($seconds) <= 90 * 60:
+                return round(abs($seconds) / 60).' minutes ago';
+
+            case abs($seconds) <= 36 * 60 * 60:
+                return round(abs($seconds) / (60 * 60)).' hours ago';
+
+            default:
+                return round(abs($seconds) / (24 * 60 * 60)).' days ago';
+        }
     }
     
     function nice_degree($str, $axis)

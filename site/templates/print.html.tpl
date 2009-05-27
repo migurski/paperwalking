@@ -10,6 +10,23 @@
     <style type="text/css" title="text/css">
     /* <![CDATA[{literal} */
     
+        #print-button
+        {
+            cursor: pointer;
+            font-family: Chicago, Verdana, sans-serif;
+            font-size: 12px !important;
+            background: url('print-button.png');
+            border: none;
+            width: 50px;
+            height: 20px;
+        }
+        
+        form#age-warning
+        {
+            border: 1px solid black;
+            padding: .2em 1em;
+        }
+
         #map
         {
             position: relative;
@@ -45,9 +62,29 @@
         <a href="http://www.openstreetmap.org/?lat={$print.south/2+$print.north/2|escape}&amp;lon={$print.east/2+$print.east/2|escape}&amp;zoom=15&amp;layers=B000FTF">
             {$print.south/2+$print.north/2|nice_degree:"lat"|escape}, {$print.east/2+$print.east/2|nice_degree:"lon"|escape}</a>
         <br />
-        Created {$print.created|nice_datetime|escape}
+        Created {$print.age|nice_relativetime|escape}.
         <span class="date-created" style="display: none;">{$print.created|escape}</span>
     </p>
+
+    {if $print.age > 14*86400}
+        <form id="age-warning" action="{$base_dir}/compose.php" method="post" name="bounds">
+            <p>
+                This print is more than two weeks old.
+                You may want to make a fresh one that
+                includes recent OpenStreetMap updates.
+            </p>
+
+            <p>
+                <input name="north" type="hidden" value="{$print.north|escape}" />
+                <input name="south" type="hidden" value="{$print.south|escape}" />
+                <input name="east" type="hidden" value="{$print.east|escape}" />
+                <input name="west" type="hidden" value="{$print.west|escape}" />
+                <input name="zoom" type="hidden" value="{$print.zoom|escape}" />
+        
+                <input id="print-button" type="submit" name="action" value="Print" />
+            </p>
+        </form>
+    {/if}
     
     <p>
         <a href="{$print.pdf_url|escape}">Download a PDF</a> to get started mapping this area

@@ -23,6 +23,8 @@
         {if $scan.last_step == 6}
             <p>
                 <a href="{$base_dir}/print.php?id={$scan.print_id|escape}">Download fresh maps of this area</a>.
+                <br/>
+                Uploaded {$scan.age|nice_relativetime|escape}.
             </p>
         
             {*

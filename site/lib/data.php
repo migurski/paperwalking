@@ -152,7 +152,8 @@
     function get_print(&$dbh, $print_id)
     {
         $q = sprintf('SELECT id, north, south, east, west,
-                             UNIX_TIMESTAMP(created) AS created
+                             UNIX_TIMESTAMP(created) AS created,
+                             UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(created) AS age
                       FROM prints
                       WHERE id = %s',
                      $dbh->quoteSmart($print_id));
@@ -172,7 +173,11 @@
     
     function get_scan(&$dbh, $scan_id)
     {
-        $q = sprintf('SELECT *
+        $q = sprintf('SELECT id, print_id, last_step,
+                             min_row, min_column, min_zoom,
+                             max_row, max_column, max_zoom,
+                             UNIX_TIMESTAMP(created) AS created,
+                             UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(created) AS age
                       FROM scans
                       WHERE id = %s',
                      $dbh->quoteSmart($scan_id));

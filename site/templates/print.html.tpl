@@ -82,13 +82,7 @@
     <script type="text/javascript" language="javascript1.2">
     // <![CDATA[
     
-        // {literal}
-        function onPlaces(res)
-        {
-            appendPlacename(res, document.getElementById('print-location'));
-        }
-        // {/literal}
-        
+        var onPlaces = new Function('res', "appendPlacename(res, document.getElementById('print-location'))");
         var flickrKey = '{$constants.FLICKR_KEY|escape}';
         var cloudmadeKey = '{$constants.CLOUDMADE_KEY|escape}';
         var lat = {$print.latitude|escape};

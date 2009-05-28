@@ -22,12 +22,8 @@
                 <script type="text/javascript" language="javascript1.2" defer="defer">
                 // <![CDATA[
                 
-                    function onPlacesFor{$recent.id|escape}(res)
-                    {literal}{{/literal}
-                        appendPlacename(res, document.getElementById('recent-{$recent.id|escape}'));
-                    {literal}}{/literal}
-                    
-                    getPlacename({$recent.latitude|escape}, {$recent.longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlacesFor{$recent.id|escape}');
+                    var onPlaces_{$recent.id|escape} = new Function('res', "appendPlacename(res, document.getElementById('recent-{$recent.id|escape}'))");
+                    getPlacename({$recent.latitude|escape}, {$recent.longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlaces_{$recent.id|escape}');
             
                 // ]]>
                 </script>

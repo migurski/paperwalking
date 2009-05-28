@@ -41,6 +41,7 @@
         <input type="text" name="q" size="24" />
         <input class="mac-button" type="submit" name="action" value="Find" />
         <input type="hidden" name="appid" value="{$constants.GEOPLANET_APPID|escape}" />
+        <span id="watch-cursor" style="visibility: hidden;"><img src="{$base_dir}/watch.gif" align="top" vspace="4" /></span>
     </form>
 
     <div class="sheet">
@@ -74,6 +75,9 @@
         {
             if(res['places'] && res['places']['place'] && res['places']['place'][0])
             {
+                if(document.getElementById('watch-cursor'))
+                    document.getElementById('watch-cursor').style.visibility = 'hidden';
+            
                 var place = res['places']['place'][0];
                 var bbox = place['boundingBox'];
         

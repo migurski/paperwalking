@@ -44,12 +44,12 @@
     {if $print.age > 14*86400}
         <form id="age-warning" action="{$base_dir}/compose.php" method="post" name="bounds">
             <p>
-                This print is more than two weeks old.
+                <b>This print is more than two weeks old.</b>
                 You may want to make a fresh one that
                 includes recent OpenStreetMap updates.
             </p>
 
-            <p>
+            <p style="text-align: right;">
                 <input name="north" type="hidden" value="{$print.north|escape}" />
                 <input name="south" type="hidden" value="{$print.south|escape}" />
                 <input name="east" type="hidden" value="{$print.east|escape}" />

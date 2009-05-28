@@ -77,6 +77,9 @@ function makeMap(elementID, cloudmadeKey)
 
 function getPlaces(query, appid)
 {
+    if(document.getElementById('watch-cursor'))
+        document.getElementById('watch-cursor').style.visibility = 'visible';
+
     var script = document.createElement('script');
     script.type = 'text/javascript';
     script.src = 'http://where.yahooapis.com/v1/places.q('+escape(query)+');count=1?format=json&callback=onPlaces&select=long&appid='+escape(appid);

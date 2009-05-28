@@ -12,6 +12,7 @@
     {else}
         <script type="text/javascript" src="http://www.openstreetmap.org/javascripts/swfobject.js"></script>
         <script type="text/javascript" src="{$base_dir}/modestmaps.js"></script>
+        <script type="text/javascript" src="{$base_dir}/script.js"></script>
         <script type="text/javascript" src="{$base_dir}/scan.js"></script>
     {/if}
 </head>
@@ -65,67 +66,27 @@
                         {$print.north/2+$print.south/2|nice_degree:"lat"|escape}, {$print.east/2+$print.west/2|nice_degree:"lon"|escape}</a>
                 </p>
                 
-                <script type="text/javascript" language="javascript1.2">
-                // <![CDATA[
-                
-                    var flickr_key = '{$constants.FLICKR_KEY|escape}';
-                    var lat = {$print.north/2+$print.south/2|escape};
-                    var lon = {$print.east/2+$print.west/2|escape};
-                    
-                    // {literal}
-                    
-                    function appendPlacename(res, elementID)
-                    {
-                        if(res['places'] && res['places']['place'] && res['places']['place'][0])
-                        {
-                            var place = res['places']['place'][0];
-                            var placeName = document.createTextNode(place['name']);
-                            var anchor = document.getElementById(elementID);
-                            anchor.parentNode.insertBefore(placeName, anchor.nextSibling);
-                            anchor.parentNode.insertBefore(document.createElement('br'), anchor.nextSibling);
-                        }
-                    }
-                    
-                    function onPlaces(res)
-                    {
-                        appendPlacename(res, 'print-location');
-                    }
-                    
-                    var script = document.createElement('script');
-                    script.type = 'text/javascript';
-                    script.src = 'http://api.flickr.com/services/rest/?method=flickr.places.findByLatLon&lat=' + escape(lat) + '&lon=' + escape(lon) + '&accuracy=12&format=json&jsoncallback=onPlaces&api_key=' + escape(flickr_key);
-                    document.body.appendChild(script);
-                    
-                    // {/literal}
-                
-                // ]]>
-                </script>
-    
                 <p id="mini-map">
                     <img class="doc" src="{$base_dir}/c-thru-doc.png" />
                 </p>
                 
-                <script type="text/javascript">
+                <script type="text/javascript" language="javascript1.2">
                 // <![CDATA[
-            
-                    // "import" the namespace
-                    var mm = com.modestmaps;
-                    var cloudmade_key = '{$constants.CLOUDMADE_KEY|escape}';
                 
                     // {literal}
-                    var provider = new mm.MapProvider(function(c) { return 'http://tile.cloudmade.com/' + cloudmade_key + '/997/256/' + c.zoom +'/'+ c.column +'/'+ c.row + '.png'; });
+                    function onPlaces(res)
+                    {
+                        appendPlacename(res, document.getElementById('print-location'));
+                    }
                     // {/literal}
-            
-                    var center = new mm.Location(({$print.south|escape} + {$print.north|escape}) / 2, ({$print.east|escape} + {$print.west|escape}) / 2);
-                    var map = new mm.Map('mini-map', provider, new mm.Point(408, 252));
+                
+                    var flickrKey = '{$constants.FLICKR_KEY|escape}';
+                    var cloudmadeKey = '{$constants.CLOUDMADE_KEY|escape}';
+                    var lat = {$print.north/2+$print.south/2|escape};
+                    var lon = {$print.east/2+$print.west/2|escape};
                     
-                    map.setCenterZoom(center, 9);
-                    map.draw();
-                    
-                    // we're not actually looking for an interactive map
-                    mm.removeEvent(map.parent, 'dblclick', map.getDoubleClick());
-                    mm.removeEvent(map.parent, 'mousedown', map.getMouseDown());
-                    mm.removeEvent(map.parent, 'mousewheel', map.getMouseWheel());
+                    getPlacename(lat, lon, flickrKey, 'onPlaces');
+                    makeStaticMap('mini-map', lat, lon, cloudmadeKey);
             
                 // ]]>
                 </script>

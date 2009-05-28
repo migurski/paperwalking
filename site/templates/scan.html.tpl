@@ -74,16 +74,21 @@
                     
                     // {literal}
                     
-                    function onPlaces(res)
+                    function appendPlacename(res, elementID)
                     {
                         if(res['places'] && res['places']['place'] && res['places']['place'][0])
                         {
                             var place = res['places']['place'][0];
                             var placeName = document.createTextNode(place['name']);
-                            var anchor = document.getElementById('print-location');
+                            var anchor = document.getElementById(elementID);
                             anchor.parentNode.insertBefore(placeName, anchor.nextSibling);
                             anchor.parentNode.insertBefore(document.createElement('br'), anchor.nextSibling);
                         }
+                    }
+                    
+                    function onPlaces(res)
+                    {
+                        appendPlacename(res, 'print-location');
                     }
                     
                     var script = document.createElement('script');

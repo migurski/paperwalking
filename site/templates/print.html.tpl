@@ -33,12 +33,43 @@
     
     <p>
         Print map of the area surrounding
-        <a href="http://www.openstreetmap.org/?lat={$print.south/2+$print.north/2|escape}&amp;lon={$print.east/2+$print.east/2|escape}&amp;zoom=15&amp;layers=B000FTF">
-            {$print.south/2+$print.north/2|nice_degree:"lat"|escape}, {$print.east/2+$print.east/2|nice_degree:"lon"|escape}</a>
+        <a id="print-location" href="http://www.openstreetmap.org/?lat={$print.north/2+$print.south/2|escape}&amp;lon={$print.east/2+$print.west/2|escape}&amp;zoom=15&amp;layers=B000FTF">
+            {$print.north/2+$print.south/2|nice_degree:"lat"|escape}, {$print.east/2+$print.west/2|nice_degree:"lon"|escape}</a>
         <br />
         Created {$print.age|nice_relativetime|escape}.
         <span class="date-created" style="display: none;">{$print.created|escape}</span>
     </p>
+    
+    <script type="text/javascript" language="javascript1.2">
+    // <![CDATA[
+    
+        var flickr_key = '{$constants.FLICKR_KEY|escape}';
+        var lat = {$print.north/2+$print.south/2|escape};
+        var lon = {$print.east/2+$print.west/2|escape};
+        
+        // {literal}
+        
+        function onPlaces(res)
+        {
+            if(res['places'] && res['places']['place'] && res['places']['place'][0])
+            {
+                var place = res['places']['place'][0];
+                var placeName = document.createTextNode(place['name']);
+                var anchor = document.getElementById('print-location');
+                anchor.parentNode.insertBefore(placeName, anchor.nextSibling);
+                anchor.parentNode.insertBefore(document.createElement('br'), anchor.nextSibling);
+            }
+        }
+        
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'http://api.flickr.com/services/rest/?method=flickr.places.findByLatLon&lat=' + escape(lat) + '&lon=' + escape(lon) + '&accuracy=12&format=json&jsoncallback=onPlaces&api_key=' + escape(flickr_key);
+        document.body.appendChild(script);
+        
+        // {/literal}
+    
+    // ]]>
+    </script>
 
     {if $print.age > 14*86400}
         <form id="age-warning" action="{$base_dir}/compose.php" method="post" name="bounds">

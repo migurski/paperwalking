@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="{$base_dir}/style.css" type="text/css" />
 	<link rel="stylesheet" href="{$base_dir}/index.css" type="text/css" />
     <script type="text/javascript" src="{$base_dir}/modestmaps.js"></script>
+    <script type="text/javascript" src="{$base_dir}/script.js"></script>
     <script type="text/javascript" src="{$base_dir}/index.js"></script>
 </head>
 <body>
@@ -102,6 +103,33 @@
 
         <input class="mac-button" type="submit" name="action" value="Print" />
     </form>
+
+    <h2>Recent Prints</h2>
+    
+    <ol>
+        {foreach from=$prints item="recent"}
+            <li>
+                <a href="{$base_dir}/print.php?id={$recent.id|escape}">
+                    <b id="recent-{$recent.id|escape}">{$recent.age|nice_relativetime|escape}</b></a>
+                <script type="text/javascript" language="javascript1.2" defer="defer">
+                // <![CDATA[
+                
+                    function onPlacesFor{$recent.id|escape}(res)
+                    {literal}{{/literal}
+                        appendPlacename(res, document.getElementById('recent-{$recent.id|escape}'));
+                    {literal}}{/literal}
+                    
+                    getPlacename({$recent.latitude|escape}, {$recent.longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlacesFor{$recent.id|escape}');
+            
+                // ]]>
+                </script>
+            </li>
+        {/foreach}
+    </ol>
+    
+    <p>
+        <a href="{$base_dir}/prints.php">See more.</a>
+    </p>
     
     <p id="footer">
         &copy;2009 <a href="http://mike.teczno.com">Michal Migurski</a>, <a href="http://stamen.com">Stamen Design</a>

@@ -149,9 +149,41 @@
         return true;
     }
     
+    function get_prints(&$dbh, $count)
+    {
+        $q = sprintf('SELECT id, north, south, east, west,
+                             (north + south) / 2 AS latitude,
+                             (east + west) / 2 AS longitude,
+                             UNIX_TIMESTAMP(created) AS created,
+                             UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(created) AS age
+                      FROM prints
+                      ORDER BY created DESC
+                      LIMIT %d',
+                      $count);
+    
+        $res = $dbh->query($q);
+        
+        if(PEAR::isError($res)) 
+            die_with_code(500, "{$res->message}\n{$q}\n");
+
+        $rows = array();
+        
+        while($row = $res->fetchRow(DB_FETCHMODE_ASSOC))
+        {
+            $row['pdf_url'] = sprintf('http://%s.s3.amazonaws.com/prints/%s/walking-paper-%s.pdf', S3_BUCKET_ID, $row['id'], $row['id']);
+            $row['preview_url'] = sprintf('http://%s.s3.amazonaws.com/prints/%s/preview.png', S3_BUCKET_ID, $row['id']);
+
+            $rows[] = $row;
+        }
+        
+        return $rows;
+    }
+    
     function get_print(&$dbh, $print_id)
     {
         $q = sprintf('SELECT id, north, south, east, west,
+                             (north + south) / 2 AS latitude,
+                             (east + west) / 2 AS longitude,
                              UNIX_TIMESTAMP(created) AS created,
                              UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(created) AS age
                       FROM prints

@@ -31,8 +31,8 @@
             <div id="editor">
                 <p>
                     Scanned map of the area surrounding
-                    <a id="print-location" href="http://www.openstreetmap.org/?lat={$print.north/2+$print.south/2|escape}&amp;lon={$print.east/2+$print.west/2|escape}&amp;zoom=15&amp;layers=B000FTF">
-                        {$print.north/2+$print.south/2|nice_degree:"lat"|escape}, {$print.east/2+$print.west/2|nice_degree:"lon"|escape}</a>
+                    <a id="print-location" href="http://www.openstreetmap.org/?lat={$print.latitude|escape}&amp;lon={$print.longitude|escape}&amp;zoom=15&amp;layers=B000FTF">
+                        {$print.latitude|nice_degree:"lat"|escape}, {$print.longitude|nice_degree:"lon"|escape}</a>
                 </p>
                 
                 <p id="mini-map">
@@ -51,8 +51,8 @@
                 
                     var flickrKey = '{$constants.FLICKR_KEY|escape}';
                     var cloudmadeKey = '{$constants.CLOUDMADE_KEY|escape}';
-                    var lat = {$print.north/2+$print.south/2|escape};
-                    var lon = {$print.east/2+$print.west/2|escape};
+                    var lat = {$print.latitude|escape};
+                    var lon = {$print.longitude|escape};
                     
                     getPlacename(lat, lon, flickrKey, 'onPlaces');
                     makeStaticMap('mini-map', lat, lon, cloudmadeKey);

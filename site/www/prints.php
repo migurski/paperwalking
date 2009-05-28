@@ -13,12 +13,12 @@
     
     $dbh =& get_db_connection();
     
-    $prints = get_prints($dbh, 5);
+    $prints = get_prints($dbh, 50);
 
     $sm = get_smarty_instance();
     $sm->assign('prints', $prints);
     
     header("Content-Type: text/html; charset=UTF-8");
-    print $sm->fetch("index.html.tpl");
+    print $sm->fetch("prints.html.tpl");
 
 ?>

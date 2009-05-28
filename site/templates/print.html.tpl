@@ -10,36 +10,10 @@
     <style type="text/css" title="text/css">
     /* <![CDATA[{literal} */
     
-        #print-button
-        {
-            cursor: pointer;
-            font-family: Chicago, Verdana, sans-serif;
-            font-size: 12px !important;
-            background: url('print-button.png');
-            border: none;
-            width: 50px;
-            height: 20px;
-        }
-        
         form#age-warning
         {
             border: 1px solid black;
             padding: .2em 1em;
-        }
-
-        #map
-        {
-            position: relative;
-            border: 1px solid black;
-            height: 252px;
-        }
-        
-        #map .doc
-        {
-            z-index: 99;
-            position: absolute;
-            top: 112px;
-            left: 195px;
         }
     
     /* {/literal}]]> */
@@ -81,7 +55,7 @@
                 <input name="west" type="hidden" value="{$print.west|escape}" />
                 <input name="zoom" type="hidden" value="{$print.zoom|escape}" />
         
-                <input id="print-button" type="submit" name="action" value="Print" />
+                <input class="mac-button" type="submit" name="action" value="Print" />
             </p>
         </form>
     {/if}
@@ -100,7 +74,7 @@
         <div class="dog-ear"> </div>
     </div>
     
-    <p id="map">
+    <p id="mini-map">
         <img class="doc" src="{$base_dir}/c-thru-doc.png" />
     </p>
     
@@ -109,18 +83,16 @@
 
         // "import" the namespace
         var mm = com.modestmaps;
+        var cloudmade_key = '{$constants.CLOUDMADE_KEY|escape}';
     
         // {literal}
-        var provider = new mm.MapProvider(function(c) { return 'http://tile.cloudmade.com/f1fe9c2761a15118800b210c0eda823c/997/256/' + c.zoom +'/'+ c.column +'/'+ c.row + '.png'; });
+        var provider = new mm.MapProvider(function(c) { return 'http://tile.cloudmade.com/' + cloudmade_key + '/997/256/' + c.zoom +'/'+ c.column +'/'+ c.row + '.png'; });
         // {/literal}
 
         var center = new mm.Location(({$print.south|escape} + {$print.north|escape}) / 2, ({$print.east|escape} + {$print.west|escape}) / 2);
-        var map_el = document.getElementById('map');
-        var map = new mm.Map(map_el, provider, new mm.Point(408, 252));
+        var map = new mm.Map('mini-map', provider, new mm.Point(408, 252));
         
-        map_el.style.backgroundColor = '#ccc';
         map.setCenterZoom(center, 9);
-        
         map.draw();
         
         // we're not actually looking for an interactive map

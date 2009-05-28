@@ -34,7 +34,7 @@
                 <a href="javascript:map.panLeft()">pan left</a> | <a href="javascript:map.panRight()">pan right</a> | <a href="javascript:map.panDown()">pan down</a> | <a href="javascript:map.panUp()">pan up</a>
             </p>
 
-            <p id="map"></p>
+            <p id="mini-map"></p>
             
             <script type="text/javascript">
             // <![CDATA[
@@ -43,7 +43,7 @@
                 var mm = com.modestmaps;
             
                 var provider = new mm.MapProvider(makeProviderFunction('{$constants.S3_BUCKET_ID|escape}', '{$scan.id|escape}'));
-                var map_el = document.getElementById('map');
+                var map_el = document.getElementById('mini-map');
                 var map = new mm.Map(map_el, provider, new mm.Point(408, 528));
                 
                 var northwest = provider.coordinateLocation(new mm.Coordinate({$scan.min_row}, {$scan.min_column}, {$scan.min_zoom}));
@@ -65,7 +65,7 @@
                         {$print.south/2+$print.north/2|nice_degree:"lat"|escape}, {$print.east/2+$print.east/2|nice_degree:"lon"|escape}</a>
                 </p>
                 
-                <p id="map">
+                <p id="mini-map">
                     <img class="doc" src="{$base_dir}/c-thru-doc.png" />
                 </p>
                 
@@ -74,18 +74,16 @@
             
                     // "import" the namespace
                     var mm = com.modestmaps;
+                    var cloudmade_key = '{$constants.CLOUDMADE_KEY|escape}';
                 
                     // {literal}
-                    var provider = new mm.MapProvider(function(c) { return 'http://tile.cloudmade.com/f1fe9c2761a15118800b210c0eda823c/997/256/' + c.zoom +'/'+ c.column +'/'+ c.row + '.png'; });
+                    var provider = new mm.MapProvider(function(c) { return 'http://tile.cloudmade.com/' + cloudmade_key + '/997/256/' + c.zoom +'/'+ c.column +'/'+ c.row + '.png'; });
                     // {/literal}
             
                     var center = new mm.Location(({$print.south|escape} + {$print.north|escape}) / 2, ({$print.east|escape} + {$print.west|escape}) / 2);
-                    var map_el = document.getElementById('map');
-                    var map = new mm.Map(map_el, provider, new mm.Point(408, 252));
+                    var map = new mm.Map('mini-map', provider, new mm.Point(408, 252));
                     
-                    map_el.style.backgroundColor = '#ccc';
                     map.setCenterZoom(center, 9);
-                    
                     map.draw();
                     
                     // we're not actually looking for an interactive map
@@ -125,7 +123,7 @@
                         (<a href="http://www.openstreetmap.org/user/forgot-password">Lost your password?</a>)
                     </p>
                     <p>
-                        <input id="edit-button" name="action" type="submit" value="Edit" />
+                        <input class="mac-button" name="action" type="submit" value="Edit" />
                         <input name="minrow" type="hidden" value="{$scan.min_row|escape}" />
                         <input name="mincolumn" type="hidden" value="{$scan.min_column|escape}" />
                         <input name="minzoom" type="hidden" value="{$scan.min_zoom|escape}" />

@@ -49,6 +49,34 @@ blockquote
     padding-left: 2em;
 }
 
+input.mac-button
+{
+    cursor: pointer;
+    font-family: Chicago, Verdana, sans-serif;
+    font-size: 12px !important;
+    background: url('print-button.png');
+    border: none;
+    width: 50px;
+    height: 20px;
+}
+
+#mini-map
+{
+    width: 408px;
+    height: 252px;
+    border: solid 1px black;
+    background-color: #ccc;
+    position: relative;
+}
+
+    #mini-map .doc
+    {
+        z-index: 99;
+        position: absolute;
+        top: 112px;
+        left: 195px;
+    }
+
 .sheet
 {
     margin: 1em auto;

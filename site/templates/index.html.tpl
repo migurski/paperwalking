@@ -34,8 +34,14 @@
     </p>
 
     <p>
-        To get started, pan and zoom the map below to place you know:
+        To get started, search for a town or city you know.
     </p>
+
+    <form onsubmit="return getPlaces(this.elements['q'].value, this.elements['appid'].value);">
+        <input type="text" name="q" size="24" />
+        <input class="mac-button" type="submit" name="action" value="Find" />
+        <input type="hidden" name="appid" value="{$constants.GEOPLANET_APPID|escape}" />
+    </form>
 
     <div class="sheet">
         <div id="map"></div>
@@ -53,9 +59,35 @@
     </div>
     
     <p>
-        <span id="info"></span>
         <span id="zoom-warning" style="display: none;">A zoom level of <b>14 or more</b> is recommended for street-level mapping.</span>
+        <span id="info"></span>
     </p>
+
+    <script type="text/javascript" language="javascript1.2">
+    // <![CDATA[
+
+        var map = makeMap('map', '{$constants.CLOUDMADE_KEY|escape}');
+        
+        // {literal}
+        
+        function onPlaces(res)
+        {
+            if(res['places'] && res['places']['place'] && res['places']['place'][0])
+            {
+                var place = res['places']['place'][0];
+                var bbox = place['boundingBox'];
+        
+                var sw = new mm.Location(bbox['southWest']['latitude'], bbox['southWest']['longitude']);
+                var ne = new mm.Location(bbox['northEast']['latitude'], bbox['northEast']['longitude']);
+                
+                map.setExtent([sw, ne]);
+            }
+        }
+        
+        // {/literal}
+    
+    // ]]>
+    </script>
 
     <form action="{$base_dir}/compose.php" method="post" name="bounds">
         <input name="north" type="hidden" />
@@ -64,14 +96,8 @@
         <input name="west" type="hidden" />
         <input name="zoom" type="hidden" />
 
-        <input id="print-button" type="submit" name="action" value="Print" />
+        <input class="mac-button" type="submit" name="action" value="Print" />
     </form>
-    
-    <script type="text/javascript">
-    // <![CDATA[
-        var map = makeMap('map');
-    // ]]>
-    </script>
     
     <p id="footer">
         &copy;2009 <a href="http://mike.teczno.com">Michal Migurski</a>, <a href="http://stamen.com">Stamen Design</a>

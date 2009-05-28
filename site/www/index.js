@@ -1,10 +1,6 @@
 // "import" the namespace
 var mm = com.modestmaps;
 
-var tileURL = function(coord) {
-    return 'http://tile.cloudmade.com/f1fe9c2761a15118800b210c0eda823c/997/256/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
-}
-
 function formatDegree(value, axis)
 {
     var dir = value;
@@ -60,8 +56,12 @@ function onMapChanged(map)
     form.elements['zoom'].value = map.coordinate.zoom;
 }
 
-function makeMap(elementID)
+function makeMap(elementID, cloudmadeKey)
 {
+    var tileURL = function(coord) {
+        return 'http://tile.cloudmade.com/' + cloudmadeKey + '/997/256/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
+    }
+    
     var map = new mm.Map(elementID, new mm.MapProvider(tileURL), new mm.Point(360, 456))
 
     map.addCallback('zoomed',    function(m, a) { return onMapChanged(m); });
@@ -73,4 +73,14 @@ function makeMap(elementID)
     map.draw();
     
     return map;
+}
+
+function getPlaces(query, appid)
+{
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'http://where.yahooapis.com/v1/places.q('+escape(query)+');count=1?format=json&callback=onPlaces&select=long&appid='+escape(appid);
+    document.body.appendChild(script);
+    
+    return false;
 }

@@ -28,37 +28,6 @@
                 Uploaded {$scan.age|nice_relativetime|escape}.
             </p>
     
-            {*
-            <p>
-                <a href="javascript:map.zoomIn()">zoom in</a> | <a href="javascript:map.zoomOut()">zoom out</a>
-                <br>
-                <a href="javascript:map.panLeft()">pan left</a> | <a href="javascript:map.panRight()">pan right</a> | <a href="javascript:map.panDown()">pan down</a> | <a href="javascript:map.panUp()">pan up</a>
-            </p>
-
-            <p id="mini-map"></p>
-            
-            <script type="text/javascript">
-            // <![CDATA[
-        
-                // "import" the namespace
-                var mm = com.modestmaps;
-            
-                var provider = new mm.MapProvider(makeProviderFunction('{$constants.S3_BUCKET_ID|escape}', '{$scan.id|escape}'));
-                var map_el = document.getElementById('mini-map');
-                var map = new mm.Map(map_el, provider, new mm.Point(408, 528));
-                
-                var northwest = provider.coordinateLocation(new mm.Coordinate({$scan.min_row}, {$scan.min_column}, {$scan.min_zoom}));
-                var southeast = provider.coordinateLocation(new mm.Coordinate({$scan.max_row}, {$scan.max_column}, {$scan.max_zoom}));
-                
-                map_el.style.backgroundColor = '#ccc';
-                map.setExtent([northwest, southeast]);
-                
-                map.draw();
-        
-            // ]]>
-            </script>
-            *}
-
             <div id="editor">
                 <p>
                     Scanned map of the area surrounding

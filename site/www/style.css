@@ -60,6 +60,29 @@ input.mac-button
     height: 20px;
 }
 
+#navigation
+{
+    margin-top: 1em;
+    padding-bottom: 1em;
+    margin-bottom: 2em;
+    border-bottom: 1px solid gray;
+}
+
+    #navigation a
+    {
+    	padding: .25em .5em;
+    	margin: 0 .2em 0 -.5em;
+    	text-decoration: none;
+    	color: black;
+    }
+
+    #navigation a:hover,
+    #navigation a:active
+    {
+        background-color: black;
+        color: white;
+    }
+    
 #mini-map
 {
     width: 408px;

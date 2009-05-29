@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    <h1><a href="{$base_dir}/"><img src="{$base_dir}/icon.png" border="0" align="bottom" alt="" /> Walking Papers</a></h1>
+    {include file="navigation.htmlf.tpl"}
     
     <p>
         (explanation)
@@ -28,9 +28,7 @@
         <input type="submit" value="Upload It!">
     </form>
     
-    <p id="footer">
-        &copy;2009 <a href="http://mike.teczno.com">Michal Migurski</a>, <a href="http://stamen.com">Stamen Design</a>
-    </p>
+    {include file="footer.htmlf.tpl"}
     
 </body>
 </html>

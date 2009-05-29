@@ -30,7 +30,7 @@
         <span class="west">{$print.west|escape}</span>
     </span>
 
-    <h1><a href="{$base_dir}/"><img src="{$base_dir}/icon.png" border="0" align="bottom" alt="" /> Walking Papers</a></h1>
+    {include file="navigation.htmlf.tpl"}
     
     <p>
         Print map of the area surrounding
@@ -113,9 +113,7 @@
         Please allow a few weeks for scanning and printing.
     </p>
 
-    <p id="footer">
-        &#xA9;2009 <a href="http://mike.teczno.com">Michal Migurski</a>, <a href="http://stamen.com">Stamen Design</a>
-    </p>
+    {include file="footer.htmlf.tpl"}
     
 </body>
 </html>

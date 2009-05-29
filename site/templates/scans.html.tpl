@@ -12,18 +12,18 @@
 
     <h1><a href="{$base_dir}/"><img src="{$base_dir}/icon.png" border="0" align="bottom" alt="" /> Walking Papers</a></h1>
     
-    <h2>Recent Prints</h2>
+    <h2>Recent Scans</h2>
     
     <ol>
-        {foreach from=$prints item="print"}
+        {foreach from=$scans item="scan"}
             <li>
-                <a href="{$base_dir}/print.php?id={$print.id|escape}">
-                    <b id="print-{$print.id|escape}">{$print.age|nice_relativetime|escape}</b></a>
+                <a href="{$base_dir}/scan.php?id={$scan.id|escape}">
+                    <b id="scan-{$scan.id|escape}">{$scan.age|nice_relativetime|escape}</b></a>
                 <script type="text/javascript" language="javascript1.2" defer="defer">
                 // <![CDATA[
                 
-                    var onPlaces_{$print.id|escape} = new Function('res', "appendPlacename(res, document.getElementById('print-{$print.id|escape}'))");
-                    getPlacename({$print.latitude|escape}, {$print.longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlaces_{$print.id|escape}');
+                    var onPlaces_{$scan.id|escape} = new Function('res', "appendPlacename(res, document.getElementById('scan-{$scan.id|escape}'))");
+                    getPlacename({$scan.print_latitude|escape}, {$scan.print_longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlaces_{$scan.id|escape}');
             
                 // ]]>
                 </script>

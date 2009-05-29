@@ -104,18 +104,18 @@
         <input class="mac-button" type="submit" name="action" value="Print" />
     </form>
 
-    <h2>Recent Prints</h2>
+    <h2>Recent Scans</h2>
     
     <ol>
-        {foreach from=$prints item="recent"}
+        {foreach from=$scans item="rscan"}
             <li>
-                <a href="{$base_dir}/print.php?id={$recent.id|escape}">
-                    <b id="recent-{$recent.id|escape}">{$recent.age|nice_relativetime|escape}</b></a>
+                <a href="{$base_dir}/scan.php?id={$rscan.id|escape}">
+                    <b id="scan-{$rscan.id|escape}">{$rscan.age|nice_relativetime|escape}</b></a>
                 <script type="text/javascript" language="javascript1.2" defer="defer">
                 // <![CDATA[
                 
-                    var onPlaces_{$recent.id|escape} = new Function('res', "appendPlacename(res, document.getElementById('recent-{$recent.id|escape}'))");
-                    getPlacename({$recent.latitude|escape}, {$recent.longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlaces_{$recent.id|escape}');
+                    var onPlaces_{$rscan.id|escape} = new Function('res', "appendPlacename(res, document.getElementById('scan-{$rscan.id|escape}'))");
+                    getPlacename({$rscan.print_latitude|escape}, {$rscan.print_longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlaces_{$rscan.id|escape}');
             
                 // ]]>
                 </script>
@@ -124,7 +124,30 @@
     </ol>
     
     <p>
-        <a href="{$base_dir}/prints.php">See more.</a>
+        <a href="{$base_dir}/scans.php">More recent scans...</a>
+    </p>
+    
+    <h2>Recent Prints</h2>
+    
+    <ol>
+        {foreach from=$prints item="rprint"}
+            <li>
+                <a href="{$base_dir}/print.php?id={$rprint.id|escape}">
+                    <b id="print-{$rprint.id|escape}">{$rprint.age|nice_relativetime|escape}</b></a>
+                <script type="text/javascript" language="javascript1.2" defer="defer">
+                // <![CDATA[
+                
+                    var onPlaces_{$rprint.id|escape} = new Function('res', "appendPlacename(res, document.getElementById('print-{$rprint.id|escape}'))");
+                    getPlacename({$rprint.latitude|escape}, {$rprint.longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlaces_{$rprint.id|escape}');
+            
+                // ]]>
+                </script>
+            </li>
+        {/foreach}
+    </ol>
+    
+    <p>
+        <a href="{$base_dir}/prints.php">More recent prints...</a>
     </p>
     
     <p id="footer">

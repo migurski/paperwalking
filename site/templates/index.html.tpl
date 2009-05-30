@@ -74,11 +74,11 @@
         
         function onPlaces(res)
         {
+            if(document.getElementById('watch-cursor'))
+                document.getElementById('watch-cursor').style.visibility = 'hidden';
+        
             if(res['places'] && res['places']['place'] && res['places']['place'][0])
             {
-                if(document.getElementById('watch-cursor'))
-                    document.getElementById('watch-cursor').style.visibility = 'hidden';
-            
                 var place = res['places']['place'][0];
                 var bbox = place['boundingBox'];
         
@@ -86,6 +86,9 @@
                 var ne = new mm.Location(bbox['northEast']['latitude'], bbox['northEast']['longitude']);
                 
                 map.setExtent([sw, ne]);
+
+            } else {
+                alert("Sorry, I couldn't find a place by that name.");
             }
         }
         

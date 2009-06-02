@@ -27,6 +27,12 @@
             
                 // ]]>
                 </script>
+                {if $scan.will_edit != 'yes'}
+                    {*
+                    <br />
+                    edit me.
+                    *}
+                {/if}
             </li>
         {/foreach}
     </ol>

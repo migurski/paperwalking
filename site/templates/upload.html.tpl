@@ -11,6 +11,8 @@
 
     {include file="navigation.htmlf.tpl"}
     
+    <h2>Upload A Scanned Map</h2>
+    
     <p>
         (explanation)
     </p>

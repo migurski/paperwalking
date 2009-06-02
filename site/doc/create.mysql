@@ -2,11 +2,12 @@ DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
 
+    id          VARCHAR(8) NOT NULL,
     `name`      VARCHAR(32) NOT NULL,
     
     created     TIMESTAMP,
     
-    PRIMARY KEY (`name`)
+    PRIMARY KEY (id)
 
 ) ENGINE=InnoDB, CHARACTER SET utf8;
 
@@ -23,7 +24,7 @@ CREATE TABLE prints (
     east        DOUBLE,
     west        DOUBLE,
     
-    user_name   VARCHAR(32) NOT NULL,
+    user_id     VARCHAR(8) NOT NULL,
     created     TIMESTAMP NOT NULL,
     
     PRIMARY KEY (id),
@@ -48,8 +49,12 @@ CREATE TABLE scans (
     max_row     FLOAT,
     max_column  FLOAT,
     max_zoom    INT,
+    
+    description TEXT,
+    is_private  ENUM('yes', 'no') DEFAULT 'no',
+    will_edit   ENUM('yes', 'no') DEFAULT 'yes',
 
-    user_name   VARCHAR(32) NOT NULL,
+    user_id     VARCHAR(8) NOT NULL,
     created     TIMESTAMP,
     
     PRIMARY KEY (id),
@@ -68,7 +73,7 @@ CREATE TABLE steps (
     scan_id     VARCHAR(8) NOT NULL,
     number      INT NOT NULL,
 
-    user_name   VARCHAR(32) NOT NULL,
+    user_id     VARCHAR(8) NOT NULL,
     created     TIMESTAMP,
 
     INDEX scan_step (scan_id, number),

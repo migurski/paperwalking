@@ -21,48 +21,62 @@
     {include file="navigation.htmlf.tpl"}
     
     {if $scan}
-        {if $scan.last_step == 6}
+        {if $scan.last_step == $constants.STEP_FINISHED}
+            <h2>Scanned Map</h2>
+        
             <p>
                 <a href="http://{$constants.S3_BUCKET_ID|escape}.s3.amazonaws.com/scans/{$scan.id|escape}/large.jpg">
                     <img border="1" src="http://{$constants.S3_BUCKET_ID|escape}.s3.amazonaws.com/scans/{$scan.id|escape}/preview.jpg" /></a>
             </p>
         
             <p>
-                <a href="{$base_dir}/print.php?id={$scan.print_id|escape}">Download fresh maps of this area</a>.
+                Scanned map of the area surrounding
+                <a id="print-location" href="http://www.openstreetmap.org/?lat={$print.latitude|escape}&amp;lon={$print.longitude|escape}&amp;zoom=15&amp;layers=B000FTF">
+                    {$print.latitude|nice_degree:"lat"|escape}, {$print.longitude|nice_degree:"lon"|escape}</a>
                 <br/>
                 Uploaded {$scan.age|nice_relativetime|escape}.
             </p>
+        
+            <p>
+                <a href="{$base_dir}/print.php?id={$scan.print_id|escape}">Download a fresh map of this area</a>.
+            </p>
+            
+            <p id="mini-map">
+                <img class="doc" src="{$base_dir}/c-thru-doc.png" />
+            </p>
+            
+            <script type="text/javascript" language="javascript1.2">
+            // <![CDATA[
+            
+                var onPlaces = new Function('res', "appendPlacename(res, document.getElementById('print-location'))");
+                var flickrKey = '{$constants.FLICKR_KEY|escape}';
+                var cloudmadeKey = '{$constants.CLOUDMADE_KEY|escape}';
+                var lat = {$print.latitude|escape};
+                var lon = {$print.longitude|escape};
+                
+                getPlacename(lat, lon, flickrKey, 'onPlaces');
+                makeStaticMap('mini-map', lat, lon, cloudmadeKey);
+        
+            // ]]>
+            </script>
+        
+            <p>
+                <a href="{$base_dir}/print.php?id={$scan.print_id|escape}">Download fresh maps of this area</a>.
+            </p>
+    
+            <h2>Edit The Map</h2>
     
             <div id="editor">
                 <p>
-                    Scanned map of the area surrounding
-                    <a id="print-location" href="http://www.openstreetmap.org/?lat={$print.latitude|escape}&amp;lon={$print.longitude|escape}&amp;zoom=15&amp;layers=B000FTF">
-                        {$print.latitude|nice_degree:"lat"|escape}, {$print.longitude|nice_degree:"lon"|escape}</a>
+                    You can edit OpenStreetMap using this scanned map as a guide
+                    right here in this page, with the web-based OSM editor
+                    <a href="http://wiki.openstreetmap.org/index.php/Potlatch">Potlatch</a>.
                 </p>
                 
-                <p id="mini-map">
-                    <img class="doc" src="{$base_dir}/c-thru-doc.png" />
-                </p>
-                
-                <script type="text/javascript" language="javascript1.2">
-                // <![CDATA[
-                
-                    var onPlaces = new Function('res', "appendPlacename(res, document.getElementById('print-location'))");
-                    var flickrKey = '{$constants.FLICKR_KEY|escape}';
-                    var cloudmadeKey = '{$constants.CLOUDMADE_KEY|escape}';
-                    var lat = {$print.latitude|escape};
-                    var lon = {$print.longitude|escape};
-                    
-                    getPlacename(lat, lon, flickrKey, 'onPlaces');
-                    makeStaticMap('mini-map', lat, lon, cloudmadeKey);
-            
-                // ]]>
-                </script>
-            
                 <form onsubmit="return editInPotlatch(this.elements);">
                     <p>
-                        You’ll need to first log in to OpenStreetMap to do any editing,
-                        log in below or
+                        First, you’ll need to log in with your OpenStreetMap account
+                        to do any editing; do that below or
                         <a href="http://www.openstreetmap.org/user/new">create a new account</a>.
                         <strong><i>Walking Papers</i> will not see or keep your password</strong>,
                         it is passed directly to OpenStreetMap.
@@ -103,10 +117,20 @@
             </div>
         {else}
             {if $step.number == $constants.STEP_FATAL_ERROR}
-                <p>Giving up, {$step.number|step_description|lower|escape}.</p>
+                <p>
+                    Giving up, {$step.number|step_description|lower|escape}.
+                </p>
+                <p>
+                    You might try uploading your scan again, making sure that
+                    it’s at a reasonably high resolution (200+ dpi for a full
+                    sheet of paper is normal) and right-side up. If this doesn’t
+                    help, let us know.
+                </p>
                 
             {else}
-                <p>Processing your scanned image.</p>
+                <p>
+                    Processing your scanned image.
+                </p>
     
                 <ol class="steps">
                     <li class="{if $step.number == 0}on{/if}">{0|step_description|escape}</li>
@@ -117,9 +141,19 @@
                     <li class="{if $step.number == 5}on{/if}">{5|step_description|escape}</li>
                     <li class="{if $step.number == 6}on{/if}">{6|step_description|escape}</li>
                 </ol>
-                
+    
                 {if $step.number >= 7}
-                    <p>Please stand by, currently {$step.number|step_description|lower|escape}.</p>
+                    <p>
+                        Please stand by, currently {$step.number|step_description|lower|escape}.
+                        We will try to process your scan again shortly.
+                    </p>
+                {else}
+                    <p>
+                        This may take a little while, generally a few minutes.
+                        You don’t need to keep this browser window open—you can
+                        <a href="{$base_dir}/scan.php?id={$scan.id|escape}">bookmark this page</a>
+                        and come back later.
+                    </p>
                 {/if}
             {/if}
         {/if}

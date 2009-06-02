@@ -293,10 +293,10 @@
                 return 'Finished';
 
             case STEP_ERROR:
-                return 'An error has occured';
+                return 'A temporary error has occured';
 
             case STEP_FATAL_ERROR:
-                return 'A fatal error has occured';
+                return 'A permanent error has occured';
         }
 
         return new PEAR_Error('dunno');
@@ -332,7 +332,9 @@
     
     function get_steps(&$dbh, $scan_id, $limit=100)
     {
-        $q = sprintf('SELECT *
+        $q = sprintf('SELECT scan_id, number,
+                             user_id, created,
+                             is_first, is_last
                       FROM steps
                       WHERE scan_id = %s
                       ORDER BY created DESC

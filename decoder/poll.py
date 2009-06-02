@@ -27,14 +27,20 @@ parser.add_option('-b', '--apibase', dest='apibase',
                   help='URL root of queue API',
                   action='store')
 
-if __name__ == '__main__':
-
-    (options, args) = parser.parse_args()
+def getMarkers():
+    """
+    """
     markers = {}
 
     for basename in ('Header', 'Hand', 'CCBYSA'):
         basepath = os.path.dirname(os.path.realpath(__file__)) + '/corners/' + basename
         markers[basename] = decode.Marker(basepath)
+
+    return markers
+
+if __name__ == '__main__':
+
+    (options, args) = parser.parse_args()
     
     s, host, path, p, q, f = urlparse.urlparse(options.apibase)
     
@@ -61,7 +67,7 @@ if __name__ == '__main__':
                 pass
             else:
                 print >> sys.stderr, datetime.datetime.now(), 'Decoding message id', message_id, '-', url
-                decode.main(url, markers, options.apibase, message_id, options.access, options.secret, options.password)
+                decode.main(url, getMarkers(), options.apibase, message_id, options.access, options.secret, options.password)
 
         except KeyboardInterrupt:
             raise

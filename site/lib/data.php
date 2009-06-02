@@ -215,7 +215,6 @@
                       FROM scans AS s
                       LEFT JOIN prints AS p
                         ON p.id = s.print_id
-                      HAVING print_id
                       ORDER BY s.created DESC
                       LIMIT %d',
                      $count * 10);
@@ -253,8 +252,7 @@
                       FROM scans AS s
                       LEFT JOIN prints AS p
                         ON p.id = s.print_id
-                      WHERE s.id = %s
-                      HAVING print_id',
+                      WHERE s.id = %s',
                      $dbh->quoteSmart($scan_id));
     
         $res = $dbh->query($q);

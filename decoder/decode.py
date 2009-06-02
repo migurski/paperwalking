@@ -105,9 +105,27 @@ def main(url, markers, apibase, message_id, aws_access, aws_secret, password):
         bottomright = gym.locationCoordinate(ModestMaps.Geo.Location(south, east))
         
         print topleft, bottomright
-        
+
         renders = {}
         s3 = AWS.Storage.Service(aws_access, aws_secret)
+        
+        # make a smallish preview image
+        preview_name = 'scans/%(scan_id)s/preview.jpg' % locals()
+        preview_bytes = StringIO.StringIO()
+        preview_image = image.copy()
+        preview_image.thumbnail((409, 280), PIL.Image.ANTIALIAS)
+        preview_image.save(preview_bytes, 'JPEG')
+        preview_bytes = preview_bytes.getvalue()
+        s3.putBucketObject('paperwalking-uploads', preview_name, preview_bytes, 'image/jpeg', 'public-read')
+        
+        # make a largish image
+        large_name = 'scans/%(scan_id)s/large.jpg' % locals()
+        large_bytes = StringIO.StringIO()
+        large_image = image.copy()
+        large_image.thumbnail((900, 900), PIL.Image.ANTIALIAS)
+        large_image.save(large_bytes, 'JPEG')
+        large_bytes = large_bytes.getvalue()
+        s3.putBucketObject('paperwalking-uploads', large_name, large_bytes, 'image/jpeg', 'public-read')
         
         min_zoom, max_zoom = 20, 0
         

@@ -203,11 +203,12 @@
         return $row;
     }
     
-    function get_scans(&$dbh, $count)
+    function get_scans(&$dbh, $count, $include_private=false)
     {
         $q = sprintf('SELECT s.id, s.print_id, s.last_step,
                              s.min_row, s.min_column, s.min_zoom,
                              s.max_row, s.max_column, s.max_zoom,
+                             s.is_private, s.will_edit,
                              (p.north + p.south) / 2 AS print_latitude,
                              (p.east + p.west) / 2 AS print_longitude,
                              UNIX_TIMESTAMP(s.created) AS created,
@@ -215,8 +216,10 @@
                       FROM scans AS s
                       LEFT JOIN prints AS p
                         ON p.id = s.print_id
+                      WHERE %s
                       ORDER BY s.created DESC
                       LIMIT %d',
+                     ($include_private ? '1' : "s.is_private='no'"),
                      $count * 10);
     
         $res = $dbh->query($q);
@@ -245,6 +248,7 @@
         $q = sprintf('SELECT s.id, s.print_id, s.last_step,
                              s.min_row, s.min_column, s.min_zoom,
                              s.max_row, s.max_column, s.max_zoom,
+                             s.is_private, s.will_edit,
                              (p.north + p.south) / 2 AS print_latitude,
                              (p.east + p.west) / 2 AS print_longitude,
                              UNIX_TIMESTAMP(s.created) AS created,
@@ -392,7 +396,7 @@
 
         $update_clauses = array();
 
-        foreach(array('north', 'south', 'east', 'west', 'user_name') as $field)
+        foreach(array('north', 'south', 'east', 'west', 'user_id') as $field)
             if(!is_null($print[$field]))
                 if($print[$field] != $old_print[$field])
                     $update_clauses[] = sprintf('%s = %s', $field, $dbh->quoteSmart($print[$field]));
@@ -428,7 +432,7 @@
 
         $update_clauses = array();
 
-        foreach(array('print_id', 'last_step', 'user_name', 'min_row', 'min_column', 'min_zoom', 'max_row', 'max_column', 'max_zoom') as $field)
+        foreach(array('print_id', 'last_step', 'user_id', 'min_row', 'min_column', 'min_zoom', 'max_row', 'max_column', 'max_zoom') as $field)
             if(!is_null($scan[$field]))
                 if($scan[$field] != $old_scan[$field])
                     $update_clauses[] = sprintf('%s = %s', $field, $dbh->quoteSmart($scan[$field]));

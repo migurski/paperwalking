@@ -13,7 +13,7 @@
     
     $dbh =& get_db_connection();
     
-    $scans = get_scans($dbh, 50);
+    $scans = get_scans($dbh, 50, false);
 
     $sm = get_smarty_instance();
     $sm->assign('scans', $scans);

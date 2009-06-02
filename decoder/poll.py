@@ -37,6 +37,8 @@ if __name__ == '__main__':
         markers[basename] = decode.Marker(basepath)
     
     s, host, path, p, q, f = urlparse.urlparse(options.apibase)
+    
+    poll_failures = 0
 
     while True:
         try:
@@ -47,6 +49,9 @@ if __name__ == '__main__':
             res = req.getresponse()
             
             assert res.status == 200
+            
+            # success means we drop back to zero
+            poll_failures = 0
             
             try:
                 message_id, url = res.read().split()
@@ -62,7 +67,12 @@ if __name__ == '__main__':
             raise
 
         except Exception, e:
-            print >> sys.stderr, 'Something went wrong, authorities are being notified:', e
-            raise
+            print >> sys.stderr, 'Something went wrong:', e
+
+            poll_failures += 1
+            
+            if poll_failures > 5:
+                print >> sys.stderr, 'No, seriously.'
+                raise
 
         time.sleep(5)

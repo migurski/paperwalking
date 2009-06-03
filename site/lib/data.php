@@ -216,11 +216,13 @@
                       FROM scans AS s
                       LEFT JOIN prints AS p
                         ON p.id = s.print_id
-                      WHERE %s
+                      WHERE s.last_step = %d
+                        AND %s
                       ORDER BY s.created DESC
                       LIMIT %d',
+                     STEP_FINISHED,
                      ($include_private ? '1' : "s.is_private='no'"),
-                     $count * 10);
+                     $count);
     
         $res = $dbh->query($q);
         
@@ -230,15 +232,7 @@
         $rows = array();
         
         while($row = $res->fetchRow(DB_FETCHMODE_ASSOC))
-        {
-            $step = get_step($dbh, $row['id']);
-            
-            if($step['number'] == STEP_FINISHED)
-                $rows[] = $row;
-
-            if(count($rows) == $count)
-                break;
-        }
+            $rows[] = $row;
         
         return $rows;
     }

@@ -434,7 +434,7 @@
 
         $update_clauses = array();
 
-        foreach(array('print_id', 'last_step', 'user_id', 'min_row', 'min_column', 'min_zoom', 'max_row', 'max_column', 'max_zoom') as $field)
+        foreach(array('print_id', 'last_step', 'user_id', 'min_row', 'min_column', 'min_zoom', 'max_row', 'max_column', 'max_zoom', 'is_private', 'will_edit') as $field)
             if(!is_null($scan[$field]))
                 if($scan[$field] != $old_scan[$field])
                     $update_clauses[] = sprintf('%s = %s', $field, $dbh->quoteSmart($scan[$field]));

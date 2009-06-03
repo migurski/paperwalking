@@ -13,7 +13,7 @@
     $scan = add_scan($dbh);
     $dbh->query('COMMIT');
 
-    $post = s3_get_post_details($scan['id'], time() + 300);
+    $post = s3_get_post_details($scan['id'], time() + 600);
 
     $sm = get_smarty_instance();
     $sm->assign('post', $post);

@@ -47,6 +47,7 @@
             
         case 'POST':
             $scan_id = $_POST['scan'] ? $_POST['scan'] : null;
+            $description = $_POST['description'] ? $_POST['description'] : null;
             $is_private = ($_POST['private'] == 'yes');
             $will_edit = ($_POST['edit'] == 'yes');
             
@@ -57,7 +58,8 @@
 
             if($scan)
             {
-                $scan['is_private'] = $is_private ? 'yes' : 'no';
+                $scan['description'] = $description;
+                //$scan['is_private'] = $is_private ? 'yes' : 'no';
                 $scan['will_edit'] = $will_edit ? 'yes' : 'no';
                 
                 $scan = set_scan($dbh, $scan);

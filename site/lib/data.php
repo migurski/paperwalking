@@ -208,7 +208,7 @@
         $q = sprintf('SELECT s.id, s.print_id, s.last_step,
                              s.min_row, s.min_column, s.min_zoom,
                              s.max_row, s.max_column, s.max_zoom,
-                             s.is_private, s.will_edit,
+                             s.description, s.is_private, s.will_edit,
                              (p.north + p.south) / 2 AS print_latitude,
                              (p.east + p.west) / 2 AS print_longitude,
                              UNIX_TIMESTAMP(s.created) AS created,
@@ -242,7 +242,7 @@
         $q = sprintf('SELECT s.id, s.print_id, s.last_step,
                              s.min_row, s.min_column, s.min_zoom,
                              s.max_row, s.max_column, s.max_zoom,
-                             s.is_private, s.will_edit,
+                             s.description, s.is_private, s.will_edit,
                              (p.north + p.south) / 2 AS print_latitude,
                              (p.east + p.west) / 2 AS print_longitude,
                              UNIX_TIMESTAMP(s.created) AS created,
@@ -428,7 +428,7 @@
 
         $update_clauses = array();
 
-        foreach(array('print_id', 'last_step', 'user_id', 'min_row', 'min_column', 'min_zoom', 'max_row', 'max_column', 'max_zoom', 'is_private', 'will_edit') as $field)
+        foreach(array('print_id', 'last_step', 'user_id', 'min_row', 'min_column', 'min_zoom', 'max_row', 'max_column', 'max_zoom', 'description', 'is_private', 'will_edit') as $field)
             if(!is_null($scan[$field]))
                 if($scan[$field] != $old_scan[$field])
                     $update_clauses[] = sprintf('%s = %s', $field, $dbh->quoteSmart($scan[$field]));

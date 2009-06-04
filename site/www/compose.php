@@ -31,7 +31,7 @@
         $width = 360;
         $height = 456;
         
-        $req = new HTTP_Request('http://osm.stamen.com:10010/?provider=CLOUDMADE_FINELINE');
+        $req = new HTTP_Request('http://'.WSCOMPOSE_HOSTPORT.'/?provider=CLOUDMADE_FINELINE');
         $req->addQueryString('latitude', ($north + $south) / 2);
         $req->addQueryString('longitude', ($east + $west) / 2);
         $req->addQueryString('zoom', $zoom);
@@ -59,7 +59,7 @@
             $height *= 2;
         }
 
-        $req = new HTTP_Request('http://osm.stamen.com:10010/?provider=CLOUDMADE_FINELINE');
+        $req = new HTTP_Request('http://'.WSCOMPOSE_HOSTPORT.'/?provider=CLOUDMADE_FINELINE');
         $req->addQueryString('latitude', ($north + $south) / 2);
         $req->addQueryString('longitude', ($east + $west) / 2);
         $req->addQueryString('zoom', $zoom);

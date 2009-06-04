@@ -5,13 +5,17 @@
     require_once 'init.php';
     require_once 'data.php';
     
-    /*
-    $scan_id = $_GET['scan'] ? $_GET['scan'] : null;
-    */
-    
+    $user_id = $_COOKIE['visitor'] ? $_COOKIE['visitor'] : null;
+
     /**** ... ****/
     
     $dbh =& get_db_connection();
+    
+    if($user_id)
+        $user = get_user($dbh, $user_id);
+
+    if($user)
+        setcookie('visitor', $user['id'], time() + 86400 * 31);
     
     $scans = get_scans($dbh, 50, false);
 

@@ -10,7 +10,7 @@
     
     $scan_id = $_POST['scan'] ? $_POST['scan'] : null;
     $step_number = is_numeric($_POST['step']) ? $_POST['step'] : null;
-    
+
     /**** ... ****/
     
     $dbh =& get_db_connection();

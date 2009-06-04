@@ -5,6 +5,8 @@
     require_once 'init.php';
     require_once 'data.php';
     
+    $user_id = $_COOKIE['visitor'] ? $_COOKIE['visitor'] : null;
+
     $north = is_numeric($_POST['north']) ? floatval($_POST['north']) : null;
     $south = is_numeric($_POST['south']) ? floatval($_POST['south']) : null;
     $east = is_numeric($_POST['east']) ? floatval($_POST['east']) : null;
@@ -13,11 +15,16 @@
     
     $dbh =& get_db_connection();
     
+    $user = $user_id ? get_user($dbh, $user_id) : add_user($dbh);
+
+    if($user)
+        setcookie('visitor', $user['id'], time() + 86400 * 31);
+    
     if($zoom && $north && $south && $east && $west)
     {
         $dbh->query('START TRANSACTION');
         
-        $print = add_print($dbh);
+        $print = add_print($dbh, $user['id']);
         
         $print['north'] = $north;
         $print['south'] = $south;

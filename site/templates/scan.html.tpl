@@ -31,7 +31,7 @@
             {/if}
             
             <p>
-                Covers the area nar
+                Covers the area near
                 <a id="print-location" href="http://www.openstreetmap.org/?lat={$print.latitude|escape}&amp;lon={$print.longitude|escape}&amp;zoom=15&amp;layers=B000FTF">
                     {$print.latitude|nice_degree:"lat"|escape}, {$print.longitude|nice_degree:"lon"|escape}</a>
                 <br/>

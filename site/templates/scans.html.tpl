@@ -19,7 +19,7 @@
             <li>
                 <a href="{$base_dir}/scan.php?id={$scan.id|escape}">
                     <b id="scan-{$scan.id|escape}">{$scan.age|nice_relativetime|escape}
-                        {if $scan.will_edit == 'no'}★{/if}</b></a>
+                        {if $scan.will_edit == 'no'}✻{/if}</b></a>
 
                 <script type="text/javascript" language="javascript1.2" defer="defer">
                 // <![CDATA[
@@ -30,11 +30,9 @@
                 // ]]>
                 </script>
 
-                {if $scan.will_edit != 'yes'}
-                    {*
+                {if $scan.description}
                     <br />
-                    edit me.
-                    *}
+                    {$scan.description|escape}
                 {/if}
             </li>
         {/foreach}

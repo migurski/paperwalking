@@ -20,7 +20,7 @@
         improve its coverage of local points of interests and street detail.
     </p>
     
-    <h2>Print a map</h2>
+    <h2>Make A Print</h2>
     
     <p>
         <a href="http://openstreetmap.org">OpenStreetMap</a> is a wiki-style map

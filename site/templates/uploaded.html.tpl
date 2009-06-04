@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>Uploaded Walking Papers</title>
+	<title>Uploaded Scan (Walking Papers)</title>
 	<link rel="stylesheet" href="{$base_dir}/style.css" type="text/css" />
     <style type="text/css" title="text/css">
     /* <![CDATA[{literal} */
@@ -21,24 +21,25 @@
 
     {include file="navigation.htmlf.tpl"}
     
-    <h2>You Uploaded A Scanned Map</h2>
+    <h2>You’ve Uploaded A Scanned Map</h2>
     
     <p>
-        (explanation)
+        You’ve just uploaded a scanned map, and you’re about to add
+        a few bits of information about before you proceed to trace it.
     </p>
     
-    <form action="{$base_dir}/uploaded.php" method="post" enctype="multipart/form-data">
+    <form action="{$base_dir}/scan.php?id={$scan.id|escape}" method="post" enctype="multipart/form-data">
         {*
         <p>
             private?
-            <input type="checkbox" value="yes" name="private" {if $scan.is_private == 'yes'}checked="checked"{/if} />
+            <input type="checkbox" value="yes" name="is_private" {if $scan.is_private == 'yes'}checked="checked"{/if} />
         </p>
         *}
     
         <p>
             <label>
                 Do you plan to edit this yourself?
-                <select name="edit">
+                <select name="will_edit">
                     <option label="Yes" value="yes" {if $scan.will_edit == 'yes'}selected="selected"{/if}>Yes</option>
                     <option label="No" value="no"  {if $scan.will_edit == 'no'}selected="selected"{/if}>No</option>
                 </select>
@@ -57,7 +58,6 @@
             <textarea name="description" rows="10" cols="40">{$scan.description|escape}</textarea>
         </p>
     
-        <input type="hidden" name="scan" value="{$scan.id|escape}">
         <input class="mac-button" type="submit" value="Save">
     </form>
     

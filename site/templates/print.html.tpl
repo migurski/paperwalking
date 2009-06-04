@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>Print Walking Papers</title>
+	<title>Print #{$print.id|escape} (Walking Papers)</title>
 	<link rel="stylesheet" href="{$base_dir}/style.css" type="text/css" />
     <script type="text/javascript" src="{$base_dir}/modestmaps.js"></script>
     <script type="text/javascript" src="{$base_dir}/script.js"></script>
@@ -31,6 +31,8 @@
     </span>
 
     {include file="navigation.htmlf.tpl"}
+    
+    <h2>Print Map</h2>
     
     <p>
         Print map of the area surrounding
@@ -62,7 +64,13 @@
     {/if}
     
     <p>
-        <a href="{$print.pdf_url|escape}">Download a PDF</a> to get started mapping this area
+        <a href="{$print.pdf_url|escape}">
+            <img src="{$base_dir}/tiny-doc.png" border="0" align="bottom"/>
+            Download map PDF for print</a>
+    </p>
+
+    <p>
+        <a href="{$print.pdf_url|escape}">Download a map</a> to get started mapping this area
         from street level. Add details like businesses, parks, schools, buildings, paths,
         post boxes, cash machines and other useful landmarks. When you’re finished,
         <a href="{$base_dir}/upload.php">post a scan</a> of your annotated map

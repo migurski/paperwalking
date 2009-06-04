@@ -1,0 +1,7 @@
+This is where all the public-facing web stuff goes.
+
+The www folder is where your document root should point, everything else
+is not for public consumption. Note the Makefile, which creates a tmp folder
+for temporary files and a templates/cache folder for use by Smarty.
+
+You'll want to run `make` before you do anything else.

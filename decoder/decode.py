@@ -45,7 +45,7 @@ class Marker:
         print >> sys.stderr, 'Found', len(needles), 'needles',
         print >> sys.stderr, 'in %.2f sec.' % (time.time() - start)
         
-        assert len(needles) == 1
+        assert len(needles) == 1, 'Got %d needle matches instead of 1' % len(needles)
         fs1, fs2, transform = needles[0]
         
         print >> sys.stderr, (self.anchor.x, self.anchor.y),
@@ -184,7 +184,7 @@ def updateStep(apibase, password, scan_id, step_number, message_id, timeout):
     req.request('POST', path + '/step.php', params, headers)
     res = req.getresponse()
     
-    assert res.status == 200
+    assert res.status == 200, 'POST to step.php resulting in status %s instead of 200' % res.status
     
     if step_number == 6 or res.read().strip() == 'Too many errors':
         # magic number for "finished"
@@ -197,7 +197,7 @@ def updateStep(apibase, password, scan_id, step_number, message_id, timeout):
     req.request('POST', path + '/dequeue.php', params, headers)
     res = req.getresponse()
     
-    assert res.status == 200
+    assert res.status == 200, 'POST to dequeue.php resulting in status %s instead of 200' % res.status
     
     return
 
@@ -218,14 +218,14 @@ def updateScan(apibase, password, scan_id, print_id, min_coord, max_coord):
     req.request('POST', path + '/scan.php?' + query, params, headers)
     res = req.getresponse()
     
-    assert res.status == 200
+    assert res.status == 200, 'POST to scan.php resulting in status %s instead of 200' % res.status
 
     return
 
 def tileZoomLevel(image, topleft, bottomright, markers, renders):
     """ Generator of coord, tile tuples
     """
-    assert topleft.zoom == bottomright.zoom
+    assert topleft.zoom == bottomright.zoom, "Top-left and bottom-right zooms don't match up as they should: %s vs. %s" % (topleft.zoom, bottomright.zoom)
     
     zoom = topleft.zoom
     
@@ -314,7 +314,7 @@ def siftImage(url):
     status, output = commands.getstatusoutput("%(basedir)s/bin/sift --peak-thresh=8 -o '%(sift_filename)s' '%(pgm_filename)s'" % locals())
     data = open(sift_filename, 'r')
     
-    assert status == 0
+    assert status == 0, 'Sift execution returned %s instead of 0' % status
     
     features = [matchup.row2feature(row) for row in data]
 

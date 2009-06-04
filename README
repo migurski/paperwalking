@@ -13,7 +13,9 @@ the Pair.com "webmaster" account I use to host Walking Papers.
 The ugly math bits are done in an offline process that consumes a queue
 of freshly-scanned images from the main site, runs them through the
 image-recognition algorithm, and posts back georectified image tiles
-for editing.
+for editing. You can run a bunch of these in parallel to make jobs go
+faster, and they should be percetly fine on small EC2 instances or
+a box plugged into plain old residential DSL.
 
 It's worth mentioning that the image recognition part of the work relies
 on a NON-FREE, PATENTED ALGORITHM called SIFT:

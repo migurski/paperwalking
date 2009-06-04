@@ -49,6 +49,11 @@ blockquote
     padding-left: 2em;
 }
 
+p textarea
+{
+    width: 100%;
+}
+
 input.mac-button
 {
     cursor: pointer;

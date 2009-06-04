@@ -23,26 +23,19 @@
     {if $scan}
         {if $scan.last_step == $constants.STEP_FINISHED}
             <h2>Scanned Map</h2>
-        
+            
+            {if $scan.description}
+                <p style="font-style: italic;">
+                    {$scan.description|escape}
+                </p>
+            {/if}
+            
             <p>
-                <a href="http://{$constants.S3_BUCKET_ID|escape}.s3.amazonaws.com/scans/{$scan.id|escape}/large.jpg">
-                    <img border="1" src="http://{$constants.S3_BUCKET_ID|escape}.s3.amazonaws.com/scans/{$scan.id|escape}/preview.jpg" /></a>
-            </p>
-        
-            <p>
-                Scanned map of the area surrounding
+                Covers the area nar
                 <a id="print-location" href="http://www.openstreetmap.org/?lat={$print.latitude|escape}&amp;lon={$print.longitude|escape}&amp;zoom=15&amp;layers=B000FTF">
                     {$print.latitude|nice_degree:"lat"|escape}, {$print.longitude|nice_degree:"lon"|escape}</a>
                 <br/>
                 Uploaded {$scan.age|nice_relativetime|escape}.
-            </p>
-        
-            <p>
-                <a href="{$base_dir}/print.php?id={$scan.print_id|escape}">Download a fresh map of this area</a>.
-            </p>
-            
-            <p id="mini-map">
-                <img class="doc" src="{$base_dir}/c-thru-doc.png" />
             </p>
             
             <script type="text/javascript" language="javascript1.2">
@@ -50,18 +43,22 @@
             
                 var onPlaces = new Function('res', "appendPlacename(res, document.getElementById('print-location'))");
                 var flickrKey = '{$constants.FLICKR_KEY|escape}';
-                var cloudmadeKey = '{$constants.CLOUDMADE_KEY|escape}';
                 var lat = {$print.latitude|escape};
                 var lon = {$print.longitude|escape};
                 
                 getPlacename(lat, lon, flickrKey, 'onPlaces');
-                makeStaticMap('mini-map', lat, lon, cloudmadeKey);
         
             // ]]>
             </script>
         
             <p>
-                <a href="{$base_dir}/print.php?id={$scan.print_id|escape}">Download fresh maps of this area</a>.
+                <a href="http://{$constants.S3_BUCKET_ID|escape}.s3.amazonaws.com/scans/{$scan.id|escape}/large.jpg">
+                    <img border="1" src="http://{$constants.S3_BUCKET_ID|escape}.s3.amazonaws.com/scans/{$scan.id|escape}/preview.jpg" /></a>
+            </p>
+        
+            <p>
+                Download a
+                <a href="{$base_dir}/print.php?id={$scan.print_id|escape}">fresh map of this area from print #{$scan.print_id|escape}</a>.
             </p>
     
             <h2>Edit The Map</h2>

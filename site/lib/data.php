@@ -208,7 +208,7 @@
         $q = sprintf('SELECT s.id, s.print_id, s.last_step,
                              s.min_row, s.min_column, s.min_zoom,
                              s.max_row, s.max_column, s.max_zoom,
-                             s.is_private, s.will_edit,
+                             s.description, s.is_private, s.will_edit,
                              (p.north + p.south) / 2 AS print_latitude,
                              (p.east + p.west) / 2 AS print_longitude,
                              UNIX_TIMESTAMP(s.created) AS created,
@@ -216,11 +216,13 @@
                       FROM scans AS s
                       LEFT JOIN prints AS p
                         ON p.id = s.print_id
-                      WHERE %s
+                      WHERE s.last_step = %d
+                        AND %s
                       ORDER BY s.created DESC
                       LIMIT %d',
+                     STEP_FINISHED,
                      ($include_private ? '1' : "s.is_private='no'"),
-                     $count * 10);
+                     $count);
     
         $res = $dbh->query($q);
         
@@ -230,15 +232,7 @@
         $rows = array();
         
         while($row = $res->fetchRow(DB_FETCHMODE_ASSOC))
-        {
-            $step = get_step($dbh, $row['id']);
-            
-            if($step['number'] == STEP_FINISHED)
-                $rows[] = $row;
-
-            if(count($rows) == $count)
-                break;
-        }
+            $rows[] = $row;
         
         return $rows;
     }
@@ -248,7 +242,7 @@
         $q = sprintf('SELECT s.id, s.print_id, s.last_step,
                              s.min_row, s.min_column, s.min_zoom,
                              s.max_row, s.max_column, s.max_zoom,
-                             s.is_private, s.will_edit,
+                             s.description, s.is_private, s.will_edit,
                              (p.north + p.south) / 2 AS print_latitude,
                              (p.east + p.west) / 2 AS print_longitude,
                              UNIX_TIMESTAMP(s.created) AS created,
@@ -434,7 +428,7 @@
 
         $update_clauses = array();
 
-        foreach(array('print_id', 'last_step', 'user_id', 'min_row', 'min_column', 'min_zoom', 'max_row', 'max_column', 'max_zoom') as $field)
+        foreach(array('print_id', 'last_step', 'user_id', 'min_row', 'min_column', 'min_zoom', 'max_row', 'max_column', 'max_zoom', 'description', 'is_private', 'will_edit') as $field)
             if(!is_null($scan[$field]))
                 if($scan[$field] != $old_scan[$field])
                     $update_clauses[] = sprintf('%s = %s', $field, $dbh->quoteSmart($scan[$field]));

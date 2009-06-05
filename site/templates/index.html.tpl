@@ -29,8 +29,8 @@
         such as the United States, basic roads exist, but lack local detail:
         locations of traffic signals, ATMs, cafés, schools, parks, and shops.
         What such partially-mapped places need is not more GPS traces, but
-        additional knowledge about what exists on and around the street. Paper
-        Walking is made to help you easily create printed maps, mark them with
+        additional knowledge about what exists on and around the street. Walking
+        Papers is made to help you easily create printed maps, mark them with
         things you know, and then share that knowledge with OpenStreetMap.
     </p>
 

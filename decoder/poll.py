@@ -54,7 +54,7 @@ if __name__ == '__main__':
             req.request('POST', path+'/dequeue.php', params, {'Content-Type': 'application/x-www-form-urlencoded'})
             res = req.getresponse()
             
-            assert res.status == 200
+            assert res.status == 200, 'poll POST to dequeue.php resulting in status %s instead of 200' % res.status
             
             # success means we drop back to zero
             poll_failures = 0

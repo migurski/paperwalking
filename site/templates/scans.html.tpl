@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>Walking Papers</title>
+	<title>Recent Scans (Walking Papers)</title>
 	<link rel="stylesheet" href="{$base_dir}/style.css" type="text/css" />
     <script type="text/javascript" src="{$base_dir}/script.js"></script>
 </head>
@@ -19,7 +19,7 @@
             <li>
                 <a href="{$base_dir}/scan.php?id={$scan.id|escape}">
                     <b id="scan-{$scan.id|escape}">{$scan.age|nice_relativetime|escape}
-                        {if $scan.will_edit == 'no'}★{/if}</b></a>
+                        {if $scan.will_edit == 'no'}✻{/if}</b></a>
 
                 <script type="text/javascript" language="javascript1.2" defer="defer">
                 // <![CDATA[
@@ -30,11 +30,9 @@
                 // ]]>
                 </script>
 
-                {if $scan.will_edit != 'yes'}
-                    {*
+                {if $scan.description}
                     <br />
-                    edit me.
-                    *}
+                    {$scan.description|escape}
                 {/if}
             </li>
         {/foreach}

@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>Scanned Walking Papers</title>
+	<title>Scanned Map #{$scan.id|escape} (Walking Papers)</title>
 	<link rel="stylesheet" href="{$base_dir}/style.css" type="text/css" />
 	<link rel="stylesheet" href="{$base_dir}/scan.css" type="text/css" />
 	{if $scan && $scan.last_step != 6 && $scan.last_step != $constants.STEP_FATAL_ERROR}
@@ -31,7 +31,7 @@
             {/if}
             
             <p>
-                Covers the area nar
+                Covers the area near
                 <a id="print-location" href="http://www.openstreetmap.org/?lat={$print.latitude|escape}&amp;lon={$print.longitude|escape}&amp;zoom=15&amp;layers=B000FTF">
                     {$print.latitude|nice_degree:"lat"|escape}, {$print.longitude|nice_degree:"lon"|escape}</a>
                 <br/>

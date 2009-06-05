@@ -20,7 +20,7 @@
         improve its coverage of local points of interests and street detail.
     </p>
     
-    <h2>Print a map</h2>
+    <h2>Make A Print</h2>
     
     <p>
         <a href="http://openstreetmap.org">OpenStreetMap</a> is a wiki-style map
@@ -113,7 +113,8 @@
         {foreach from=$scans item="rscan"}
             <li>
                 <a href="{$base_dir}/scan.php?id={$rscan.id|escape}">
-                    <b id="scan-{$rscan.id|escape}">{$rscan.age|nice_relativetime|escape}</b></a>
+                    <b id="scan-{$rscan.id|escape}">{$rscan.age|nice_relativetime|escape}
+                        {if $rscan.will_edit == 'no'}✻{/if}</b></a>
                 <script type="text/javascript" language="javascript1.2" defer="defer">
                 // <![CDATA[
                 
@@ -122,6 +123,11 @@
             
                 // ]]>
                 </script>
+
+                {if $rscan.description}
+                    <br />
+                    {$rscan.description|escape}
+                {/if}
             </li>
         {/foreach}
     </ol>

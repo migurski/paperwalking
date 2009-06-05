@@ -1,0 +1,10 @@
+This is where the heavy offline image editing happens.
+
+poll.py is what you actually run, check the usage instructions like this:
+
+    python poll.py --help
+
+Note the Makefile, which grabs an implementation of SIFT and a copy
+of the Modest Maps python port.
+
+You'll want to run `make` before you do anything else.

@@ -44,15 +44,16 @@
         return $id;
     }
     
-    function add_print(&$dbh)
+    function add_print(&$dbh, $user_id)
     {
         while(true)
         {
             $print_id = generate_id();
             
             $q = sprintf('INSERT INTO prints
-                          SET id = %s',
-                         $dbh->quoteSmart($print_id));
+                          SET id = %s, user_id = %s',
+                         $dbh->quoteSmart($print_id),
+                         $dbh->quoteSmart($user_id));
 
             error_log(preg_replace('/\s+/', ' ', $q));
     
@@ -70,15 +71,16 @@
         }
     }
     
-    function add_scan(&$dbh)
+    function add_scan(&$dbh, $user_id)
     {
         while(true)
         {
             $scan_id = generate_id();
             
             $q = sprintf('INSERT INTO scans
-                          SET id = %s',
-                         $dbh->quoteSmart($scan_id));
+                          SET id = %s, user_id = %s',
+                         $dbh->quoteSmart($scan_id),
+                         $dbh->quoteSmart($user_id));
 
             error_log(preg_replace('/\s+/', ' ', $q));
     
@@ -95,6 +97,32 @@
             add_step($dbh, $scan_id, 0);
             
             return get_scan($dbh, $scan_id);
+        }
+    }
+    
+    function add_user(&$dbh)
+    {
+        while(true)
+        {
+            $user_id = generate_id();
+            
+            $q = sprintf('INSERT INTO users
+                          SET id = %s',
+                         $dbh->quoteSmart($user_id));
+
+            error_log(preg_replace('/\s+/', ' ', $q));
+    
+            $res = $dbh->query($q);
+            
+            if(PEAR::isError($res)) 
+            {
+                if($res->getCode() == DB_ERROR_ALREADY_EXISTS)
+                    continue;
+    
+                die_with_code(500, "{$res->message}\n{$q}\n");
+            }
+            
+            return get_user($dbh, $user_id);
         }
     }
     
@@ -155,7 +183,8 @@
                              (north + south) / 2 AS latitude,
                              (east + west) / 2 AS longitude,
                              UNIX_TIMESTAMP(created) AS created,
-                             UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(created) AS age
+                             UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(created) AS age,
+                             user_id
                       FROM prints
                       ORDER BY created DESC
                       LIMIT %d',
@@ -185,7 +214,8 @@
                              (north + south) / 2 AS latitude,
                              (east + west) / 2 AS longitude,
                              UNIX_TIMESTAMP(created) AS created,
-                             UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(created) AS age
+                             UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(created) AS age,
+                             user_id
                       FROM prints
                       WHERE id = %s',
                      $dbh->quoteSmart($print_id));
@@ -212,7 +242,8 @@
                              (p.north + p.south) / 2 AS print_latitude,
                              (p.east + p.west) / 2 AS print_longitude,
                              UNIX_TIMESTAMP(s.created) AS created,
-                             UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(s.created) AS age
+                             UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(s.created) AS age,
+                             s.user_id
                       FROM scans AS s
                       LEFT JOIN prints AS p
                         ON p.id = s.print_id
@@ -246,12 +277,30 @@
                              (p.north + p.south) / 2 AS print_latitude,
                              (p.east + p.west) / 2 AS print_longitude,
                              UNIX_TIMESTAMP(s.created) AS created,
-                             UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(s.created) AS age
+                             UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(s.created) AS age,
+                             s.user_id
                       FROM scans AS s
                       LEFT JOIN prints AS p
                         ON p.id = s.print_id
                       WHERE s.id = %s',
                      $dbh->quoteSmart($scan_id));
+    
+        $res = $dbh->query($q);
+        
+        if(PEAR::isError($res)) 
+            die_with_code(500, "{$res->message}\n{$q}\n");
+
+        return $res->fetchRow(DB_FETCHMODE_ASSOC);
+    }
+    
+    function get_user(&$dbh, $user_id)
+    {
+        $q = sprintf('SELECT id, name,
+                             UNIX_TIMESTAMP(created) AS created,
+                             UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(created) AS age
+                      FROM users
+                      WHERE id = %s',
+                     $dbh->quoteSmart($user_id));
     
         $res = $dbh->query($q);
         

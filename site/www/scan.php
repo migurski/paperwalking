@@ -6,10 +6,17 @@
     require_once 'data.php';
     
     $scan_id = $_GET['id'] ? $_GET['id'] : null;
-    
+    $user_id = $_COOKIE['visitor'] ? $_COOKIE['visitor'] : null;
+
     /**** ... ****/
     
     $dbh =& get_db_connection();
+    
+    if($user_id)
+        $user = get_user($dbh, $user_id);
+
+    if($user)
+        setcookie('visitor', $user['id'], time() + 86400 * 31);
     
     $scan = get_scan($dbh, $scan_id);
     
@@ -26,7 +33,10 @@
                           'min_zoom' => $_POST['min_zoom'],
                           'max_row' => $_POST['max_row'],
                           'max_column' => $_POST['max_column'],
-                          'max_zoom' => $_POST['max_zoom']);
+                          'max_zoom' => $_POST['max_zoom'],
+                          'description' => $_POST['description'],
+                          'is_private' => $_POST['is_private'],
+                          'will_edit' => $_POST['will_edit']);
             
             $dbh->query('START TRANSACTION');
             $scan = set_scan($dbh, $scan);

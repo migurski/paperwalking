@@ -7,7 +7,7 @@ body
     color: black;
 }
 
-h1, h2, p, form, ol, blockquote
+h1, h2, h3, p, form, ol, blockquote
 {
     margin: 1em auto;
     width: 408px;
@@ -39,9 +39,19 @@ h2
     font-size: 1.9em;
 }
 
+h3
+{
+    font-size: 1.6em;
+}
+
 p, ol, blockquote
 {
     font-size: 1.5em;
+}
+
+li
+{
+    margin-bottom: .5em;
 }
 
 blockquote

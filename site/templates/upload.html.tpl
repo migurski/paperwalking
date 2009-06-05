@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>Upload Walking Papers</title>
+    <title>Upload Scan (Walking Papers)</title>
     <link rel="stylesheet" href="{$base_dir}/style.css" type="text/css" />
     <meta http-equiv="refresh" content="30" />
 </head>
@@ -12,10 +12,12 @@
 
     {include file="navigation.htmlf.tpl"}
     
-    <h2>Upload A Scanned Map</h2>
+    <h2>You’re Uploading A Scanned Map</h2>
     
     <p>
-        (explanation)
+        You’re here because you have a paper version of a
+        <a href="{$base_dir}/prints.php">printed map</a> and you’d like to
+        send a scanned version to trace into OpenStreetMap.
     </p>
     
     <form action="http://{$post.bucket|escape}.s3.amazonaws.com/" method="post" enctype="multipart/form-data">
@@ -28,7 +30,7 @@
         <input name="signature" type="hidden" value="{$post.signature|escape}">
         
         <input name="file" type="file">
-        <input type="submit" value="Upload It!">
+        <input class="mac-button" type="submit" value="Send">
     </form>
     
     {include file="footer.htmlf.tpl"}

@@ -120,8 +120,10 @@
                 <p>
                     You might try uploading your scan again, making sure that
                     it’s at a reasonably high resolution (200+ dpi for a full
-                    sheet of paper is normal) and right-side up. If this doesn’t
-                    help, let us know.
+                    sheet of paper is normal) and right-side up. A legible 
+                    <a href="http://en.wikipedia.org/wiki/QR_Code">QR code</a> is critical.
+                    If this doesn’t help,
+                    <a href="mailto:info@walking-papers.org?subject=Problem%20with%20scan%20#{$scan.id|escape}">let us know</a>.
                 </p>
                 
             {else}

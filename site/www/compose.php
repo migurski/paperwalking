@@ -20,7 +20,7 @@
     if($user)
         setcookie('visitor', $user['id'], time() + 86400 * 31);
 
-    function latlon_placename($lat, $lon, $zoom)
+    function latlon_placeinfo($lat, $lon, $zoom)
     {
         $req = new HTTP_Request('http://api.flickr.com/services/rest/');
         $req->addQueryString('method', 'flickr.places.findByLatLon');
@@ -44,11 +44,39 @@
                 $places = $rsp['places']['place'];
                 
                 if(is_array($places[0]) && $places[0]['name'])
-                    return $places[0]['name'];
+                {
+                    list($place_name, $place_woeid) = array($places[0]['name'], $places[0]['woeid']);
+                    
+                    $req = new HTTP_Request('http://api.flickr.com/services/rest/');
+                    $req->addQueryString('method', 'flickr.places.getInfo');
+                    $req->addQueryString('woe_id', $place_woeid);
+                    $req->addQueryString('format', 'php_serial');
+                    $req->addQueryString('api_key', FLICKR_KEY);
+            
+                    $res = $req->sendRequest();
+                    
+                    if(PEAR::isError($res))
+                        return array(null, null, null, null, null, null);
+            
+                    $rsp = unserialize($req->getResponseBody());
+                    
+                    if(is_array($rsp) && is_array($rsp['place']))
+                    {
+                        list($country, $region) = array($rsp['place']['country'], $rsp['place']['region']);
+                        
+                        if(is_array($country))
+                            list($country_name, $country_woeid) = array($country['_content'], $country['woeid']);
+                        
+                        if(is_array($region))
+                            list($region_name, $region_woeid) = array($region['_content'], $region['woeid']);
+                    }
+                    
+                    return array($country_name, $country_woeid, $region_name, $region_woeid, $place_name, $place_woeid);
+                }
             }
         }
         
-        return '';
+        return array(null, null, null, null, null, null);
     }
     
     function compose_map_image($north, $south, $east, $west, $zoom, $width, $height)
@@ -91,10 +119,13 @@
         $print['east'] = $east;
         $print['west'] = $west;
         
-        $print['place_name'] = latlon_placename(($north + $south) / 2, ($west + $east) / 2, $zoom - 2);
-        
+        list($print['country_name'], $print['country_woeid'],
+             $print['region_name'], $print['region_woeid'],
+             $print['place_name'], $print['place_woeid'])
+         = latlon_placeinfo(($north + $south) / 2, ($west + $east) / 2, $zoom - 1);
+
         $print = set_print($dbh, $print);
-        
+
         $dbh->query('COMMIT');
         
         $width = 360;

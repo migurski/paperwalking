@@ -205,7 +205,12 @@
             ? 'country_name, country_woeid, region_name, region_woeid, place_name, place_woeid,'
             : '';
         
+        $zoom_column_name = in_array('zoom', $column_names)
+            ? 'zoom,'
+            : '';
+        
         $q = sprintf("SELECT {$woeid_column_names}
+                             {$zoom_column_name}
                              id, north, south, east, west,
                              (north + south) / 2 AS latitude,
                              (east + west) / 2 AS longitude,
@@ -244,7 +249,12 @@
             ? 'country_name, country_woeid, region_name, region_woeid, place_name, place_woeid,'
             : '';
         
+        $zoom_column_name = in_array('zoom', $column_names)
+            ? 'zoom,'
+            : '';
+        
         $q = sprintf("SELECT {$woeid_column_names}
+                             {$zoom_column_name}
                              id, north, south, east, west,
                              (north + south) / 2 AS latitude,
                              (east + west) / 2 AS longitude,

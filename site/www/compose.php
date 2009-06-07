@@ -108,28 +108,11 @@
         die_with_code(500, "Tried all the ws-compose host-ports, and none of them worked.\n");
     }
     
-    if($zoom && $north && $south && $east && $west)
+    function compose_map($print)
     {
-        $dbh->query('START TRANSACTION');
-        
-        $print = add_print($dbh, $user['id']);
-        
-        $print['north'] = $north;
-        $print['south'] = $south;
-        $print['east'] = $east;
-        $print['west'] = $west;
-        $print['zoom'] = $zoom;
-        
-        list($print['country_name'], $print['country_woeid'],
-             $print['region_name'], $print['region_woeid'],
-             $print['place_name'], $print['place_woeid'])
-         = latlon_placeinfo(($north + $south) / 2, ($west + $east) / 2, $zoom - 1);
-
-        $print = set_print($dbh, $print);
-        
         $width = 360;
         $height = 456;
-        $png = compose_map_image($north, $south, $east, $west, $zoom, $width, $height);
+        $png = compose_map_image($print['north'], $print['south'], $print['east'], $print['west'], $print['zoom'], $width, $height);
 
         // post a preview
         $url = new Net_URL($print['preview_url']);
@@ -138,7 +121,8 @@
         if(PEAR::isError($res))
             die_with_code(500, "{$res->message}\n{$q}\n");
         
-        $max_zoom = min(18, $zoom + 2);
+        $zoom = $print['zoom'];
+        $max_zoom = min(18, $print['zoom'] + 2);
         
         while($zoom < $max_zoom)
         {
@@ -147,7 +131,7 @@
             $height *= 2;
         }
 
-        $png = compose_map_image($north, $south, $east, $west, $zoom, $width, $height);
+        $png = compose_map_image($print['north'], $print['south'], $print['east'], $print['west'], $zoom, $width, $height);
 
         $print_url = 'http://'.get_domain_name().get_base_dir().'/print.php?id='.urlencode($print['id']);
     
@@ -209,9 +193,32 @@
         
         unlink($map_filename);
         unlink($code_filename);
+    }
+    
+    if($zoom && $north && $south && $east && $west)
+    {
+        $dbh->query('START TRANSACTION');
+        
+        $print = add_print($dbh, $user['id']);
+        
+        $print['north'] = $north;
+        $print['south'] = $south;
+        $print['east'] = $east;
+        $print['west'] = $west;
+        $print['zoom'] = $zoom;
+        
+        list($print['country_name'], $print['country_woeid'],
+             $print['region_name'], $print['region_woeid'],
+             $print['place_name'], $print['place_woeid'])
+         = latlon_placeinfo(($north + $south) / 2, ($west + $east) / 2, $zoom - 1);
+
+        $print = set_print($dbh, $print);
+        
+        compose_map($print);
 
         $dbh->query('COMMIT');
         
+        $print_url = 'http://'.get_domain_name().get_base_dir().'/print.php?id='.urlencode($print['id']);
         header("Location: {$print_url}");
     }
     

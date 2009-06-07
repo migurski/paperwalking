@@ -194,6 +194,7 @@ def updateStep(apibase, password, scan_id, step_number, message_id, timeout):
     
     assert res.status == 200, 'POST to step.php %s/%d resulting in status %s instead of 200' % (scan_id, step_number, res.status)
     
+    # TODO: move this responsibility to step.php
     if step_number == 6 or res.read().strip() == 'Too many errors':
         # magic number for "finished"
         params = urllib.urlencode({'id': message_id, 'password': password, 'delete': 'yes'})

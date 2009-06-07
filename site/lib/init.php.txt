@@ -6,8 +6,8 @@
     
     define('API_PASSWORD', '*** you choose this ***');
 
-    // ws-compose.py host:port
-    define('WSCOMPOSE_HOSTPORT', '*** python port of http://modestmaps.com/ ***');
+    // Comma-delimited list of ws-compose.py host:ports
+    define('WSCOMPOSE_HOSTPORTS', '*** python port of http://modestmaps.com/ ***');
 
     // Yahoo GeoPlanet application ID
     define('GEOPLANET_APPID', '*** http://developer.yahoo.com/geo/geoplanet/ ***');

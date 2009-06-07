@@ -376,8 +376,7 @@
     function get_steps(&$dbh, $scan_id, $limit=100)
     {
         $q = sprintf('SELECT scan_id, number,
-                             user_id, created,
-                             is_first, is_last
+                             user_id, created
                       FROM steps
                       WHERE scan_id = %s
                       ORDER BY created DESC

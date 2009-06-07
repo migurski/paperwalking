@@ -19,6 +19,35 @@
 
     if($user)
         setcookie('visitor', $user['id'], time() + 86400 * 31);
+
+    function compose_map_image($north, $south, $east, $west, $zoom, $width, $height)
+    {
+        $hostports = explode(',', WSCOMPOSE_HOSTPORTS);
+        shuffle($hostports);
+        
+        foreach($hostports as $hostport)
+        {
+            $req = new HTTP_Request("http://{$hostport}/?provider=CLOUDMADE_FINELINE");
+            $req->addQueryString('latitude', ($north + $south) / 2);
+            $req->addQueryString('longitude', ($east + $west) / 2);
+            $req->addQueryString('zoom', $zoom);
+            $req->addQueryString('width', $width);
+            $req->addQueryString('height', $height);
+            
+            $res = $req->sendRequest();
+            
+            if(PEAR::isError($res))
+                continue;
+    
+            if($req->getResponseCode() == 200)
+            {
+                // return some raw PNG data
+                return $req->getResponseBody();
+            }
+        }
+
+        die_with_code(500, "Tried all the ws-compose host-ports, and none of them worked\n");
+    }
     
     if($zoom && $north && $south && $east && $west)
     {
@@ -37,22 +66,11 @@
         
         $width = 360;
         $height = 456;
-        
-        $req = new HTTP_Request('http://'.WSCOMPOSE_HOSTPORT.'/?provider=CLOUDMADE_FINELINE');
-        $req->addQueryString('latitude', ($north + $south) / 2);
-        $req->addQueryString('longitude', ($east + $west) / 2);
-        $req->addQueryString('zoom', $zoom);
-        $req->addQueryString('width', $width);
-        $req->addQueryString('height', $height);
-        
-        $res = $req->sendRequest();
-        
-        if(PEAR::isError($res))
-            die_with_code(500, "{$res->message}\n{$q}\n");
+        $png = compose_map_image($north, $south, $east, $west, $zoom, $width, $height);
 
         // post a preview
         $url = new Net_URL($print['preview_url']);
-        $res = s3_post_file(ltrim($url->path, '/'), $req->getResponseBody(), 'image/png');
+        $res = s3_post_file(ltrim($url->path, '/'), $png, 'image/png');
         
         if(PEAR::isError($res))
             die_with_code(500, "{$res->message}\n{$q}\n");
@@ -66,17 +84,7 @@
             $height *= 2;
         }
 
-        $req = new HTTP_Request('http://'.WSCOMPOSE_HOSTPORT.'/?provider=CLOUDMADE_FINELINE');
-        $req->addQueryString('latitude', ($north + $south) / 2);
-        $req->addQueryString('longitude', ($east + $west) / 2);
-        $req->addQueryString('zoom', $zoom);
-        $req->addQueryString('width', $width);
-        $req->addQueryString('height', $height);
-        
-        $res = $req->sendRequest();
-        
-        if(PEAR::isError($res))
-            die_with_code(500, "{$res->message}\n{$q}\n");
+        $png = compose_map_image($north, $south, $east, $west, $zoom, $width, $height);
 
         $print_url = 'http://'.get_domain_name().get_base_dir().'/print.php?id='.urlencode($print['id']);
     
@@ -89,7 +97,7 @@
         $hand_filename = realpath(dirname(__FILE__).'/../lib/print/Hand.png');
         $pdf->image($hand_filename, 516, 30, 66, 48);
         
-        $map_img = imagecreatefromstring($req->getResponseBody());
+        $map_img = imagecreatefromstring($png);
         $map_filename = tempnam(TMP_DIR, 'composed-map-');
         imagejpeg($map_img, $map_filename, 75);
         $pdf->image($map_filename, 36, 72, 540, 684, 'jpg');

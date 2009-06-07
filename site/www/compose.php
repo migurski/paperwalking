@@ -105,7 +105,7 @@
             }
         }
 
-        die_with_code(500, "Tried all the ws-compose host-ports, and none of them worked\n");
+        die_with_code(500, "Tried all the ws-compose host-ports, and none of them worked.\n");
     }
     
     if($zoom && $north && $south && $east && $west)
@@ -126,8 +126,6 @@
          = latlon_placeinfo(($north + $south) / 2, ($west + $east) / 2, $zoom - 1);
 
         $print = set_print($dbh, $print);
-
-        $dbh->query('COMMIT');
         
         $width = 360;
         $height = 456;
@@ -211,6 +209,8 @@
         
         unlink($map_filename);
         unlink($code_filename);
+
+        $dbh->query('COMMIT');
         
         header("Location: {$print_url}");
     }

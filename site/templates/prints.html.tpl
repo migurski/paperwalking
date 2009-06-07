@@ -17,16 +17,24 @@
     <ol>
         {foreach from=$prints item="print"}
             <li>
-                <a href="{$base_dir}/print.php?id={$print.id|escape}">
-                    <b id="print-{$print.id|escape}">{$print.age|nice_relativetime|escape}</b></a>
-                <script type="text/javascript" language="javascript1.2" defer="defer">
-                // <![CDATA[
+                {if $print.place_woeid}
+                    <a href="{$base_dir}/print.php?id={$print.id|escape}">
+                        <b id="print-{$print.id|escape}">{$print.age|nice_relativetime|escape}</b>
+                        <br />
+                        {$print.place_name|escape}</a>
+
+                {else}
+                    <a href="{$base_dir}/print.php?id={$print.id|escape}">
+                        <b id="print-{$print.id|escape}">{$print.age|nice_relativetime|escape}</b></a>
+                    <script type="text/javascript" language="javascript1.2" defer="defer">
+                    // <![CDATA[
+                    
+                        var onPlaces_{$print.id|escape} = new Function('res', "appendPlacename(res, document.getElementById('print-{$print.id|escape}'))");
+                        getPlacename({$print.latitude|escape}, {$print.longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlaces_{$print.id|escape}');
                 
-                    var onPlaces_{$print.id|escape} = new Function('res', "appendPlacename(res, document.getElementById('print-{$print.id|escape}'))");
-                    getPlacename({$print.latitude|escape}, {$print.longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlaces_{$print.id|escape}');
-            
-                // ]]>
-                </script>
+                    // ]]>
+                    </script>
+                {/if}
             </li>
         {/foreach}
     </ol>

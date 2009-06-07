@@ -44,6 +44,23 @@
         return $id;
     }
     
+    function table_columns(&$dbh, $table)
+    {
+        $q = 'DESCRIBE '.$dbh->escapeSimple($table);
+
+        $res = $dbh->query($q);
+        
+        if(PEAR::isError($res)) 
+            die_with_code(500, "{$res->message}\n{$q}\n");
+
+        $columns = array();
+        
+        while($col = $res->fetchRow(DB_FETCHMODE_ASSOC))
+            $columns[$col['Field']] = $col['Type'];
+
+        return $columns;
+    }
+    
     function add_print(&$dbh, $user_id)
     {
         while(true)
@@ -179,7 +196,15 @@
     
     function get_prints(&$dbh, $count)
     {
-        $q = sprintf('SELECT id, north, south, east, west,
+        // TODO: ditch dependency on table_columns()
+        $column_names = array_keys(table_columns($dbh, 'prints'));
+        
+        $woeid_column_names = in_array('place_woeid', $column_names)
+            ? 'country_name, country_woeid, region_name, region_woeid, place_name, place_woeid,'
+            : '';
+        
+        $q = sprintf("SELECT {$woeid_column_names}
+                             id, north, south, east, west,
                              (north + south) / 2 AS latitude,
                              (east + west) / 2 AS longitude,
                              UNIX_TIMESTAMP(created) AS created,
@@ -187,7 +212,7 @@
                              user_id
                       FROM prints
                       ORDER BY created DESC
-                      LIMIT %d',
+                      LIMIT %d",
                       $count);
     
         $res = $dbh->query($q);
@@ -210,14 +235,22 @@
     
     function get_print(&$dbh, $print_id)
     {
-        $q = sprintf('SELECT id, north, south, east, west,
+        // TODO: ditch dependency on table_columns()
+        $column_names = array_keys(table_columns($dbh, 'prints'));
+        
+        $woeid_column_names = in_array('place_woeid', $column_names)
+            ? 'country_name, country_woeid, region_name, region_woeid, place_name, place_woeid,'
+            : '';
+        
+        $q = sprintf("SELECT {$woeid_column_names}
+                             id, north, south, east, west,
                              (north + south) / 2 AS latitude,
                              (east + west) / 2 AS longitude,
                              UNIX_TIMESTAMP(created) AS created,
                              UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(created) AS age,
                              user_id
                       FROM prints
-                      WHERE id = %s',
+                      WHERE id = %s",
                      $dbh->quoteSmart($print_id));
     
         $res = $dbh->query($q);
@@ -440,9 +473,11 @@
             return false;
 
         $update_clauses = array();
+        $column_names = array_keys(table_columns($dbh, 'prints'));
 
-        foreach(array('north', 'south', 'east', 'west', 'user_id') as $field)
-            if(!is_null($print[$field]))
+        // TODO: ditch dependency on table_columns()
+        foreach(array('north', 'south', 'east', 'west', 'user_id', 'country_name', 'country_woeid', 'region_name', 'region_woeid', 'place_name', 'place_woeid') as $field)
+            if(in_array($field, $column_names) && !is_null($print[$field]))
                 if($print[$field] != $old_print[$field])
                     $update_clauses[] = sprintf('%s = %s', $field, $dbh->quoteSmart($print[$field]));
 

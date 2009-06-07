@@ -7,7 +7,7 @@
 	<title>Scanned Map #{$scan.id|escape} (Walking Papers)</title>
 	<link rel="stylesheet" href="{$base_dir}/style.css" type="text/css" />
 	<link rel="stylesheet" href="{$base_dir}/scan.css" type="text/css" />
-	{if $scan && $scan.last_step != 6 && $scan.last_step != $constants.STEP_FATAL_ERROR}
+	{if $scan && $scan.last_step != 6 && $scan.last_step != $constants.STEP_FATAL_ERROR && $scan.last_step != $constants.STEP_FATAL_QRCODE_ERROR}
         <meta http-equiv="refresh" content="5" />
     {else}
         <script type="text/javascript" src="http://www.openstreetmap.org/javascripts/swfobject.js"></script>
@@ -113,9 +113,9 @@
                 </form>
             </div>
         {else}
-            {if $step.number == $constants.STEP_FATAL_ERROR}
+            {if $step.number == $constants.STEP_FATAL_ERROR || $step.number == $constants.STEP_FATAL_QRCODE_ERROR}
                 <p>
-                    Giving up, {$step.number|step_description|lower|escape}.
+                    {$step.number|step_description|escape}, giving up.
                 </p>
                 <p>
                     You might try uploading your scan again, making sure that
@@ -125,6 +125,15 @@
                     If this doesn’t help,
                     <a href="mailto:info@walking-papers.org?subject=Problem%20with%20scan%20#{$scan.id|escape}">let us know</a>.
                 </p>
+                
+                {if $step.number == $constants.STEP_FATAL_QRCODE_ERROR}
+                    <p>
+                        Here’s the part of your scan where we tried to find a code:
+                    </p>
+                    <p>
+                        <img width="65%" border="1" src="http://{$constants.S3_BUCKET_ID|escape}.s3.amazonaws.com/scans/{$scan.id|escape}/qrcode.jpg" />
+                    </p>
+                {/if}
                 
             {else}
                 <p>

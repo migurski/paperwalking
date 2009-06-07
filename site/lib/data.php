@@ -19,6 +19,7 @@
     define('STEP_BAD_QRCODE', 98);
     define('STEP_ERROR', 99);
     define('STEP_FATAL_ERROR', 100);
+    define('STEP_FATAL_QRCODE_ERROR', 101);
 
     function &get_db_connection()
     {
@@ -374,6 +375,9 @@
 
             case STEP_ERROR:
                 return 'A temporary error has occured';
+
+            case STEP_FATAL_QRCODE_ERROR:
+                return 'We could not read the QR code';
 
             case STEP_FATAL_ERROR:
                 return 'A permanent error has occured';

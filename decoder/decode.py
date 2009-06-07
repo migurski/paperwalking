@@ -167,7 +167,7 @@ def main(url, markers, apibase, message_id, bucket_id, aws_access, aws_secret, p
 
     except CodeReadException:
         print 'Failed QR code, maybe will try again?'
-        updateStepLocal(99, 10)
+        updateStepLocal(98, 10)
     
     except KeyboardInterrupt:
         raise

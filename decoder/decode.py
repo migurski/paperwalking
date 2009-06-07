@@ -58,7 +58,7 @@ class Marker:
 def main(url, markers, apibase, message_id, aws_access, aws_secret, password):
     """
     """
-    url_pat = re.compile(r'^http://([^\.]+).s3.amazonaws.com/scans/([^/]+)/(.+)$', re.I)
+    url_pat = re.compile(r'^http://([^\.]+).s3.amazonaws.com/scans/([^/]+)/(.*)$', re.I)
     
     if url_pat.match(url):
         scan_id = url_pat.sub(r'\2', url)

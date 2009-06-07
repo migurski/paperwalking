@@ -17,18 +17,27 @@
     <ol>
         {foreach from=$scans item="scan"}
             <li>
-                <a href="{$base_dir}/scan.php?id={$scan.id|escape}">
-                    <b id="scan-{$scan.id|escape}">{$scan.age|nice_relativetime|escape}
-                        {if $scan.will_edit == 'no'}✻{/if}</b></a>
+                {if $scan.print_place_woeid}
+                    <a href="{$base_dir}/scan.php?id={$scan.id|escape}">
+                        <b id="scan-{$scan.id|escape}">{$scan.age|nice_relativetime|escape}
+                            {if $scan.will_edit == 'no'}✻{/if}</b>
+                        <br />
+                        {$scan.print_place_name|escape}</a>
 
-                <script type="text/javascript" language="javascript1.2" defer="defer">
-                // <![CDATA[
+                {else}
+                    <a href="{$base_dir}/scan.php?id={$scan.id|escape}">
+                        <b id="scan-{$scan.id|escape}">{$scan.age|nice_relativetime|escape}
+                            {if $scan.will_edit == 'no'}✻{/if}</b></a>
+    
+                    <script type="text/javascript" language="javascript1.2" defer="defer">
+                    // <![CDATA[
+                    
+                        var onPlaces_{$scan.id|escape} = new Function('res', "appendPlacename(res, document.getElementById('scan-{$scan.id|escape}'))");
+                        getPlacename({$scan.print_latitude|escape}, {$scan.print_longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlaces_{$scan.id|escape}');
                 
-                    var onPlaces_{$scan.id|escape} = new Function('res', "appendPlacename(res, document.getElementById('scan-{$scan.id|escape}'))");
-                    getPlacename({$scan.print_latitude|escape}, {$scan.print_longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlaces_{$scan.id|escape}');
-            
-                // ]]>
-                </script>
+                    // ]]>
+                    </script>
+                {/if}
 
                 {if $scan.description}
                     <br />

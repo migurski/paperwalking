@@ -270,7 +270,15 @@
     
     function get_scans(&$dbh, $count, $include_private=false)
     {
-        $q = sprintf('SELECT s.id, s.print_id, s.last_step,
+        // TODO: ditch dependency on table_columns()
+        $column_names = array_keys(table_columns($dbh, 'prints'));
+        
+        $woeid_column_names = in_array('place_woeid', $column_names)
+            ? 'p.place_name AS print_place_name, p.place_woeid AS print_place_woeid,'
+            : '';
+        
+        $q = sprintf("SELECT {$woeid_column_names}
+                             s.id, s.print_id, s.last_step,
                              s.min_row, s.min_column, s.min_zoom,
                              s.max_row, s.max_column, s.max_zoom,
                              s.description, s.is_private, s.will_edit,
@@ -285,7 +293,7 @@
                       WHERE s.last_step = %d
                         AND %s
                       ORDER BY s.created DESC
-                      LIMIT %d',
+                      LIMIT %d",
                      STEP_FINISHED,
                      ($include_private ? '1' : "s.is_private='no'"),
                      $count);
@@ -305,19 +313,15 @@
     
     function get_scan(&$dbh, $scan_id)
     {
-        $q = sprintf('SELECT s.id, s.print_id, s.last_step,
-                             s.min_row, s.min_column, s.min_zoom,
-                             s.max_row, s.max_column, s.max_zoom,
-                             s.description, s.is_private, s.will_edit,
-                             (p.north + p.south) / 2 AS print_latitude,
-                             (p.east + p.west) / 2 AS print_longitude,
-                             UNIX_TIMESTAMP(s.created) AS created,
-                             UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(s.created) AS age,
-                             s.user_id
-                      FROM scans AS s
-                      LEFT JOIN prints AS p
-                        ON p.id = s.print_id
-                      WHERE s.id = %s',
+        $q = sprintf('SELECT id, print_id, last_step,
+                             min_row, min_column, min_zoom,
+                             max_row, max_column, max_zoom,
+                             description, is_private, will_edit,
+                             UNIX_TIMESTAMP(created) AS created,
+                             UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(created) AS age,
+                             user_id
+                      FROM scans
+                      WHERE id = %s',
                      $dbh->quoteSmart($scan_id));
     
         $res = $dbh->query($q);

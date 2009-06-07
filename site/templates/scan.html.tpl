@@ -143,9 +143,19 @@
     
                 {if $step.number >= 7}
                     <p>
-                        Please stand by, currently {$step.number|step_description|lower|escape}.
+                        {$step.number|step_description|escape}, please stand by.
                         We will try to process your scan again shortly.
                     </p>
+                    
+                    {if $step.number == $constants.STEP_BAD_QRCODE}
+                        <p>
+                            Here’s the part of your scan where we tried to find a code:
+                        </p>
+                        <p>
+                            <img width="65%" border="1" src="http://{$constants.S3_BUCKET_ID|escape}.s3.amazonaws.com/scans/{$scan.id|escape}/qrcode.jpg" />
+                        </p>
+                    {/if}
+                    
                 {else}
                     <p>
                         This may take a little while, generally a few minutes.

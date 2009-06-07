@@ -20,6 +20,37 @@
     if($user)
         setcookie('visitor', $user['id'], time() + 86400 * 31);
 
+    function latlon_placename($lat, $lon, $zoom)
+    {
+        $req = new HTTP_Request('http://api.flickr.com/services/rest/');
+        $req->addQueryString('method', 'flickr.places.findByLatLon');
+        $req->addQueryString('lat', $lat);
+        $req->addQueryString('lon', $lon);
+        $req->addQueryString('accuracy', $zoom);
+        $req->addQueryString('format', 'php_serial');
+        $req->addQueryString('api_key', FLICKR_KEY);
+
+        $res = $req->sendRequest();
+        
+        if(PEAR::isError($res))
+            return '';
+
+        if($req->getResponseCode() == 200)
+        {
+            $rsp = unserialize($req->getResponseBody());
+            
+            if(is_array($rsp['places']) && is_array($rsp['places']['place']))
+            {
+                $places = $rsp['places']['place'];
+                
+                if(is_array($places[0]) && $places[0]['name'])
+                    return $places[0]['name'];
+            }
+        }
+        
+        return '';
+    }
+    
     function compose_map_image($north, $south, $east, $west, $zoom, $width, $height)
     {
         $hostports = explode(',', WSCOMPOSE_HOSTPORTS);
@@ -59,6 +90,8 @@
         $print['south'] = $south;
         $print['east'] = $east;
         $print['west'] = $west;
+        
+        $print['place_name'] = latlon_placename(($north + $south) / 2, ($west + $east) / 2, $zoom - 2);
         
         $print = set_print($dbh, $print);
         

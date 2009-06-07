@@ -55,7 +55,7 @@ class Marker:
 
         self.anchor = Point(x, y)
 
-def main(url, markers, apibase, message_id, aws_access, aws_secret, password):
+def main(url, markers, apibase, message_id, bucket_id, aws_access, aws_secret, password):
     """
     """
     url_pat = re.compile(r'^http://([^\.]+).s3.amazonaws.com/scans/([^/]+)/(.*)$', re.I)
@@ -71,6 +71,8 @@ def main(url, markers, apibase, message_id, aws_access, aws_secret, password):
     updateStepLocal = lambda step_number, timeout: updateStep(apibase, password, scan_id, step_number, message_id, timeout)
     
     try:
+        s3 = AWS.Storage.Service(aws_access, aws_secret)
+
         # sifting
         updateStepLocal(2, 60)
         
@@ -92,6 +94,13 @@ def main(url, markers, apibase, message_id, aws_access, aws_secret, password):
         updateStepLocal(4, 10)
         
         qrcode = extractCode(image, markers)
+
+        qrcode_name = 'scans/%(scan_id)s/qrcode.jpg' % locals()
+        qrcode_bytes = StringIO.StringIO()
+        qrcode_image = qrcode.copy()
+        qrcode_image.save(qrcode_bytes, 'JPEG')
+        qrcode_bytes = qrcode_bytes.getvalue()
+        s3.putBucketObject(bucket_id, qrcode_name, qrcode_bytes, 'image/jpeg', 'public-read')
     
         print_id, north, west, south, east = readCode(qrcode)
         print 'code contents:', 'Print', print_id, (north, west, south, east)
@@ -107,7 +116,6 @@ def main(url, markers, apibase, message_id, aws_access, aws_secret, password):
         print topleft, bottomright
 
         renders = {}
-        s3 = AWS.Storage.Service(aws_access, aws_secret)
         
         # make a smallish preview image
         preview_name = 'scans/%(scan_id)s/preview.jpg' % locals()
@@ -116,7 +124,7 @@ def main(url, markers, apibase, message_id, aws_access, aws_secret, password):
         preview_image.thumbnail((409, 280), PIL.Image.ANTIALIAS)
         preview_image.save(preview_bytes, 'JPEG')
         preview_bytes = preview_bytes.getvalue()
-        s3.putBucketObject('paperwalking-uploads', preview_name, preview_bytes, 'image/jpeg', 'public-read')
+        s3.putBucketObject(bucket_id, preview_name, preview_bytes, 'image/jpeg', 'public-read')
         
         # make a largish image
         large_name = 'scans/%(scan_id)s/large.jpg' % locals()
@@ -125,7 +133,7 @@ def main(url, markers, apibase, message_id, aws_access, aws_secret, password):
         large_image.thumbnail((900, 900), PIL.Image.ANTIALIAS)
         large_image.save(large_bytes, 'JPEG')
         large_bytes = large_bytes.getvalue()
-        s3.putBucketObject('paperwalking-uploads', large_name, large_bytes, 'image/jpeg', 'public-read')
+        s3.putBucketObject(bucket_id, large_name, large_bytes, 'image/jpeg', 'public-read')
         
         min_zoom, max_zoom = 20, 0
         
@@ -143,7 +151,7 @@ def main(url, markers, apibase, message_id, aws_access, aws_secret, password):
                 tile_image.save(tile_bytes, 'JPEG')
                 tile_bytes = tile_bytes.getvalue()
 
-                s3.putBucketObject('paperwalking-uploads', tile_name, tile_bytes, 'image/jpeg', 'public-read')
+                s3.putBucketObject(bucket_id, tile_name, tile_bytes, 'image/jpeg', 'public-read')
             
                 renders[str(coord)] = tile_image
                 
@@ -184,7 +192,7 @@ def updateStep(apibase, password, scan_id, step_number, message_id, timeout):
     req.request('POST', path + '/step.php', params, headers)
     res = req.getresponse()
     
-    assert res.status == 200, 'POST to step.php resulting in status %s instead of 200' % res.status
+    assert res.status == 200, 'POST to step.php %s/%d resulting in status %s instead of 200' % (scan_id, step_number, res.status)
     
     if step_number == 6 or res.read().strip() == 'Too many errors':
         # magic number for "finished"

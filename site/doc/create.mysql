@@ -32,7 +32,9 @@ CREATE TABLE prints (
 
 ) ENGINE=InnoDB, CHARACTER SET utf8;
 
-ALTER TABLE prints ADD COLUMN country_name VARCHAR(64) AFTER west;
+ALTER TABLE prints ADD COLUMN zoom INT UNSIGNED AFTER west;
+
+ALTER TABLE prints ADD COLUMN country_name VARCHAR(64) AFTER zoom;
 ALTER TABLE prints ADD COLUMN country_woeid INT UNSIGNED AFTER country_name;
 
 ALTER TABLE prints ADD COLUMN region_name VARCHAR(64) AFTER country_woeid;

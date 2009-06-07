@@ -487,7 +487,7 @@
         $column_names = array_keys(table_columns($dbh, 'prints'));
 
         // TODO: ditch dependency on table_columns()
-        foreach(array('north', 'south', 'east', 'west', 'user_id', 'country_name', 'country_woeid', 'region_name', 'region_woeid', 'place_name', 'place_woeid') as $field)
+        foreach(array('north', 'south', 'east', 'west', 'zoom', 'user_id', 'country_name', 'country_woeid', 'region_name', 'region_woeid', 'place_name', 'place_woeid') as $field)
             if(in_array($field, $column_names) && !is_null($print[$field]))
                 if($print[$field] != $old_print[$field])
                     $update_clauses[] = sprintf('%s = %s', $field, $dbh->quoteSmart($print[$field]));

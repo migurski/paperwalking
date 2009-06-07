@@ -118,6 +118,7 @@
         $print['south'] = $south;
         $print['east'] = $east;
         $print['west'] = $west;
+        $print['zoom'] = $zoom;
         
         list($print['country_name'], $print['country_woeid'],
              $print['region_name'], $print['region_woeid'],

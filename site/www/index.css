@@ -3,3 +3,13 @@
     color: white;
     background-color: black;
 }
+
+.sheet #zoom-warning
+{
+    font-size: 1.5em;
+    width: 310px;
+    position: absolute;
+    left: 40px;
+    top: 415px;
+    padding: 9px;
+}

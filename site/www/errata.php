@@ -82,15 +82,54 @@
             $zooms[$row['zoom']] = $row['prints'];
     }
     
+    
+    
+    $country_names = array();
+    $country_counts = array();
+    $country_percents = array();
+    
+    if(in_array('country_woeid', array_keys(table_columns($dbh, 'prints'))))
+    {
+        $res = $dbh->query('SELECT country_woeid, country_name, COUNT(*) AS print_count
+                            FROM prints
+                            WHERE country_woeid
+                            GROUP BY country_woeid
+                            ORDER BY print_count DESC');
+    
+        if(PEAR::isError($res)) 
+            die_with_code(500, "{$res->message}\n");
+    
+        $total = 0;
+        
+        while($row = $res->fetchRow(DB_FETCHMODE_ASSOC))
+        {
+            $total += $row['print_count'];
+        
+            if($country_counts[$row['country_woeid']]) {
+                $country_counts[$row['country_woeid']] += $row['print_count'];
+
+            } else {
+                $country_names[$row['country_woeid']] = $row['country_name'];
+                $country_counts[$row['country_woeid']] = $row['print_count'];
+            }
+        }
+        
+        foreach($country_counts as $woeid => $count)
+            $country_percents[$woeid] = 100 * $count / $total;
+    }
+    
 
 
     $sm = get_smarty_instance();
-    $sm->assign('print_count', $print_count);
-    $sm->assign('scan_count', $scan_count);
+    //$sm->assign('print_count', $print_count);
+    //$sm->assign('scan_count', $scan_count);
     $sm->assign('print_percent', round(100 * $print_count / ($print_count + $scan_count)));
     $sm->assign('scan_percent', round(100 * $scan_count / ($print_count + $scan_count)));
-    $sm->assign('hemisphere_count', $hemisphere_count);
+    //$sm->assign('hemisphere_count', $hemisphere_count);
     $sm->assign('hemisphere_percent', $hemisphere_percent);
+    $sm->assign('country_names', $country_names);
+    //$sm->assign('country_counts', $country_counts);
+    $sm->assign('country_percents', $country_percents);
     $sm->assign('zooms', $zooms);
     
     header("Content-Type: text/html; charset=UTF-8");

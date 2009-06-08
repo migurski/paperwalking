@@ -8,17 +8,6 @@
 	<link rel="stylesheet" href="{$base_dir}/style.css" type="text/css" />
     <script type="text/javascript" src="{$base_dir}/modestmaps.js"></script>
     <script type="text/javascript" src="{$base_dir}/script.js"></script>
-    <style type="text/css" title="text/css">
-    /* <![CDATA[{literal} */
-    
-        form#age-warning
-        {
-            border: 1px solid black;
-            padding: .2em 1em;
-        }
-    
-    /* {/literal}]]> */
-    </style>
 </head>
 <body>
 
@@ -51,26 +40,6 @@
         <span class="date-created" style="display: none;">{$print.created|escape}</span>
     </p>
     
-    {if $print.age > 14*86400}
-        <form id="age-warning" action="{$base_dir}/compose.php" method="post" name="bounds">
-            <p>
-                <b>This print is more than two weeks old.</b>
-                You may want to make a fresh one that
-                includes recent OpenStreetMap updates.
-            </p>
-
-            <p style="text-align: right;">
-                <input name="north" type="hidden" value="{$print.north|escape}" />
-                <input name="south" type="hidden" value="{$print.south|escape}" />
-                <input name="east" type="hidden" value="{$print.east|escape}" />
-                <input name="west" type="hidden" value="{$print.west|escape}" />
-                <input name="zoom" type="hidden" value="{$print.zoom|escape}" />
-        
-                <input class="mac-button" type="submit" name="action" value="Print" />
-            </p>
-        </form>
-    {/if}
-    
     <p>
         <a href="{$print.pdf_url|escape}">
             <img src="{$base_dir}/tiny-doc.png" border="0" align="bottom"/>
@@ -85,6 +54,21 @@
         to trace your handwritten changes and notes directly into OpenStreetMap.
     </p>
 
+    {if $print.zoom}
+        <form action="{$base_dir}/compose.php" method="post" name="bounds">
+            <p>
+                <input name="north" type="hidden" value="{$print.north|escape}" />
+                <input name="south" type="hidden" value="{$print.south|escape}" />
+                <input name="east" type="hidden" value="{$print.east|escape}" />
+                <input name="west" type="hidden" value="{$print.west|escape}" />
+                <input name="zoom" type="hidden" value="{$print.zoom|escape}" />
+        
+                Is this map wrong, or out of date?
+                <input class="mac-button" type="submit" name="action" value="Redo" />
+            </p>
+        </form>
+    {/if}
+    
     <div class="sheet">
         <img src="{$print.preview_url|escape}"/>
         <div class="dummy-qrcode"><img src="http://chart.apis.google.com/chart?chs=44x44&amp;cht=qr&amp;chld=L%7C0&amp;chl=example" alt="" border="0" /></div>

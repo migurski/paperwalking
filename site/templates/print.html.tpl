@@ -42,8 +42,16 @@
     
     <p>
         Print map of the area surrounding
-        <a id="print-location" href="http://www.openstreetmap.org/?lat={$print.latitude|escape}&amp;lon={$print.longitude|escape}&amp;zoom=15&amp;layers=B000FTF">
-            {$print.latitude|nice_degree:"lat"|escape}, {$print.longitude|nice_degree:"lon"|escape}</a>
+        {if $print.place_woeid}
+            <a id="print-location" href="http://www.openstreetmap.org/?lat={$print.latitude|escape}&amp;lon={$print.longitude|escape}&amp;zoom=15&amp;layers=B000FTF">
+                {$print.latitude|nice_degree:"lat"|escape}, {$print.longitude|nice_degree:"lon"|escape}</a>
+            <br />
+            {$print.place_name|escape}
+
+        {else}
+            <a id="print-location" href="http://www.openstreetmap.org/?lat={$print.latitude|escape}&amp;lon={$print.longitude|escape}&amp;zoom=15&amp;layers=B000FTF">
+                {$print.latitude|nice_degree:"lat"|escape}, {$print.longitude|nice_degree:"lon"|escape}</a>
+        {/if}
         <br />
         Created {$print.age|nice_relativetime|escape}.
         <span class="date-created" style="display: none;">{$print.created|escape}</span>
@@ -102,7 +110,7 @@
         var lat = {$print.latitude|escape};
         var lon = {$print.longitude|escape};
         
-        getPlacename(lat, lon, flickrKey, 'onPlaces');
+        {if !$print.place_woeid}getPlacename(lat, lon, flickrKey, 'onPlaces');{/if}
         makeStaticMap('mini-map', lat, lon, cloudmadeKey);
 
     // ]]>

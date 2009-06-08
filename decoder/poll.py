@@ -27,6 +27,10 @@ parser.add_option('-b', '--apibase', dest='apibase',
                   help='URL root of queue API',
                   action='store')
 
+parser.add_option('-d', '--bucket', dest='bucket',
+                  help='S3 bucket name',
+                  action='store')
+
 def getMarkers():
     """
     """
@@ -67,7 +71,7 @@ if __name__ == '__main__':
                 pass
             else:
                 print >> sys.stderr, datetime.datetime.now(), 'Decoding message id', message_id, '-', url
-                decode.main(url, getMarkers(), options.apibase, message_id, options.access, options.secret, options.password)
+                decode.main(url, getMarkers(), options.apibase, message_id, options.bucket, options.access, options.secret, options.password)
 
         except KeyboardInterrupt:
             raise

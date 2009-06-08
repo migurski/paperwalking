@@ -24,6 +24,7 @@
         <img src="http://chart.apis.google.com/chart?cht=p&amp;chd=t:{$print_percent|escape},{$scan_percent|escape}&amp;chs=408x120&amp;chl={$print_count|escape}+Prints|{$scan_count|escape}+Scans">
     </p>
     
+    {*
     <h3>Zoom Levels</h3>
     
     <p>
@@ -34,6 +35,7 @@
     <p>
         <img src="http://chart.apis.google.com/chart?cht=bvs&amp;chbh=a&amp;chs=408x120&amp;chxt=r&amp;chxr=0,0,{$zooms|@max}&amp;chds=0,{$zooms|@max}&amp;chl=0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18&amp;chd=t:{$zooms.0|escape},{$zooms.1|escape},{$zooms.2|escape},{$zooms.3|escape},{$zooms.4|escape},{$zooms.5|escape},{$zooms.6|escape},{$zooms.7|escape},{$zooms.8|escape},{$zooms.9|escape},{$zooms.10|escape},{$zooms.11|escape},{$zooms.12|escape},{$zooms.13|escape},{$zooms.14|escape},{$zooms.15|escape},{$zooms.16|escape},{$zooms.17|escape},{$zooms.18|escape}" />
     </p>
+    *}
     
     <h3>Hemispheres</h3>
     

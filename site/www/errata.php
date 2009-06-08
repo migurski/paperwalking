@@ -112,6 +112,10 @@
                 $country_names[$row['country_woeid']] = $row['country_name'];
                 $country_counts[$row['country_woeid']] = $row['print_count'];
             }
+            
+            // the pie chart is small
+            if(count($country_names) == 15)
+                break;
         }
         
         foreach($country_counts as $woeid => $count)

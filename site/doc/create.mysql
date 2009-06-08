@@ -40,7 +40,7 @@ ALTER TABLE prints ADD COLUMN country_woeid INT UNSIGNED AFTER country_name;
 ALTER TABLE prints ADD COLUMN region_name VARCHAR(64) AFTER country_woeid;
 ALTER TABLE prints ADD COLUMN region_woeid INT UNSIGNED AFTER region_name;
 
-ALTER TABLE prints ADD COLUMN place_name VARCHAR(64) AFTER region_woeid;
+ALTER TABLE prints ADD COLUMN place_name VARCHAR(128) AFTER region_woeid;
 ALTER TABLE prints ADD COLUMN place_woeid INT UNSIGNED AFTER place_name;
 
 

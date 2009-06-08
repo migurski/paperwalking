@@ -15,6 +15,12 @@
 
     {include file="navigation.htmlf.tpl"}
     
+    <p style="background: red; color: white;">
+        For much of Saturday night / Sunday morning (Pacific time) it was not
+        possible to make new prints, because I accidentally broke the site.
+        Everything should be back to normal now. Sorry, Mike.
+    </p>
+    
     <p>
         Print maps, draw on them, scan them back in and help OpenStreetMap
         improve its coverage of local points of interests and street detail.

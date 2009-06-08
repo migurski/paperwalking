@@ -32,6 +32,12 @@
 
     {include file="navigation.htmlf.tpl"}
     
+    <p style="background: red; color: white;">
+        For much of Saturday night / Sunday morning (Pacific time) it was not
+        possible to make new prints, because I accidentally broke the site.
+        Everything should be back to normal now. Sorry, Mike.
+    </p>
+    
     <h2>Print Map</h2>
     
     <p>

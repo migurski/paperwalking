@@ -14,6 +14,16 @@
     
     <h2>Errata</h2>
     
+    <h3>Countries</h3>
+    
+    <p>
+        Share of prints by country.
+    </p>
+    
+    <p>
+        <img src="http://chart.apis.google.com/chart?cht=p&amp;chd=t:{"urlencode"|@array_map:$country_percents|@join:","|escape}&amp;chs=408x120&amp;chl={"urlencode"|@array_map:$country_names|@join:"|"|escape}">
+    </p>
+    
     <h3>Numbers</h3>
     
     <p>
@@ -21,7 +31,7 @@
     </p>
     
     <p>
-        <img src="http://chart.apis.google.com/chart?cht=p&amp;chd=t:{$print_percent|escape},{$scan_percent|escape}&amp;chs=408x120&amp;chl={$print_count|escape}+Prints|{$scan_count|escape}+Scans">
+        <img src="http://chart.apis.google.com/chart?cht=p&amp;chd=t:{$print_percent|escape},{$scan_percent|escape}&amp;chs=408x120&amp;chl=Prints|Scans">
     </p>
     
     <h3>Zoom Levels</h3>
@@ -42,11 +52,11 @@
     </p>
     
     <p>
-        <img src="http://chart.apis.google.com/chart?cht=p&amp;chp=1.2566&amp;chd=t:{$hemisphere_percent.western|escape},{$hemisphere_percent.eastern|escape}&amp;chs=408x120&amp;chl={$hemisphere_count.western|escape}+Western|{$hemisphere_count.eastern|escape}+Eastern">
+        <img src="http://chart.apis.google.com/chart?cht=p&amp;chp=1.2566&amp;chd=t:{$hemisphere_percent.western|escape},{$hemisphere_percent.eastern|escape}&amp;chs=408x120&amp;chl=Western|Eastern">
     </p>
     
     <p>
-        <img src="http://chart.apis.google.com/chart?cht=p&amp;chp=2.8274&amp;chd=t:{$hemisphere_percent.northern|escape},{$hemisphere_percent.southern|escape}&amp;chs=408x120&amp;chl={$hemisphere_count.northern|escape}+Northern|{$hemisphere_count.southern|escape}+Southern">
+        <img src="http://chart.apis.google.com/chart?cht=p&amp;chp=2.8274&amp;chd=t:{$hemisphere_percent.northern|escape},{$hemisphere_percent.southern|escape}&amp;chs=408x120&amp;chl=Northern|Southern">
     </p>
     
     {include file="footer.htmlf.tpl"}

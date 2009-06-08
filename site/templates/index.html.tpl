@@ -112,17 +112,27 @@
     <ol>
         {foreach from=$scans item="rscan"}
             <li>
-                <a href="{$base_dir}/scan.php?id={$rscan.id|escape}">
-                    <b id="scan-{$rscan.id|escape}">{$rscan.age|nice_relativetime|escape}
-                        {if $rscan.will_edit == 'no'}✻{/if}</b></a>
-                <script type="text/javascript" language="javascript1.2" defer="defer">
-                // <![CDATA[
+                {if $rscan.print_place_woeid}
+                    <a href="{$base_dir}/scan.php?id={$rscan.id|escape}">
+                        <b id="scan-{$rscan.id|escape}">{$rscan.age|nice_relativetime|escape}
+                            {if $rscan.will_edit == 'no'}✻{/if}</b>
+                        <br />
+                        {$rscan.print_place_name|escape}</a>
+
+                {else}
+                    <a href="{$base_dir}/scan.php?id={$rscan.id|escape}">
+                        <b id="scan-{$rscan.id|escape}">{$rscan.age|nice_relativetime|escape}
+                            {if $rscan.will_edit == 'no'}✻{/if}</b></a>
+    
+                    <script type="text/javascript" language="javascript1.2" defer="defer">
+                    // <![CDATA[
+                    
+                        var onPlaces_{$rscan.id|escape} = new Function('res', "appendPlacename(res, document.getElementById('scan-{$rscan.id|escape}'))");
+                        getPlacename({$rscan.print_latitude|escape}, {$rscan.print_longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlaces_{$rscan.id|escape}');
                 
-                    var onPlaces_{$rscan.id|escape} = new Function('res', "appendPlacename(res, document.getElementById('scan-{$rscan.id|escape}'))");
-                    getPlacename({$rscan.print_latitude|escape}, {$rscan.print_longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlaces_{$rscan.id|escape}');
-            
-                // ]]>
-                </script>
+                    // ]]>
+                    </script>
+                {/if}
 
                 {if $rscan.description}
                     <br />
@@ -141,16 +151,24 @@
     <ol>
         {foreach from=$prints item="rprint"}
             <li>
-                <a href="{$base_dir}/print.php?id={$rprint.id|escape}">
-                    <b id="print-{$rprint.id|escape}">{$rprint.age|nice_relativetime|escape}</b></a>
-                <script type="text/javascript" language="javascript1.2" defer="defer">
-                // <![CDATA[
+                {if $rprint.place_woeid}
+                    <a href="{$base_dir}/print.php?id={$rprint.id|escape}">
+                        <b id="print-{$rprint.id|escape}">{$rprint.age|nice_relativetime|escape}</b>
+                        <br />
+                        {$rprint.place_name|escape}</a>
+
+                {else}
+                    <a href="{$base_dir}/print.php?id={$rprint.id|escape}">
+                        <b id="print-{$rprint.id|escape}">{$rprint.age|nice_relativetime|escape}</b></a>
+                    <script type="text/javascript" language="javascript1.2" defer="defer">
+                    // <![CDATA[
+                    
+                        var onPlaces_{$rprint.id|escape} = new Function('res', "appendPlacename(res, document.getElementById('print-{$rprint.id|escape}'))");
+                        getPlacename({$rprint.latitude|escape}, {$rprint.longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlaces_{$rprint.id|escape}');
                 
-                    var onPlaces_{$rprint.id|escape} = new Function('res', "appendPlacename(res, document.getElementById('print-{$rprint.id|escape}'))");
-                    getPlacename({$rprint.latitude|escape}, {$rprint.longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlaces_{$rprint.id|escape}');
-            
-                // ]]>
-                </script>
+                    // ]]>
+                    </script>
+                {/if}
             </li>
         {/foreach}
     </ol>

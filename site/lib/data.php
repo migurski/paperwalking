@@ -16,8 +16,10 @@
     define('STEP_READING_QR_CODE', 4);
     define('STEP_TILING_UPLOADING', 5);
     define('STEP_FINISHED', 6);
+    define('STEP_BAD_QRCODE', 98);
     define('STEP_ERROR', 99);
     define('STEP_FATAL_ERROR', 100);
+    define('STEP_FATAL_QRCODE_ERROR', 101);
 
     function &get_db_connection()
     {
@@ -42,6 +44,23 @@
             $id .= substr($chars, rand(0, strlen($chars) - 1), 1);
 
         return $id;
+    }
+    
+    function table_columns(&$dbh, $table)
+    {
+        $q = 'DESCRIBE '.$dbh->escapeSimple($table);
+
+        $res = $dbh->query($q);
+        
+        if(PEAR::isError($res)) 
+            die_with_code(500, "{$res->message}\n{$q}\n");
+
+        $columns = array();
+        
+        while($col = $res->fetchRow(DB_FETCHMODE_ASSOC))
+            $columns[$col['Field']] = $col['Type'];
+
+        return $columns;
     }
     
     function add_print(&$dbh, $user_id)
@@ -179,7 +198,20 @@
     
     function get_prints(&$dbh, $count)
     {
-        $q = sprintf('SELECT id, north, south, east, west,
+        // TODO: ditch dependency on table_columns()
+        $column_names = array_keys(table_columns($dbh, 'prints'));
+        
+        $woeid_column_names = in_array('place_woeid', $column_names)
+            ? 'country_name, country_woeid, region_name, region_woeid, place_name, place_woeid,'
+            : '';
+        
+        $zoom_column_name = in_array('zoom', $column_names)
+            ? 'zoom,'
+            : '';
+        
+        $q = sprintf("SELECT {$woeid_column_names}
+                             {$zoom_column_name}
+                             id, north, south, east, west,
                              (north + south) / 2 AS latitude,
                              (east + west) / 2 AS longitude,
                              UNIX_TIMESTAMP(created) AS created,
@@ -187,7 +219,7 @@
                              user_id
                       FROM prints
                       ORDER BY created DESC
-                      LIMIT %d',
+                      LIMIT %d",
                       $count);
     
         $res = $dbh->query($q);
@@ -210,14 +242,27 @@
     
     function get_print(&$dbh, $print_id)
     {
-        $q = sprintf('SELECT id, north, south, east, west,
+        // TODO: ditch dependency on table_columns()
+        $column_names = array_keys(table_columns($dbh, 'prints'));
+        
+        $woeid_column_names = in_array('place_woeid', $column_names)
+            ? 'country_name, country_woeid, region_name, region_woeid, place_name, place_woeid,'
+            : '';
+        
+        $zoom_column_name = in_array('zoom', $column_names)
+            ? 'zoom,'
+            : '';
+        
+        $q = sprintf("SELECT {$woeid_column_names}
+                             {$zoom_column_name}
+                             id, north, south, east, west,
                              (north + south) / 2 AS latitude,
                              (east + west) / 2 AS longitude,
                              UNIX_TIMESTAMP(created) AS created,
                              UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(created) AS age,
                              user_id
                       FROM prints
-                      WHERE id = %s',
+                      WHERE id = %s",
                      $dbh->quoteSmart($print_id));
     
         $res = $dbh->query($q);
@@ -235,7 +280,15 @@
     
     function get_scans(&$dbh, $count, $include_private=false)
     {
-        $q = sprintf('SELECT s.id, s.print_id, s.last_step,
+        // TODO: ditch dependency on table_columns()
+        $column_names = array_keys(table_columns($dbh, 'prints'));
+        
+        $woeid_column_names = in_array('place_woeid', $column_names)
+            ? 'p.place_name AS print_place_name, p.place_woeid AS print_place_woeid,'
+            : '';
+        
+        $q = sprintf("SELECT {$woeid_column_names}
+                             s.id, s.print_id, s.last_step,
                              s.min_row, s.min_column, s.min_zoom,
                              s.max_row, s.max_column, s.max_zoom,
                              s.description, s.is_private, s.will_edit,
@@ -250,7 +303,7 @@
                       WHERE s.last_step = %d
                         AND %s
                       ORDER BY s.created DESC
-                      LIMIT %d',
+                      LIMIT %d",
                      STEP_FINISHED,
                      ($include_private ? '1' : "s.is_private='no'"),
                      $count);
@@ -270,19 +323,15 @@
     
     function get_scan(&$dbh, $scan_id)
     {
-        $q = sprintf('SELECT s.id, s.print_id, s.last_step,
-                             s.min_row, s.min_column, s.min_zoom,
-                             s.max_row, s.max_column, s.max_zoom,
-                             s.description, s.is_private, s.will_edit,
-                             (p.north + p.south) / 2 AS print_latitude,
-                             (p.east + p.west) / 2 AS print_longitude,
-                             UNIX_TIMESTAMP(s.created) AS created,
-                             UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(s.created) AS age,
-                             s.user_id
-                      FROM scans AS s
-                      LEFT JOIN prints AS p
-                        ON p.id = s.print_id
-                      WHERE s.id = %s',
+        $q = sprintf('SELECT id, print_id, last_step,
+                             min_row, min_column, min_zoom,
+                             max_row, max_column, max_zoom,
+                             description, is_private, will_edit,
+                             UNIX_TIMESTAMP(created) AS created,
+                             UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(created) AS age,
+                             user_id
+                      FROM scans
+                      WHERE id = %s',
                      $dbh->quoteSmart($scan_id));
     
         $res = $dbh->query($q);
@@ -335,8 +384,14 @@
             case STEP_FINISHED:
                 return 'Finished';
 
+            case STEP_BAD_QRCODE:
+                return 'We could not read the QR code';
+
             case STEP_ERROR:
                 return 'A temporary error has occured';
+
+            case STEP_FATAL_QRCODE_ERROR:
+                return 'We could not read the QR code';
 
             case STEP_FATAL_ERROR:
                 return 'A permanent error has occured';
@@ -376,8 +431,7 @@
     function get_steps(&$dbh, $scan_id, $limit=100)
     {
         $q = sprintf('SELECT scan_id, number,
-                             user_id, created,
-                             is_first, is_last
+                             user_id, created
                       FROM steps
                       WHERE scan_id = %s
                       ORDER BY created DESC
@@ -440,9 +494,11 @@
             return false;
 
         $update_clauses = array();
+        $column_names = array_keys(table_columns($dbh, 'prints'));
 
-        foreach(array('north', 'south', 'east', 'west', 'user_id') as $field)
-            if(!is_null($print[$field]))
+        // TODO: ditch dependency on table_columns()
+        foreach(array('north', 'south', 'east', 'west', 'zoom', 'user_id', 'country_name', 'country_woeid', 'region_name', 'region_woeid', 'place_name', 'place_woeid') as $field)
+            if(in_array($field, $column_names) && !is_null($print[$field]))
                 if($print[$field] != $old_print[$field])
                     $update_clauses[] = sprintf('%s = %s', $field, $dbh->quoteSmart($print[$field]));
 

@@ -20,6 +20,65 @@
     if($user)
         setcookie('visitor', $user['id'], time() + 86400 * 31);
 
+    function latlon_placeinfo($lat, $lon, $zoom)
+    {
+        $req = new HTTP_Request('http://api.flickr.com/services/rest/');
+        $req->addQueryString('method', 'flickr.places.findByLatLon');
+        $req->addQueryString('lat', $lat);
+        $req->addQueryString('lon', $lon);
+        $req->addQueryString('accuracy', $zoom);
+        $req->addQueryString('format', 'php_serial');
+        $req->addQueryString('api_key', FLICKR_KEY);
+
+        $res = $req->sendRequest();
+        
+        if(PEAR::isError($res))
+            return '';
+
+        if($req->getResponseCode() == 200)
+        {
+            $rsp = unserialize($req->getResponseBody());
+            
+            if(is_array($rsp['places']) && is_array($rsp['places']['place']))
+            {
+                $places = $rsp['places']['place'];
+                
+                if(is_array($places[0]) && $places[0]['name'])
+                {
+                    list($place_name, $place_woeid) = array($places[0]['name'], $places[0]['woeid']);
+                    
+                    $req = new HTTP_Request('http://api.flickr.com/services/rest/');
+                    $req->addQueryString('method', 'flickr.places.getInfo');
+                    $req->addQueryString('woe_id', $place_woeid);
+                    $req->addQueryString('format', 'php_serial');
+                    $req->addQueryString('api_key', FLICKR_KEY);
+            
+                    $res = $req->sendRequest();
+                    
+                    if(PEAR::isError($res))
+                        return array(null, null, null, null, null, null);
+            
+                    $rsp = unserialize($req->getResponseBody());
+                    
+                    if(is_array($rsp) && is_array($rsp['place']))
+                    {
+                        list($country, $region) = array($rsp['place']['country'], $rsp['place']['region']);
+                        
+                        if(is_array($country))
+                            list($country_name, $country_woeid) = array($country['_content'], $country['woeid']);
+                        
+                        if(is_array($region))
+                            list($region_name, $region_woeid) = array($region['_content'], $region['woeid']);
+                    }
+                    
+                    return array($country_name, $country_woeid, $region_name, $region_woeid, $place_name, $place_woeid);
+                }
+            }
+        }
+        
+        return array(null, null, null, null, null, null);
+    }
+    
     function compose_map_image($north, $south, $east, $west, $zoom, $width, $height)
     {
         $hostports = explode(',', WSCOMPOSE_HOSTPORTS);
@@ -46,27 +105,14 @@
             }
         }
 
-        die_with_code(500, "Tried all the ws-compose host-ports, and none of them worked\n");
+        die_with_code(500, "Tried all the ws-compose host-ports, and none of them worked.\n");
     }
     
-    if($zoom && $north && $south && $east && $west)
+    function compose_map($print)
     {
-        $dbh->query('START TRANSACTION');
-        
-        $print = add_print($dbh, $user['id']);
-        
-        $print['north'] = $north;
-        $print['south'] = $south;
-        $print['east'] = $east;
-        $print['west'] = $west;
-        
-        $print = set_print($dbh, $print);
-        
-        $dbh->query('COMMIT');
-        
         $width = 360;
         $height = 456;
-        $png = compose_map_image($north, $south, $east, $west, $zoom, $width, $height);
+        $png = compose_map_image($print['north'], $print['south'], $print['east'], $print['west'], $print['zoom'], $width, $height);
 
         // post a preview
         $url = new Net_URL($print['preview_url']);
@@ -75,7 +121,8 @@
         if(PEAR::isError($res))
             die_with_code(500, "{$res->message}\n{$q}\n");
         
-        $max_zoom = min(18, $zoom + 2);
+        $zoom = $print['zoom'];
+        $max_zoom = min(18, $print['zoom'] + 2);
         
         while($zoom < $max_zoom)
         {
@@ -84,7 +131,7 @@
             $height *= 2;
         }
 
-        $png = compose_map_image($north, $south, $east, $west, $zoom, $width, $height);
+        $png = compose_map_image($print['north'], $print['south'], $print['east'], $print['west'], $zoom, $width, $height);
 
         $print_url = 'http://'.get_domain_name().get_base_dir().'/print.php?id='.urlencode($print['id']);
     
@@ -146,7 +193,32 @@
         
         unlink($map_filename);
         unlink($code_filename);
+    }
+    
+    if($zoom && $north && $south && $east && $west)
+    {
+        $dbh->query('START TRANSACTION');
         
+        $print = add_print($dbh, $user['id']);
+        
+        $print['north'] = $north;
+        $print['south'] = $south;
+        $print['east'] = $east;
+        $print['west'] = $west;
+        $print['zoom'] = $zoom;
+        
+        list($print['country_name'], $print['country_woeid'],
+             $print['region_name'], $print['region_woeid'],
+             $print['place_name'], $print['place_woeid'])
+         = latlon_placeinfo(($north + $south) / 2, ($west + $east) / 2, $zoom - 1);
+
+        $print = set_print($dbh, $print);
+        
+        compose_map($print);
+
+        $dbh->query('COMMIT');
+        
+        $print_url = 'http://'.get_domain_name().get_base_dir().'/print.php?id='.urlencode($print['id']);
         header("Location: {$print_url}");
     }
     

@@ -15,15 +15,15 @@
     <h2>Errata</h2>
     
     <p>
-        I have been informed that "Errata" does not mean what I thought it meant.
+        I have been informed that “Errata” does not mean what I thought it meant:
+        <i><a href="http://dictionary.reference.com/search?q=errata">Errata</a> -
+        a list of errors and their corrections inserted, usually on a separate
+        page or slip of paper, in a book or other publication.</i>
     </p>
    
     <p>
-        <a href="http://dictionary.reference.com/search?q=errata">Errata</a>: a list of errors and their corrections inserted, usually on a separate page or slip of paper, in a book or other publication.
-    </p>
-   
-    <p>
-        I thought it was more like a list of random, "erratic" stuff that didn't fit anyplace else. So, this page has <a href="{$base_dir}/zeitgeist.php">moved to "zeitgeist"</a>.
+        I thought it was more like a list of random, “erratic” stuff that didn’t fit anyplace
+        else. So, this page has <a href="{$base_dir}/zeitgeist.php">moved to “zeitgeist”</a>.
     </p>
     
     {include file="footer.htmlf.tpl"}

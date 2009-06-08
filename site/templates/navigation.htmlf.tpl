@@ -5,6 +5,6 @@
     <a href="{$base_dir}/prints.php">Prints</a>
     <a href="{$base_dir}/scans.php">Scans</a>
     <a href="{$base_dir}/upload.php">Upload</a>
-    <a href="{$base_dir}/errata.php">Errata</a>
+    <a href="{$base_dir}/zeitgeist.php">Zeitgeist</a>
     <a href="{$base_dir}/about.php">About</a>
 </p>

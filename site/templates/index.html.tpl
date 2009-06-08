@@ -35,7 +35,7 @@
     </p>
 
     <p>
-        To get started, search for a town or city you know.
+        To get started, search for a town or city you know, then pan and zoom the map to an exact location.
     </p>
 
     <form onsubmit="return getPlaces(this.elements['q'].value, this.elements['appid'].value);">
@@ -44,6 +44,10 @@
         <input type="hidden" name="appid" value="{$constants.GEOPLANET_APPID|escape}" />
         <span id="watch-cursor" style="visibility: hidden;"><img src="{$base_dir}/watch.gif" align="top" vspace="4" /></span>
     </form>
+
+    <p>
+        <span id="info"></span>
+    </p>
 
     <div class="sheet">
         <div id="map"></div>
@@ -58,13 +62,11 @@
             <area shape="rect" alt="left" coords="0,21,13,35" href="javascript:map.panLeft()">
         </map>
         <div class="dog-ear"> </div>
+        <div id="zoom-warning" style="display: none;">
+            A zoom level of <b>14 or more</b> is recommended for street-level mapping.
+        </div>
     </div>
     
-    <p>
-        <span id="zoom-warning" style="display: none;">A zoom level of <b>14 or more</b> is recommended for street-level mapping.</span>
-        <span id="info"></span>
-    </p>
-
     <script type="text/javascript" language="javascript1.2">
     // <![CDATA[
 
@@ -104,7 +106,7 @@
         <input name="west" type="hidden" />
         <input name="zoom" type="hidden" />
 
-        <input class="mac-button" type="submit" name="action" value="Print" />
+        <input class="mac-button" type="submit" name="action" value="Make" />
     </form>
 
     <h2>Recent Scans</h2>

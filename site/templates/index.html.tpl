@@ -18,6 +18,8 @@
     <p>
         Print maps, draw on them, scan them back in and help OpenStreetMap
         improve its coverage of local points of interests and street detail.
+        <i>Walking Papers</i> is a product of <a href="http://stamen.com">Stamen Design's</a>
+        <a href="http://mike.teczno.com">Michal Migurski</a>.
     </p>
     
     <h2>Make A Print</h2>

@@ -94,7 +94,7 @@
                             FROM prints
                             WHERE country_woeid
                             GROUP BY country_woeid
-                            ORDER BY print_count DESC');
+                            ORDER BY print_count DESC, created DESC');
     
         if(PEAR::isError($res)) 
             die_with_code(500, "{$res->message}\n");
@@ -114,7 +114,7 @@
             }
             
             // the pie chart is small
-            if(count($country_names) == 15)
+            if(count($country_names) == 10)
                 break;
         }
         

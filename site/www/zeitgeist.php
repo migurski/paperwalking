@@ -122,6 +122,38 @@
             $country_percents[$woeid] = 100 * $count / $total;
     }
     
+    
+    
+    $scan_states = array('progress' => 0, 'finished' => 0, 'failed' => 0);
+    $total_scans = 0;
+    
+    $res = $dbh->query('SELECT last_step, COUNT(*) AS scans
+                        FROM scans
+                        WHERE last_step != 0
+                        GROUP BY last_step');
+
+    if(PEAR::isError($res)) 
+        die_with_code(500, "{$res->message}\n");
+
+    while($row = $res->fetchRow(DB_FETCHMODE_ASSOC))
+    {
+        if(in_array($row['last_step'], array(STEP_FINISHED))) {
+            $scan_states['finished'] += $row['scans'];
+
+        } elseif(in_array($row['last_step'], array(STEP_FATAL_ERROR, STEP_FATAL_QRCODE_ERROR))) {
+            $scan_states['failed'] += $row['scans'];
+
+        } else {
+            $scan_states['progress'] += $row['scans'];
+        }
+        
+        $total_scans += $row['scans'];
+    }
+    
+    $scan_states['finished'] = 100 * $scan_states['finished'] / $total_scans;
+    $scan_states['progress'] = 100 * $scan_states['progress'] / $total_scans;
+    $scan_states['failed'] = 100 * $scan_states['failed'] / $total_scans;
+    
 
 
     $sm = get_smarty_instance();
@@ -134,6 +166,7 @@
     $sm->assign('country_names', $country_names);
     //$sm->assign('country_counts', $country_counts);
     $sm->assign('country_percents', $country_percents);
+    $sm->assign('scan_states', $scan_states);
     $sm->assign('zooms', $zooms);
     
     header("Content-Type: text/html; charset=UTF-8");

@@ -34,6 +34,37 @@
         <img src="http://chart.apis.google.com/chart?cht=p&amp;chd=t:{$print_percent|escape},{$scan_percent|escape}&amp;chs=408x120&amp;chl=Prints|Scans">
     </p>
     
+    <p>
+        Why are there so many prints? It’s easy to create a print and less-easy to make a scan. We’re in the early days of this site,
+        and I imagine that it may take some time for the initial excitement of printing out paper maps to translate into submitted,
+        annotated scanned images. Bring it on!
+    </p>
+    
+    <h3>Scans</h3>
+    
+    <p>
+        Number of scans that have finished successfully, failed for some reason, or are still in progress.
+    </p>
+    
+    <p>
+        {if $scan_states.progress}
+            <img src="http://chart.apis.google.com/chart?cht=p&amp;chp=2.8274&amp;chd=t:{$scan_states.progress|escape},{$scan_states.finished|escape},{$scan_states.failed|escape}&amp;chs=408x120&amp;chl=In+Progress|Finished|Failed">
+
+        {else}
+            <img src="http://chart.apis.google.com/chart?cht=p&amp;chp=2.8274&amp;chd=t:{$scan_states.finished|escape},{$scan_states.failed|escape}&amp;chs=408x120&amp;chl=Finished|Failed">
+        {/if}
+    </p>
+    
+    <p>
+        Why do scans fail? Based on the errors we’ve seen, scans seem to fail for one of three reasons:
+    </p>
+    
+    <ol>
+        <li>Many users have been uploading the same print PDF’s downloaded from this site. Scans need to be bitmap images, ideally JPEG’s.</li>
+        <li>Some users have submitted scans that are at a low resolution, or low-quality photographs instead of scans. Check the print pages for an address where you can mail us paper to have scanned!</li>
+        <li>Some scans have come out of printers with failing ink cartridges, which makes important details such as the QR code in the lower-right corner illegible.</li>
+    </ol>
+    
     <h3>Zoom Levels</h3>
     
     <p>

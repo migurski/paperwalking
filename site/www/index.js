@@ -62,7 +62,7 @@ function makeMap(elementID, cloudmadeKey)
         return 'http://tile.cloudmade.com/' + cloudmadeKey + '/997/256/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
     }
     
-    var map = new mm.Map(elementID, new mm.MapProvider(tileURL), new mm.Point(360, 456))
+    var map = new mm.Map(elementID, new mm.MapProvider(tileURL), new mm.Point(456, 360))
 
     map.addCallback('zoomed',    function(m, a) { return onMapChanged(m); });
     map.addCallback('centered',  function(m, a) { return onMapChanged(m); });

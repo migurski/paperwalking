@@ -51,7 +51,7 @@
         <span id="info"></span>
     </p>
 
-    <div class="sheet">
+    <div class="sheet landscape">
         <div id="map"></div>
         <!-- <div class="dummy-qrcode"><img src="http://chart.apis.google.com/chart?chs=44x44&amp;cht=qr&amp;chld=L%7C0&amp;chl=example" alt="" border="0" /></div> -->
         <img class="slippy-nav" src="{$base_dir}/slippy-nav.png" width="43" height="57" border="0" alt="up" usemap="#slippy_nav"/>

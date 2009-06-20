@@ -157,6 +157,23 @@ input.mac-button
     top: -1px;
 }
 
+    .sheet.landscape
+    {
+        width: 456px;
+        height: 360px;
+    }
+    
+    .sheet.landscape .dummy-qrcode
+    {
+        top: 336px;
+        left: 432px;
+    }
+    
+    .sheet.landscape .dog-ear
+    {
+        left: 475px;
+    }
+    
 #footer
 {
     margin-top: 4em;

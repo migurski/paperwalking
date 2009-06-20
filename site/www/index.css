@@ -13,3 +13,9 @@
     top: 415px;
     padding: 9px;
 }
+
+.sheet.landscape #zoom-warning
+{
+    width: 406px;
+    top: 319px;
+}

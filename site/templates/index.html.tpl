@@ -51,7 +51,7 @@
         <span id="info"></span>
     </p>
 
-    <div class="sheet landscape">
+    <div class="sheet">
         <div id="map"></div>
         <!-- <div class="dummy-qrcode"><img src="http://chart.apis.google.com/chart?chs=44x44&amp;cht=qr&amp;chld=L%7C0&amp;chl=example" alt="" border="0" /></div> -->
         <img class="slippy-nav" src="{$base_dir}/slippy-nav.png" width="43" height="57" border="0" alt="up" usemap="#slippy_nav"/>
@@ -96,6 +96,24 @@
             }
         }
         
+        function setOrientation(orientation)
+        {
+            var sheet = map.parent.parentNode;
+        
+            if(orientation == 'landscape') {
+                sheet.className = sheet.className + ' landscape';
+                map.dimensions = new mm.Point(456, 360);
+            
+            } else {
+                sheet.className = sheet.className.replace(/landscape/, '');
+                map.dimensions = new mm.Point(360, 456);
+            }
+
+            map.parent.style.width = parseInt(map.dimensions.x) + 'px';
+            map.parent.style.height = parseInt(map.dimensions.y) + 'px';
+            map.draw();
+        }
+        
         // {/literal}
     
     // ]]>
@@ -108,7 +126,15 @@
         <input name="west" type="hidden" />
         <input name="zoom" type="hidden" />
 
-        <input class="mac-button" type="submit" name="action" value="Make" />
+        <p>
+            Orientation:
+            <select name="orientation" onchange="setOrientation(this.value);">
+                <option label="Portrait" value="portrait" selected="selected">Portrait</option>
+                <option label="Landscape" value="landscape">Landscape</option>
+            </select>
+    
+            <input class="mac-button" type="submit" name="action" value="Make" />
+        </p>
     </form>
 
     <h2>Recent Scans</h2>

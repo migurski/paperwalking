@@ -69,7 +69,7 @@
         </form>
     {/if}
     
-    <div class="sheet">
+    <div class="sheet {$print.orientation|escape}">
         <img src="{$print.preview_url|escape}"/>
         <div class="dummy-qrcode"><img src="http://chart.apis.google.com/chart?chs=44x44&amp;cht=qr&amp;chld=L%7C0&amp;chl=example" alt="" border="0" /></div>
         <div class="dog-ear"> </div>

@@ -102,7 +102,7 @@
         
             if(orientation == 'landscape') {
                 sheet.className = sheet.className + ' landscape';
-                map.dimensions = new mm.Point(456, 360);
+                map.dimensions = new mm.Point(480, 336);
             
             } else {
                 sheet.className = sheet.className.replace(/landscape/, '');

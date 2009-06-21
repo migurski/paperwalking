@@ -161,19 +161,19 @@ input.mac-button
 
     .sheet.landscape
     {
-        width: 456px;
-        height: 360px;
+        width: 480px;
+        height: 336px;
     }
     
     .sheet.landscape .dummy-qrcode
     {
-        top: 336px;
-        left: 432px;
+        top: 312px;
+        left: 456px;
     }
     
     .sheet.landscape .dog-ear
     {
-        left: 475px;
+        left: 499px;
     }
     
 #footer

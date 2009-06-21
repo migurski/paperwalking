@@ -365,19 +365,26 @@ def extractCode(image, markers):
     # transformation from ideal space to printed image space.
     # markers are positioned with Header at upper left, Hand at upper right, and CCBYSA at lower left
     
-    ax, bx, cx = linearSolution(0,   0, markers['Header'].anchor.x,
-                                540, 0, markers['Hand'].anchor.x,
-                                0, 720, markers['CCBYSA'].anchor.x)
+    aspect = float(markers['Hand'].anchor.x - markers['Header'].anchor.x) / float(markers['CCBYSA'].anchor.y - markers['Header'].anchor.y)
+    orientation = aspect > 1 and 'landscape' or 'portrait'
     
-    ay, by, cy = linearSolution(0,   0, markers['Header'].anchor.y,
-                                540, 0, markers['Hand'].anchor.y,
-                                0, 720, markers['CCBYSA'].anchor.y)
+    right = orientation == 'portrait' and 540 or 720
+    bottom = orientation == 'portrait' and 720 or 540
+    
+    ax, bx, cx = linearSolution(0,      0, markers['Header'].anchor.x,
+                                right,  0, markers['Hand'].anchor.x,
+                                0, bottom, markers['CCBYSA'].anchor.x)
+    
+    ay, by, cy = linearSolution(0,      0, markers['Header'].anchor.y,
+                                right,  0, markers['Hand'].anchor.y,
+                                0, bottom, markers['CCBYSA'].anchor.y)
     
     # candidate location of the QR code on the printed image:
     # top-left, top-right, bottom-left corner of QR code.
+    xys = [(right - 63, bottom - 63), (right, bottom - 63), (right - 63, bottom)]
+
     corners = [Point(ax * x + bx * y + cx, ay * x + by * y + cy)
-               for (x, y)
-               in [(477, 657), (540, 657), (477, 720)]]
+               for (x, y) in xys]
 
     # projection from extracted QR code image space to source image space
     

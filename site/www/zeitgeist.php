@@ -119,7 +119,7 @@
         }
         
         foreach($country_counts as $woeid => $count)
-            $country_percents[$woeid] = 100 * $count / $total;
+            $country_percents[$woeid] = round(100 * $count / $total);
     }
     
     
@@ -150,9 +150,9 @@
         $total_scans += $row['scans'];
     }
     
-    $scan_states['finished'] = 100 * $scan_states['finished'] / $total_scans;
-    $scan_states['progress'] = 100 * $scan_states['progress'] / $total_scans;
-    $scan_states['failed'] = 100 * $scan_states['failed'] / $total_scans;
+    $scan_states['finished'] = round(100 * $scan_states['finished'] / $total_scans);
+    $scan_states['progress'] = round(100 * $scan_states['progress'] / $total_scans);
+    $scan_states['failed'] = round(100 * $scan_states['failed'] / $total_scans);
     
 
 

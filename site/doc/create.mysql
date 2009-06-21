@@ -43,6 +43,8 @@ ALTER TABLE prints ADD COLUMN region_woeid INT UNSIGNED AFTER region_name;
 ALTER TABLE prints ADD COLUMN place_name VARCHAR(128) AFTER region_woeid;
 ALTER TABLE prints ADD COLUMN place_woeid INT UNSIGNED AFTER place_name;
 
+ALTER TABLE prints ADD COLUMN orientation ENUM('portrait', 'landscape') DEFAULT 'portrait' AFTER zoom;
+
 
 
 DROP TABLE IF EXISTS scans;

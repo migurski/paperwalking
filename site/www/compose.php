@@ -5,6 +5,12 @@
     require_once 'init.php';
     require_once 'data.php';
     
+    /*
+    header('Content-Type: text/plain');
+    print_r($_POST);
+    die();
+    */
+    
     $user_id = $_COOKIE['visitor'] ? $_COOKIE['visitor'] : null;
 
     $north = is_numeric($_POST['north']) ? floatval($_POST['north']) : null;
@@ -12,6 +18,7 @@
     $east = is_numeric($_POST['east']) ? floatval($_POST['east']) : null;
     $west = is_numeric($_POST['west']) ? floatval($_POST['west']) : null;
     $zoom = is_numeric($_POST['zoom']) ? intval($_POST['zoom']) : null;
+    $orientation = $_POST['orientation'] ? $_POST['orientation'] : null;
     
     $dbh =& get_db_connection();
     
@@ -110,8 +117,10 @@
     
     function compose_map($print)
     {
-        $width = 360;
-        $height = 456;
+        list($width, $height) = ($print['orientation'] == 'portrait')
+            ? array(360, 480 - 24)
+            : array(480, 360 - 24);
+        
         $png = compose_map_image($print['north'], $print['south'], $print['east'], $print['west'], $print['zoom'], $width, $height);
 
         // post a preview
@@ -135,40 +144,46 @@
 
         $print_url = 'http://'.get_domain_name().get_base_dir().'/print.php?id='.urlencode($print['id']);
     
-        $pdf = new FPDF('P', 'pt', 'letter');
+        $pdf = new FPDF($print['orientation'] == 'portrait' ? 'P' : 'L', 'pt', 'letter');
         $pdf->addPage();
         
         $icon_filename = realpath(dirname(__FILE__).'/../lib/print/icon.png');
         $pdf->image($icon_filename, 35.99, 42.87, 19.2, 25.6);
         
         $hand_filename = realpath(dirname(__FILE__).'/../lib/print/Hand.png');
-        $pdf->image($hand_filename, 516, 30, 66, 48);
+        $pdf->image($hand_filename, $pdf->w - 96, 30, 66, 48);
         
         $map_img = imagecreatefromstring($png);
         $map_filename = tempnam(TMP_DIR, 'composed-map-');
         imagejpeg($map_img, $map_filename, 75);
-        $pdf->image($map_filename, 36, 72, 540, 684, 'jpg');
+        
+        if($print['orientation'] == 'portrait') {
+            $pdf->image($map_filename, 36, 72, 540, 684, 'jpg');
+        
+        } else {
+            $pdf->image($map_filename, 36, 72, 720, 504, 'jpg');
+        }
         
         $pdf->setFont('Helvetica', 'B', 24);
         $pdf->text(62.61, 68.49, 'Walking Papers');
         
         $pdf->setFillColor(0xFF);
-        $pdf->rect(35, 729, 200, 28, 'F');
+        $pdf->rect(35, $pdf->h - 63, 200, 28, 'F');
         
         $ccbysa_filename = realpath(dirname(__FILE__).'/../lib/print/CCBYSA.png');
-        $pdf->image($ccbysa_filename, 30, 732, 67, 30);
+        $pdf->image($ccbysa_filename, 30, $pdf->h - 60, 67, 30);
 
         $pdf->setFont('Helvetica', '', 9);
-        $pdf->text(254, 57.74, 'Help improve OpenStreetMap by drawing on this map, then visit');
-        $pdf->text(254, 68.74, $print_url);
-        $pdf->text(99, 744.5, 'Map data ©2009 CC-BY-SA');
-        $pdf->text(99, 755.5, 'OpenStreetMap.org contributors');
+        $pdf->text($pdf->w - 358, 57.74, 'Help improve OpenStreetMap by drawing on this map, then visit');
+        $pdf->text($pdf->w - 358, 68.74, $print_url);
+        $pdf->text(99, $pdf->h - 47.5, 'Map data ©2009 CC-BY-SA');
+        $pdf->text(99, $pdf->h - 36.5, 'OpenStreetMap.org contributors');
 
         $size = 64;
         $pad = 8;
         
         $pdf->setFillColor(0xFF);
-        $pdf->rect(36 + 540 - $size - $pad, 36 + 720 - $size - $pad, $size + $pad * 2, $size + $pad * 2, 'F');
+        $pdf->rect($pdf->w - 36 - $size - $pad, $pdf->h - 36 - $size - $pad, $size + $pad * 2, $size + $pad * 2, 'F');
 
         $req = new HTTP_Request('http://chart.apis.google.com/chart?chs=264x264&cht=qr&chld=Q|0');
         $req->addQueryString('chl', $print_url);
@@ -180,7 +195,7 @@
         $code_img = imagecreatefromstring($req->getResponseBody());
         $code_filename = tempnam(TMP_DIR, 'composed-code-');
         imagepng($code_img, $code_filename);
-        $pdf->image($code_filename, 36 + 540 - $size, 36 + 720 - $size, $size, $size, 'png');
+        $pdf->image($code_filename, $pdf->w - 36 - $size, $pdf->h - 36 - $size, $size, $size, 'png');
         
         $pdf_content = $pdf->output('', 'S');
         
@@ -206,6 +221,7 @@
         $print['east'] = $east;
         $print['west'] = $west;
         $print['zoom'] = $zoom;
+        $print['orientation'] = $orientation;
         
         list($print['country_name'], $print['country_woeid'],
              $print['region_name'], $print['region_woeid'],

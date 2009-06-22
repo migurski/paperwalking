@@ -19,7 +19,7 @@
     
 
 
-    $res = $dbh->query('SELECT COUNT(*) FROM prints');
+    $res = $dbh->query('SELECT COUNT(*) FROM prints WHERE created > NOW() - INTERVAL 1 MONTH');
     
     if(PEAR::isError($res)) 
         die_with_code(500, "{$res->message}\n");
@@ -40,10 +40,13 @@
     
     
     $hemisphere_count = array('northern' => 0, 'southern' => 0, 'eastern' => 0, 'western' => 0);
+    $orientation_count = array('landscape' => 0, 'portrait' => 0);
     
     $res = $dbh->query('SELECT (north + south) / 2 AS latitude,
-                               (east + west) / 2 AS longitude
-                        FROM prints');
+                               (east + west) / 2 AS longitude,
+                               orientation
+                        FROM prints
+                        WHERE created > NOW() - INTERVAL 1 MONTH');
 
     if(PEAR::isError($res)) 
         die_with_code(500, "{$res->message}\n");
@@ -54,6 +57,7 @@
         $hemisphere_count['southern'] += ($row['latitude'] < 0 ? 1 : 0);
         $hemisphere_count['eastern'] += ($row['longitude'] > 0 ? 1 : 0);
         $hemisphere_count['western'] += ($row['longitude'] < 0 ? 1 : 0);
+        $orientation_count[$row['orientation']] += 1;
     }
 
     $hemisphere_percent = array(
@@ -61,6 +65,11 @@
         'southern' => round(100 * $hemisphere_count['southern'] / ($hemisphere_count['northern'] + $hemisphere_count['southern'])),
         'eastern' => round(100 * $hemisphere_count['eastern'] / ($hemisphere_count['eastern'] + $hemisphere_count['western'])),
         'western' => round(100 * $hemisphere_count['western'] / ($hemisphere_count['eastern'] + $hemisphere_count['western']))
+    );
+
+    $orientation_percent = array(
+        'landscape' => round(100 * $orientation_count['landscape'] / ($orientation_count['landscape'] + $orientation_count['portrait'])),
+        'portrait' => round(100 * $orientation_count['portrait'] / ($orientation_count['landscape'] + $orientation_count['portrait']))
     );
     
     
@@ -72,6 +81,7 @@
         $res = $dbh->query('SELECT zoom, count(*) AS prints
                             FROM prints
                             WHERE zoom
+                              AND created > NOW() - INTERVAL 1 MONTH
                             GROUP BY zoom
                             ORDER BY zoom');
     
@@ -93,6 +103,7 @@
         $res = $dbh->query('SELECT country_woeid, country_name, COUNT(*) AS print_count
                             FROM prints
                             WHERE country_woeid
+                              AND created > NOW() - INTERVAL 1 MONTH
                             GROUP BY country_woeid
                             ORDER BY print_count DESC, created DESC');
     
@@ -130,6 +141,7 @@
     $res = $dbh->query('SELECT last_step, COUNT(*) AS scans
                         FROM scans
                         WHERE last_step != 0
+                          AND created > NOW() - INTERVAL 1 MONTH
                         GROUP BY last_step');
 
     if(PEAR::isError($res)) 
@@ -163,6 +175,8 @@
     $sm->assign('scan_percent', round(100 * $scan_count / ($print_count + $scan_count)));
     //$sm->assign('hemisphere_count', $hemisphere_count);
     $sm->assign('hemisphere_percent', $hemisphere_percent);
+    //$sm->assign('orientation_count', $orientation_count);
+    $sm->assign('orientation_percent', $orientation_percent);
     $sm->assign('country_names', $country_names);
     //$sm->assign('country_counts', $country_counts);
     $sm->assign('country_percents', $country_percents);

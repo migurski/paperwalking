@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>Errata (Walking Papers)</title>
+	<title>Zeitgeist (Walking Papers)</title>
 	<link rel="stylesheet" href="{$base_dir}/style.css" type="text/css" />
     <script type="text/javascript" src="{$base_dir}/script.js"></script>
 </head>
@@ -17,17 +17,28 @@
     <h3>Countries</h3>
     
     <p>
-        Share of prints for top ten countries.
+        Share of prints for top ten countries from the past month.
     </p>
     
     <p>
         <img src="http://chart.apis.google.com/chart?cht=p&amp;chd=t:{"urlencode"|@array_map:$country_percents|@join:","|escape}&amp;chs=408x180&amp;chl={"urlencode"|@array_map:$country_names|@join:"|"|escape}">
     </p>
     
+    <h3>Orientation</h3>
+    
+    <p>
+        Share of prints by orientation in the past month.
+        Landscape orientation was first introduced on June 20.
+    </p>
+    
+    <p>
+        <img src="http://chart.apis.google.com/chart?cht=p&amp;chd=t:{$orientation_percent.portrait|escape},{$orientation_percent.landscape|escape}&amp;chs=408x120&amp;chl=Portrait|Landscape">
+    </p>
+    
     <h3>Numbers</h3>
     
     <p>
-        Number of prints vs. number of scans.
+        Number of prints vs. number of scans for the past month.
     </p>
     
     <p>
@@ -43,7 +54,7 @@
     <h3>Scans</h3>
     
     <p>
-        Number of scans that have finished successfully, failed for some reason, or are still in progress.
+        Number of scans from the past month that have finished successfully, failed for some reason, or are still in progress.
     </p>
     
     <p>
@@ -68,7 +79,7 @@
     <h3>Zoom Levels</h3>
     
     <p>
-        Number of prints at each zoom level. Zoom level 0 is the whole world,
+        Number of prints from the past month at each zoom level. Zoom level 0 is the whole world,
         while zoom level 14 is recommended as a minimum for street-level mapping.
     </p>
     
@@ -79,7 +90,7 @@
     <h3>Hemispheres</h3>
     
     <p>
-        Number of prints by hemisphere.
+        Share of prints by hemisphere in the past month.
     </p>
     
     <p>

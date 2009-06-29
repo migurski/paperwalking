@@ -51,7 +51,7 @@ class Marker:
         print >> sys.stderr, (self.anchor.x, self.anchor.y),
 
         x, y = transform(self.anchor.x, self.anchor.y)
-        print >> sys.stderr, '->', (x, y),
+        print >> sys.stderr, '->', '(%.2f, %.2f)' % (x, y),
 
         self.anchor = Point(x, y)
 
@@ -365,8 +365,12 @@ def extractCode(image, markers):
     # transformation from ideal space to printed image space.
     # markers are positioned with Header at upper left, Hand at upper right, and CCBYSA at lower left
     
-    aspect = float(markers['Hand'].anchor.x - markers['Header'].anchor.x) / float(markers['CCBYSA'].anchor.y - markers['Header'].anchor.y)
+    distance_across = math.hypot(markers['Hand'].anchor.x - markers['Header'].anchor.x, markers['Hand'].anchor.y - markers['Header'].anchor.y)
+    distance_down = math.hypot(markers['CCBYSA'].anchor.x - markers['Header'].anchor.x, markers['CCBYSA'].anchor.y - markers['Header'].anchor.y)
+    aspect = distance_across / distance_down
     orientation = aspect > 1 and 'landscape' or 'portrait'
+    
+    print >> sys.stderr, 'aspect', aspect, 'orientation', orientation
     
     right = orientation == 'portrait' and 540 or 720
     bottom = orientation == 'portrait' and 720 or 540

@@ -242,6 +242,9 @@ def tileZoomLevel(image, topleft, bottomright, markers, renders):
     
     top, left, bottom, right = topleft.row, topleft.column, bottomright.row, bottomright.column
     
+    assert top < bottom, 'Top is not less-than bottom as it should be: %.2f vs. %.2f' % (top, bottom)
+    assert left < right, 'Left is not less-than right as it should be: %.2f vs. %.2f' % (left, right)
+    
     ax, bx, cx = linearSolution(left,    top, markers['Header'].anchor.x,
                                 right,   top, markers['Hand'].anchor.x,
                                 left, bottom, markers['CCBYSA'].anchor.x)
@@ -250,13 +253,13 @@ def tileZoomLevel(image, topleft, bottomright, markers, renders):
                                 right,   top, markers['Hand'].anchor.y,
                                 left, bottom, markers['CCBYSA'].anchor.y)
 
+    coordinatePixel = lambda x, y: (ax * x + bx * y + cx, ay * x + by * y + cy)
+
     magnification = math.hypot(ax, bx) / 256
     
     if .65 < magnification and magnification < 20:
     
         print >> sys.stderr, zoom,
-        
-        coordinatePixel = lambda x, y: (ax * x + bx * y + cx, ay * x + by * y + cy)
         
         for row in range(int(topleft.container().row), int(bottomright.container().row) + 1):
             for column in range(int(topleft.container().column), int(bottomright.container().column) + 1):
@@ -273,13 +276,14 @@ def tileZoomLevel(image, topleft, bottomright, markers, renders):
 def extractTile(image, coord, coordinatePixel, renders):
     """
     """
-    left, top = coordinatePixel(coord.column, coord.row)
-    right, bottom = coordinatePixel(coord.right().column, coord.down().row)
+    topleftx, toplefty = coordinatePixel(coord.column, coord.row)
+    toprightx, toprighty = coordinatePixel(coord.right().column, coord.row)
+    bottomleftx, bottomlefty = coordinatePixel(coord.column, coord.down().row)
     
     # transformation from tile image space to pixel space
-    axt, bxt, cxt = linearSolution(0, 0, left, 512, 0, right, 0, 512, left)
-    ayt, byt, cyt = linearSolution(0, 0, top, 512, 0, top, 0, 512, bottom)
-
+    axt, bxt, cxt = linearSolution(0, 0, topleftx, 512, 0, toprightx, 0, 512, bottomleftx)
+    ayt, byt, cyt = linearSolution(0, 0, toplefty, 512, 0, toprighty, 0, 512, bottomlefty)
+    
     # pull the original pixels out
     tile_pixels = image.transform((512, 512), PIL.Image.AFFINE, (axt, bxt, cxt, ayt, byt, cyt), PIL.Image.BICUBIC)
     tile_img = PIL.Image.new('L', tile_pixels.size, 0xCC).convert('RGB')

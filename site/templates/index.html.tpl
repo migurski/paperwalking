@@ -22,7 +22,54 @@
         <a href="http://mike.teczno.com">Michal Migurski</a>.
     </p>
     
-    <h2>Make A Print</h2>
+    <p>
+        <a href="#make">See below to make your own printed map.</a>
+    </p>
+    
+    <p>
+        <img src="{$base_dir}/scan-example.jpg" border="1" />
+    </p>
+    
+    <h2>Recent Scans</h2>
+    
+    <ol>
+        {foreach from=$scans item="rscan"}
+            <li>
+                {if $rscan.print_place_woeid}
+                    <a href="{$base_dir}/scan.php?id={$rscan.id|escape}">
+                        <b id="scan-{$rscan.id|escape}">{$rscan.age|nice_relativetime|escape}
+                            {if $rscan.will_edit == 'no'}✻{/if}</b>
+                        <br />
+                        {$rscan.print_place_name|escape}</a>
+
+                {else}
+                    <a href="{$base_dir}/scan.php?id={$rscan.id|escape}">
+                        <b id="scan-{$rscan.id|escape}">{$rscan.age|nice_relativetime|escape}
+                            {if $rscan.will_edit == 'no'}✻{/if}</b></a>
+    
+                    <script type="text/javascript" language="javascript1.2" defer="defer">
+                    // <![CDATA[
+                    
+                        var onPlaces_{$rscan.id|escape} = new Function('res', "appendPlacename(res, document.getElementById('scan-{$rscan.id|escape}'))");
+                        getPlacename({$rscan.print_latitude|escape}, {$rscan.print_longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlaces_{$rscan.id|escape}');
+                
+                    // ]]>
+                    </script>
+                {/if}
+
+                {if $rscan.description}
+                    <br />
+                    {$rscan.description|escape}
+                {/if}
+            </li>
+        {/foreach}
+    </ol>
+    
+    <p>
+        <a href="{$base_dir}/scans.php">More recent scans...</a>
+    </p>
+    
+    <h2><a name="make">Make A Prin</a>t</h2>
     
     <p>
         <a href="http://openstreetmap.org">OpenStreetMap</a> is a wiki-style map
@@ -37,7 +84,7 @@
     </p>
 
     <p>
-        To get started, search for a town or city you know, then pan and zoom the map to an exact location.
+        <strong>To get started</strong>, search for a town or city you know, then pan and zoom the map to an exact location.
     </p>
 
     <form onsubmit="return getPlaces(this.elements['q'].value, this.elements['appid'].value);">
@@ -137,45 +184,6 @@
         </p>
     </form>
 
-    <h2>Recent Scans</h2>
-    
-    <ol>
-        {foreach from=$scans item="rscan"}
-            <li>
-                {if $rscan.print_place_woeid}
-                    <a href="{$base_dir}/scan.php?id={$rscan.id|escape}">
-                        <b id="scan-{$rscan.id|escape}">{$rscan.age|nice_relativetime|escape}
-                            {if $rscan.will_edit == 'no'}✻{/if}</b>
-                        <br />
-                        {$rscan.print_place_name|escape}</a>
-
-                {else}
-                    <a href="{$base_dir}/scan.php?id={$rscan.id|escape}">
-                        <b id="scan-{$rscan.id|escape}">{$rscan.age|nice_relativetime|escape}
-                            {if $rscan.will_edit == 'no'}✻{/if}</b></a>
-    
-                    <script type="text/javascript" language="javascript1.2" defer="defer">
-                    // <![CDATA[
-                    
-                        var onPlaces_{$rscan.id|escape} = new Function('res', "appendPlacename(res, document.getElementById('scan-{$rscan.id|escape}'))");
-                        getPlacename({$rscan.print_latitude|escape}, {$rscan.print_longitude|escape}, '{$constants.FLICKR_KEY|escape}', 'onPlaces_{$rscan.id|escape}');
-                
-                    // ]]>
-                    </script>
-                {/if}
-
-                {if $rscan.description}
-                    <br />
-                    {$rscan.description|escape}
-                {/if}
-            </li>
-        {/foreach}
-    </ol>
-    
-    <p>
-        <a href="{$base_dir}/scans.php">More recent scans...</a>
-    </p>
-    
     <h2>Recent Prints</h2>
     
     <ol>

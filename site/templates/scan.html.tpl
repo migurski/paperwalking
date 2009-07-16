@@ -18,6 +18,27 @@
 </head>
 <body>
 
+    {if $scan && $scan.last_step == $constants.STEP_FINISHED}
+        <span id="scan-info" style="display: none;">
+            <span class="scan">{$scan.id|escape}</span>
+            <span class="tile">http://{$constants.S3_BUCKET_ID|escape}.s3.amazonaws.com/scans/{$scan.id|escape}/{literal}{z}/{x}/{y}{/literal}.jpg</span>
+            <span class="minrow">{$scan.min_row|escape}</span>
+            <span class="mincolumn">{$scan.min_column|escape}</span>
+            <span class="minzoom">{$scan.min_zoom|escape}</span>
+            <span class="maxrow">{$scan.max_row|escape}</span>
+            <span class="maxcolumn">{$scan.max_column|escape}</span>
+            <span class="maxzoom">{$scan.max_zoom|escape}</span>
+        </span>
+    
+        <span id="print-info" style="display: none;">
+            <span class="print">{$print.id|escape}</span>
+            <span class="north">{$print.north|escape}</span>
+            <span class="south">{$print.south|escape}</span>
+            <span class="east">{$print.east|escape}</span>
+            <span class="west">{$print.west|escape}</span>
+        </span>
+    {/if}
+
     {include file="navigation.htmlf.tpl"}
     
     {if $scan}

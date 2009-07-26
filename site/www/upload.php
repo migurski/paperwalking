@@ -5,7 +5,7 @@
     require_once 'init.php';
     require_once 'data.php';
     
-    $user_id = $_COOKIE['visitor'] ? $_COOKIE['visitor'] : null;
+    list($user_id) = read_userdata($_COOKIE['visitor']);
 
     /**** ... ****/
     
@@ -14,7 +14,7 @@
     $user = $user_id ? get_user($dbh, $user_id) : add_user($dbh);
 
     if($user)
-        setcookie('visitor', $user['id'], time() + 86400 * 31);
+        setcookie('visitor', write_userdata($user['id']), time() + 86400 * 31);
     
     $dbh->query('START TRANSACTION');
     $scan = add_scan($dbh, $user['id']);

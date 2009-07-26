@@ -5,7 +5,7 @@
     require_once 'init.php';
     require_once 'data.php';
     
-    $user_id = $_COOKIE['visitor'] ? $_COOKIE['visitor'] : null;
+    list($user_id) = read_userdata($_COOKIE['visitor']);
 
     /**** ... ****/
     
@@ -15,7 +15,7 @@
         $user = get_user($dbh, $user_id);
 
     if($user)
-        setcookie('visitor', $user['id'], time() + 86400 * 31);
+        setcookie('visitor', write_userdata($user['id']), time() + 86400 * 31);
     
     $scans = get_scans($dbh, 50, false);
 

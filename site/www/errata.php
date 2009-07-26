@@ -5,7 +5,7 @@
     require_once 'init.php';
     require_once 'data.php';
     
-    $user_id = $_COOKIE['visitor'] ? $_COOKIE['visitor'] : null;
+    list($user_id) = read_userdata($_COOKIE['visitor']);
 
     /**** ... ****/
     

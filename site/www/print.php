@@ -6,7 +6,7 @@
     require_once 'data.php';
     
     $print_id = $_GET['id'] ? $_GET['id'] : null;
-    $user_id = $_COOKIE['visitor'] ? $_COOKIE['visitor'] : null;
+    list($user_id) = read_userdata($_COOKIE['visitor']);
 
     /**** ... ****/
     
@@ -16,7 +16,7 @@
         $user = get_user($dbh, $user_id);
 
     if($user)
-        setcookie('visitor', $user['id'], time() + 86400 * 31);
+        setcookie('visitor', write_userdata($user['id']), time() + 86400 * 31);
     
     $print = get_print($dbh, $print_id);
     

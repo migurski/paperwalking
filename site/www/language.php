@@ -15,7 +15,7 @@
     list($user_id, $language) = read_userdata($_COOKIE['visitor'], $_SERVER['HTTP_ACCEPT_LANGUAGE']);
 
     // change to some other language
-    $language = in_array($_POST['language'], array('en', 'de'))
+    $language = in_array($_POST['language'], array('en', 'de', 'nl'))
         ? $_POST['language']
         : $language;
 

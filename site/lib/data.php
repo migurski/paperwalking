@@ -96,6 +96,10 @@
             // any one of de, de-ch, etc.
             if(preg_match('/^de\b/', $language))
                 return 'de';
+
+            // nl or nl-be
+            if(preg_match('/^nl\b/', $language))
+                return 'nl';
         }
         
         // english is the default

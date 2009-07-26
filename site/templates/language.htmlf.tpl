@@ -4,5 +4,6 @@
         <input type="hidden" name="referer" value="{* http://{$domain|escape} *}{$request.uri|escape}"/>
         <button type="submit" class="{if $language == "en"}selected{/if}" name="language" value="en">English</button>
         <button type="submit" class="{if $language == "de"}selected{/if}" name="language" value="de">Deutsche</button>
+        <button type="submit" class="{if $language == "nl"}selected{/if}" name="language" value="nl">Nederlands</button>
     </p>
 </form>

@@ -11,7 +11,7 @@
     die();
     */
     
-    list($user_id) = read_userdata($_COOKIE['visitor']);
+    list($user_id, $language) = read_userdata($_COOKIE['visitor'], $_SERVER['HTTP_ACCEPT_LANGUAGE']);
 
     $north = is_numeric($_POST['north']) ? floatval($_POST['north']) : null;
     $south = is_numeric($_POST['south']) ? floatval($_POST['south']) : null;
@@ -25,7 +25,7 @@
     $user = $user_id ? get_user($dbh, $user_id) : add_user($dbh);
 
     if($user)
-        setcookie('visitor', write_userdata($user['id']), time() + 86400 * 31);
+        setcookie('visitor', write_userdata($user['id'], $language), time() + 86400 * 31);
 
     function latlon_placeinfo($lat, $lon, $zoom)
     {

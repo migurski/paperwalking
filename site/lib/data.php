@@ -26,23 +26,25 @@
         return DB::connect(DB_DSN);
     }
     
-    function write_userdata($user_id)
+    function write_userdata($id, $language)
     {
-        $userdata = array('user' => $user_id);
+        $userdata = array('user' => $id, 'language' => $language);
         $encoded_value = json_encode($userdata);
         $signed_string = $encoded_value.' '.md5($encoded_value.COOKIE_SIGNATURE);
         
-        error_log("signing string: {$signed_string}\n", 3, dirname(__FILE__).'/../tmp/log.txt');
+        //error_log("signing string: {$signed_string}\n", 3, dirname(__FILE__).'/../tmp/log.txt');
         return $signed_string;
     }
     
-    function read_userdata($signed_string)
+    function read_userdata($signed_string, $accept_language_header)
     {
+        $default_language = get_preferred_language($accept_language_header);
+        
         if(preg_match('/^(\w{8})$/', $signed_string))
         {
             // looks like an old-style user ID cookie rather than a signed string
-            error_log("found plain username in: {$signed_string}\n", 3, dirname(__FILE__).'/../tmp/log.txt');
-            return array($signed_string);
+            //error_log("found plain username in: {$signed_string}\n", 3, dirname(__FILE__).'/../tmp/log.txt');
+            return array($signed_string, $default_language);
         }
     
         if(preg_match('/^(.+) (\w{32})$/', $signed_string, $m))
@@ -53,14 +55,47 @@
             if($expected_signature == $found_signature)
             {
                 // signature checks out
-                error_log("found encoded userdata in: {$signed_string}\n", 3, dirname(__FILE__).'/../tmp/log.txt');
+                //error_log("found encoded userdata in: {$signed_string}\n", 3, dirname(__FILE__).'/../tmp/log.txt');
                 $userdata = json_decode($encoded_value, true);
-                return array($userdata['user']);
+                $language = empty($userdata['language']) ? $default_language : $userdata['language'];
+                return array($userdata['user'], $language);
             }
         }
 
-        error_log("found no userdata in: {$signed_string}\n", 3, dirname(__FILE__).'/../tmp/log.txt');
-        return array(null);
+        //error_log("found no userdata in: {$signed_string}\n", 3, dirname(__FILE__).'/../tmp/log.txt');
+        return array(null, null);
+    }
+    
+   /**
+    * Adapted from http://www.thefutureoftheweb.com/blog/use-accept-language-header
+    */
+    function get_preferred_language($accept_language_header)
+    {
+        // break up string into pieces (languages and q factors)
+        preg_match_all('/([a-z]{1,8}(-[a-z]{1,8})?)\s*(;\s*q\s*=\s*(1|0\.[0-9]+))?/i', $accept_language_header, $lang_parse);
+        
+        if(count($lang_parse[1]))
+        {
+            // create a list like "en" => 0.8
+            $languages = array_combine($lang_parse[1], $lang_parse[4]);
+            
+            // set default to 1 for any without q factor
+            foreach($languages as $l => $val)
+                $languages[$l] = ($val === '') ? 1 : $val;
+            
+            // sort list based on value	
+            arsort($languages, SORT_NUMERIC);
+        }
+        
+        foreach(array_keys($languages) as $language)
+        {
+            // any one of en-us, en-gb, etc.
+            if(preg_match('/^en\b/', $language))
+                return 'en';
+        }
+        
+        // english is the default
+        return 'en';
     }
     
     if(!function_exists('json_encode'))

@@ -8,7 +8,7 @@
     $scan_id = $_GET['scan'] ? $_GET['scan'] : null;
     $object_id = $_GET['key'] ? $_GET['key'] : null;
     $expected_etag = $_GET['etag'] ? $_GET['etag'] : null;
-    list($user_id) = read_userdata($_COOKIE['visitor']);
+    list($user_id, $language) = read_userdata($_COOKIE['visitor'], $_SERVER['HTTP_ACCEPT_LANGUAGE']);
 
     /**** ... ****/
     
@@ -18,7 +18,7 @@
         $user = get_user($dbh, $user_id);
 
     if($user)
-        setcookie('visitor', write_userdata($user['id']), time() + 86400 * 31);
+        setcookie('visitor', write_userdata($user['id'], $language), time() + 86400 * 31);
     
     if($scan_id)
         $scan = get_scan($dbh, $scan_id);

@@ -19,9 +19,12 @@
         ? $_POST['language']
         : $language;
 
-    $location = $_POST['referer'] ? $_POST['referer'] : $_SERVER['HTTP_REFERER'];
+    // redirect to some other page
+    $location = $_POST['referer']
+        ? $_POST['referer']
+        : $_SERVER['HTTP_REFERER'];
     
-    setcookie('visitor', write_userdata($user['id'], $language), time() + 86400 * 31);
+    setcookie('visitor', write_userdata($user_id, $language), time() + 86400 * 31);
     header("Location: {$location}");
     die("Fine, {$language}\n");
 

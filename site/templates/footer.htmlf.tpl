@@ -8,3 +8,5 @@
     <br />
     Web and print cartography &#xA9; <a href="http://cloudmade.com">Cloudmade</a>
 </p>
+
+{include file="language.htmlf.tpl"}

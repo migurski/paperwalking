@@ -77,13 +77,13 @@ input.mac-button
 }
 */
 
-form#language
+form.language
 {
     color: silver;
 }
 
-    form#language button,
-    form#language button.selected
+    form.language button,
+    form.language button.selected
     {
         font-family: Helvetica, Arial, sans-serif;
         font-size: 1em;
@@ -98,7 +98,7 @@ form#language
         cursor: pointer;
     }
         
-        form#language button.selected
+        form.language button.selected
         {
             font-weight: bold;
         }

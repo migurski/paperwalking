@@ -24,6 +24,7 @@
 
     $sm = get_smarty_instance();
     $sm->assign('post', $post);
+    $sm->assign('language', $language);
     
     header("Content-Type: text/html; charset=UTF-8");
     print $sm->fetch("upload.html.tpl");

@@ -21,6 +21,7 @@
 
     $sm = get_smarty_instance();
     $sm->assign('scans', $scans);
+    $sm->assign('language', $language);
     
     header("Content-Type: text/html; charset=UTF-8");
     print $sm->fetch("scans.html.tpl");

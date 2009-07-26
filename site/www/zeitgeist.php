@@ -168,6 +168,7 @@
     $sm->assign('country_percents', $country_percents);
     $sm->assign('scan_states', $scan_states);
     $sm->assign('zooms', $zooms);
+    $sm->assign('language', $language);
     
     header("Content-Type: text/html; charset=UTF-8");
     print $sm->fetch("zeitgeist.html.tpl");

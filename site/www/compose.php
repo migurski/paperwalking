@@ -245,6 +245,7 @@
     $sm->assign('url', $url);
     $sm->assign('width', $width);
     $sm->assign('height', $height);
+    $sm->assign('language', $language);
     
     header("Content-Type: text/html; charset=UTF-8");
     print $sm->fetch("compose.html.tpl");

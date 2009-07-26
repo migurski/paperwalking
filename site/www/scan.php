@@ -54,6 +54,7 @@
     $sm->assign('scan', $scan);
     $sm->assign('step', $step);
     $sm->assign('print', $print);
+    $sm->assign('language', $language);
     
     header("Content-Type: text/html; charset=UTF-8");
     print $sm->fetch("scan.html.tpl");

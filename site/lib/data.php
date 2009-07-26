@@ -92,6 +92,10 @@
             // any one of en-us, en-gb, etc.
             if(preg_match('/^en\b/', $language))
                 return 'en';
+
+            // any one of de, de-ch, etc.
+            if(preg_match('/^de\b/', $language))
+                return 'de';
         }
         
         // english is the default

@@ -94,16 +94,23 @@
     
             <h2>Edit The Map</h2>
     
+            <p>
+                There are two ways to edit OpenStreetMap using this scanned
+                map as a guide. If you prefer to use the advanced OSM editor
+                <a href="http://josm.openstreetmap.de">JOSM</a>, check out the
+                <a href="http://wiki.openstreetmap.org/wiki/JOSM/Plugins/WalkingPapers">JOSM WalkingPapers Plugin</a>.
+            </p>
+            
+            <p>
+                You can also edit OpenStreetMap right here
+                in this page, with the web-based OSM editor
+                <a href="http://wiki.openstreetmap.org/index.php/Potlatch">Potlatch</a>.
+            </p>
+            
             <div id="editor">
-                <p>
-                    You can edit OpenStreetMap using this scanned map as a guide
-                    right here in this page, with the web-based OSM editor
-                    <a href="http://wiki.openstreetmap.org/index.php/Potlatch">Potlatch</a>.
-                </p>
-                
                 <form onsubmit="return editInPotlatch(this.elements);">
                     <p>
-                        First, you’ll need to log in with your OpenStreetMap account
+                        You’ll need to log in with your OpenStreetMap account
                         to do any editing; do that below or
                         <a href="http://www.openstreetmap.org/user/new">create a new account</a>.
                         <strong><i>Walking Papers</i> will not see or keep your password</strong>,
@@ -128,6 +135,10 @@
                         <input name="password" type="password" size="30" />
                         <br />
                         (<a href="http://www.openstreetmap.org/user/forgot-password">Lost your password?</a>)
+                    </p>
+                    <p>
+                        This form will be replaced by an interactive editing window
+                        with your scanned map in the background for a guide.
                     </p>
                     <p>
                         <input class="mac-button" name="action" type="submit" value="Edit" />

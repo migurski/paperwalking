@@ -4,7 +4,15 @@
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>Scanned Map #{$scan.id|escape} (Walking Papers)</title>
+	<title>{strip}
+        {if $language == "de"}
+            Gescannte Karte #{$scan.id|escape}
+        {elseif $language == "nl"}
+            WRITE ME
+        {else}
+            Scanned Map #{$scan.id|escape}
+        {/if}
+    {/strip} (Walking Papers)</title>
 	<link rel="stylesheet" href="{$base_dir}/style.css" type="text/css" />
 	<link rel="stylesheet" href="{$base_dir}/scan.css" type="text/css" />
 	{if $scan && $scan.last_step != 6 && $scan.last_step != $constants.STEP_FATAL_ERROR && $scan.last_step != $constants.STEP_FATAL_QRCODE_ERROR}

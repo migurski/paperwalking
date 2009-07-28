@@ -4,7 +4,15 @@
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>About (Walking Papers)</title>
+	<title>{strip}
+        {if $language == "de"}
+            Über
+        {elseif $language == "nl"}
+            WRITE ME
+        {else}
+            About
+        {/if}
+    {/strip} (Walking Papers)</title>
 	<link rel="stylesheet" href="{$base_dir}/style.css" type="text/css" />
 	<link rel="stylesheet" href="{$base_dir}/index.css" type="text/css" />
 </head>

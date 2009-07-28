@@ -4,7 +4,15 @@
 <html lang="en">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>Upload Scan (Walking Papers)</title>
+    <title>{strip}
+        {if $language == "de"}
+            WRITE ME
+        {elseif $language == "nl"}
+            WRITE ME
+        {else}
+            Upload Scan
+        {/if}
+    {/strip} (Walking Papers)</title>
     <link rel="stylesheet" href="{$base_dir}/style.css" type="text/css" />
     <meta http-equiv="refresh" content="30" />
 </head>

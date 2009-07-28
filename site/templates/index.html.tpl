@@ -115,7 +115,13 @@
         </map>
         <div class="dog-ear"> </div>
         <div id="zoom-warning" style="display: none;">
-            A zoom level of <b>14 or more</b> is recommended for street-level mapping.
+            {if $language == "de"}
+                Ein Zoom-Level von <b>14 oder mehr</b> wird für das Erfassen von Details auf Straßenebene empfohlen.
+            {elseif $language == "nl"}
+                WRITE ME
+            {else}
+                A zoom level of <b>14 or more</b> is recommended for street-level mapping.
+            {/if}
         </div>
     </div>
     

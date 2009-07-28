@@ -4,7 +4,15 @@
 <html lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>Errata (Walking Papers)</title>
+	<title>{strip}
+        {if $language == "de"}
+            WRITE ME
+        {elseif $language == "nl"}
+            WRITE ME
+        {else}
+            Errata
+        {/if}
+    {/strip} (Walking Papers)</title>
 	<link rel="stylesheet" href="{$base_dir}/style.css" type="text/css" />
     <script type="text/javascript" src="{$base_dir}/script.js"></script>
 </head>

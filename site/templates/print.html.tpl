@@ -21,38 +21,17 @@
 
     {include file="navigation.htmlf.tpl"}
     
-    <h2>Print Map</h2>
-    
-    <p>
-        Print map of the area surrounding
-        {if $print.place_woeid}
-            <a id="print-location" href="http://www.openstreetmap.org/?lat={$print.latitude|escape}&amp;lon={$print.longitude|escape}&amp;zoom=15&amp;layers=B000FTF">
-                {$print.latitude|nice_degree:"lat"|escape}, {$print.longitude|nice_degree:"lon"|escape}</a>
-            <br />
-            {$print.place_name|escape}
-
+    <h2>{strip}
+        {if $language == "de"}
+            Karte drucken
+        {elseif $language == "nl"}
+            WRITE ME
         {else}
-            <a id="print-location" href="http://www.openstreetmap.org/?lat={$print.latitude|escape}&amp;lon={$print.longitude|escape}&amp;zoom=15&amp;layers=B000FTF">
-                {$print.latitude|nice_degree:"lat"|escape}, {$print.longitude|nice_degree:"lon"|escape}</a>
+            Print Map
         {/if}
-        <br />
-        Created {$print.age|nice_relativetime|escape}.
-        <span class="date-created" style="display: none;">{$print.created|escape}</span>
-    </p>
+    {/strip}</h2>
     
-    <p>
-        <a href="{$print.pdf_url|escape}">
-            <img src="{$base_dir}/tiny-doc.png" border="0" align="bottom"/>
-            Download map PDF for print</a>
-    </p>
-
-    <p>
-        <a href="{$print.pdf_url|escape}">Download a map</a> to get started mapping this area
-        from street level. Add details like businesses, parks, schools, buildings, paths,
-        post boxes, cash machines and other useful landmarks. When you’re finished,
-        <a href="{$base_dir}/upload.php">post a scan</a> of your annotated map
-        to trace your handwritten changes and notes directly into OpenStreetMap.
-    </p>
+    {include file="$language/print-top-paragraph.htmlf.tpl"}
 
     {if $print.zoom}
         <form action="{$base_dir}/compose.php" method="post" name="bounds">
@@ -63,7 +42,13 @@
                 <input name="west" type="hidden" value="{$print.west|escape}" />
                 <input name="zoom" type="hidden" value="{$print.zoom|escape}" />
         
-                Is this map wrong, or out of date?
+                {if $language == "de"}
+                    Ist diese Karte falsch oder veraltet?
+                {elseif $language == "nl"}
+                    WRITE ME
+                {else}
+                    Is this map wrong, or out of date?
+                {/if}
                 <input class="mac-button" type="submit" name="action" value="Redo" />
             </p>
         </form>
@@ -94,24 +79,7 @@
     // ]]>
     </script>
 
-    <p>
-        If you don’t have a printer, send us a
-        <b><a href="http://en.wikipedia.org/wiki/Self-addressed_stamped_envelope">self-addressed, stamped envelope</a>
-        with the print ID, “{$print.id}”,</b> and we’ll mail you a printed copy of this map. If you don’t have a scanner,
-        mail us your printed map and an <b>e-mail address</b> and we’ll scan it for
-        you.
-    </p>
-
-    <blockquote>
-        Walking Papers<br />
-        c/o Stamen Design<br />
-        3012 16th St. #200<br />
-        San Francisco, CA 94103
-    </blockquote>
-
-    <p>
-        Please allow a few weeks for scanning and printing.
-    </p>
+    {include file="$language/print-bottom-paragraph.htmlf.tpl"}
 
     {include file="footer.htmlf.tpl"}
     

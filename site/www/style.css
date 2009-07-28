@@ -77,6 +77,32 @@ input.mac-button
 }
 */
 
+form.language
+{
+    color: silver;
+}
+
+    form.language button,
+    form.language button.selected
+    {
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 1em;
+        text-decoration: underline;
+        color: silver;
+        overflow: visible;
+        width: auto;
+        background: none;
+        margin: 0;
+        padding: 0;
+        border: none;
+        cursor: pointer;
+    }
+        
+        form.language button.selected
+        {
+            font-weight: bold;
+        }
+        
 #navigation
 {
     margin-top: 1em;

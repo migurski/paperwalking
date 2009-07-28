@@ -5,7 +5,7 @@
     require_once 'init.php';
     require_once 'data.php';
     
-    $user_id = $_COOKIE['visitor'] ? $_COOKIE['visitor'] : null;
+    list($user_id, $language) = read_userdata($_COOKIE['visitor'], $_SERVER['HTTP_ACCEPT_LANGUAGE']);
 
     /**** ... ****/
     
@@ -15,12 +15,13 @@
         $user = get_user($dbh, $user_id);
 
     if($user)
-        setcookie('visitor', $user['id'], time() + 86400 * 31);
+        setcookie('visitor', write_userdata($user['id'], $language), time() + 86400 * 31);
     
     $scans = get_scans($dbh, 50, false);
 
     $sm = get_smarty_instance();
     $sm->assign('scans', $scans);
+    $sm->assign('language', $language);
     
     header("Content-Type: text/html; charset=UTF-8");
     print $sm->fetch("scans.html.tpl");

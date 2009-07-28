@@ -43,7 +43,15 @@
     
     {if $scan}
         {if $scan.last_step == $constants.STEP_FINISHED}
-            <h2>Scanned Map</h2>
+            <h2>{strip}
+                {if $language == "de"}
+                    Gescannte Karte
+                {elseif $language == "nl"}
+                    WRITE ME
+                {else}
+                    Scanned Map
+                {/if}
+            {/strip}</h2>
             
             {if $scan.description}
                 <p style="font-style: italic;">
@@ -52,7 +60,14 @@
             {/if}
             
             <p>
-                Covers the area near
+                {if $language == "de"}
+                    Umfasst diesen Bereich
+                {elseif $language == "nl"}
+                    WRITE ME
+                {else}
+                    Covers the area near
+                {/if}
+
                 {if $print.place_woeid}
                     <a id="print-location" href="http://www.openstreetmap.org/?lat={$print.latitude|escape}&amp;lon={$print.longitude|escape}&amp;zoom=15&amp;layers=B000FTF">
                         {$print.latitude|nice_degree:"lat"|escape}, {$print.longitude|nice_degree:"lon"|escape}</a>
@@ -88,47 +103,37 @@
             </p>
         
             <p>
-                Download a
-                <a href="{$base_dir}/print.php?id={$scan.print_id|escape}">fresh map of this area from print #{$scan.print_id|escape}</a>.
+                {if $language == "de"}
+                    Eine
+                    <a href="{$base_dir}/print.php?id={$scan.print_id|escape}">neue Version der Karte des Gebietes vom Ausdruck #{$scan.print_id|escape} herunterladen</a>.
+
+                {elseif $language == "nl"}
+                    WRITE ME
+                    <a href="{$base_dir}/print.php?id={$scan.print_id|escape}">LINK</a>
+
+                {else}
+                    Download a
+                    <a href="{$base_dir}/print.php?id={$scan.print_id|escape}">fresh map of this area from print #{$scan.print_id|escape}</a>.
+                {/if}
             </p>
     
-            <h2>Edit The Map</h2>
+            <h2>{strip}
+                {if $language == "de"}
+                    Karte bearbeiten
+                {elseif $language == "nl"}
+                    WRITE ME
+                {else}
+                    Edit The Map
+                {/if}
+            {/strip}</h2>
     
+            {include file="$language/scan-editor-info.htmlf.tpl"}
+            
             <div id="editor">
-                <p>
-                    You can edit OpenStreetMap using this scanned map as a guide
-                    right here in this page, with the web-based OSM editor
-                    <a href="http://wiki.openstreetmap.org/index.php/Potlatch">Potlatch</a>.
-                </p>
-                
                 <form onsubmit="return editInPotlatch(this.elements);">
-                    <p>
-                        First, you’ll need to log in with your OpenStreetMap account
-                        to do any editing; do that below or
-                        <a href="http://www.openstreetmap.org/user/new">create a new account</a>.
-                        <strong><i>Walking Papers</i> will not see or keep your password</strong>,
-                        it is passed directly to OpenStreetMap.
-                    </p>
-                    <p>
-                        <label for="username">Email Address or Username</label>
-                        <br />
-                        <input id="username-textfield" name="username" type="text" size="30" />
-                    </p>
-                    <script type="text/javascript">
-                    // <![CDATA[{literal}
-                    
-                        if(readCookie('openstreetmap-username') && document.getElementById('username-textfield'))
-                            document.getElementById('username-textfield').value = readCookie('openstreetmap-username');
-                    
-                    // {/literal}]]>
-                    </script>
-                    <p>
-                        <label for="password">Password</label>
-                        <br />
-                        <input name="password" type="password" size="30" />
-                        <br />
-                        (<a href="http://www.openstreetmap.org/user/forgot-password">Lost your password?</a>)
-                    </p>
+
+                    {include file="$language/scan-potlatch-info.htmlf.tpl"}
+
                     <p>
                         <input class="mac-button" name="action" type="submit" value="Edit" />
                         <input name="minrow" type="hidden" value="{$scan.min_row|escape}" />

@@ -12,7 +12,15 @@
 
     {include file="navigation.htmlf.tpl"}
     
-    <h2>Recent Prints</h2>
+    <h2>{strip}
+        {if $language == "de"}
+            Zuletzt gedruckt
+        {elseif $language == "nl"}
+            WRITE ME
+        {else}
+            Recent Prints
+        {/if}
+    {/strip}</h2>
     
     <ol>
         {foreach from=$prints item="print"}

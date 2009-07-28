@@ -28,12 +28,7 @@
         <img src="http://chart.apis.google.com/chart?cht=p&amp;chd=t:{"urlencode"|@array_map:$country_percents|@join:","|escape}&amp;chs=408x180&amp;chl={"urlencode"|@array_map:$country_names|@join:"|"|escape}">
     </p>
     
-    <h3>Orientation</h3>
-    
-    <p>
-        Share of prints by orientation in the past month.
-        Landscape orientation was first introduced on June 20.
-    </p>
+    {include file="$language/zeitgeist-orientation.htmlf.tpl"}
     
     <p>
         <img src="http://chart.apis.google.com/chart?cht=p&amp;chd=t:{$orientation_percent.portrait|escape},{$orientation_percent.landscape|escape}&amp;chs=408x120&amp;chl=Portrait|Landscape">

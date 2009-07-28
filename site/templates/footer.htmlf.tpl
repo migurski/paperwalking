@@ -8,6 +8,8 @@
             <a href="http://openstreetmap.org">OpenStreetMap</a>
         <br />
         Web und Druck Kartographie &#xA9; <a href="http://cloudmade.com">Cloudmade</a>
+        <br />
+        German translation by Jonas Krückel
 
     {elseif $language == "nl"}
         WRITE ME
@@ -21,6 +23,8 @@
             <a href="http://openstreetmap.org">OpenStreetMap</a>
         <br />
         Web and print cartography &#xA9; <a href="http://cloudmade.com">Cloudmade</a>
+        <br />
+        German translation by Jonas Krückel
     {/if}
 </p>
 

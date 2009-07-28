@@ -15,22 +15,21 @@
 
     {include file="navigation.htmlf.tpl"}
     
-    <p>
-        Print maps, draw on them, scan them back in and help OpenStreetMap
-        improve its coverage of local points of interests and street detail.
-        <i>Walking Papers</i> is a product of <a href="http://stamen.com">Stamen Design's</a>
-        <a href="http://mike.teczno.com">Michal Migurski</a>.
-    </p>
-    
-    <p>
-        <a href="#make">See below to make your own printed map.</a>
-    </p>
+    {include file="$language/index-top-paragraph.htmlf.tpl"}
     
     <p>
         <img src="{$base_dir}/scan-example.jpg" border="1" />
     </p>
     
-    <h2>Recent Scans</h2>
+    <h2>{strip}
+        {if $language == "de"}
+            Zuletzt gescannt
+        {elseif $language == "nl"}
+            WRITE ME
+        {else}
+            Recent Scans
+        {/if}
+    {/strip}</h2>
     
     <ol>
         {foreach from=$scans item="rscan"}
@@ -65,27 +64,31 @@
         {/foreach}
     </ol>
     
-    <p>
-        <a href="{$base_dir}/scans.php">More recent scans...</a>
-    </p>
+    <p>{strip}
+        <a href="{$base_dir}/scans.php">
+            {if $language == "de"}
+                Weitere Scans...
+            {elseif $language == "nl"}
+                WRITE ME
+            {else}
+                More recent scans...
+            {/if}
+        </a>
+    {/strip}</p>
     
-    <h2><a name="make">Make A Prin</a>t</h2>
+    <h2>{strip}
+        <a name="make">
+            {if $language == "de"}
+                Drucke
+            {elseif $language == "nl"}
+                WRITE ME
+            {else}
+                Make A Print
+            {/if}
+        </a>
+    {/strip}</h2>
     
-    <p>
-        <a href="http://openstreetmap.org">OpenStreetMap</a> is a wiki-style map
-        of the world that anyone can edit. In some places, participants are
-        creating the first freely-available maps by GPS survey. In other places,
-        such as the United States, basic roads exist, but lack local detail:
-        locations of traffic signals, ATMs, cafés, schools, parks, and shops.
-        What such partially-mapped places need is not more GPS traces, but
-        additional knowledge about what exists on and around the street. Walking
-        Papers is made to help you easily create printed maps, mark them with
-        things you know, and then share that knowledge with OpenStreetMap.
-    </p>
-
-    <p>
-        <strong>To get started</strong>, search for a town or city you know, then pan and zoom the map to an exact location.
-    </p>
+    {include file="$language/index-compose-explanation.htmlf.tpl"}
 
     <form onsubmit="return getPlaces(this.elements['q'].value, this.elements['appid'].value);">
         <input type="text" name="q" size="24" />
@@ -174,17 +177,46 @@
         <input name="zoom" type="hidden" />
 
         <p>
-            Orientation:
+            {if $language == "de"}
+                Ausrichtung:
+            {elseif $language == "nl"}
+                WRITE ME
+            {else}
+                Orientation:
+            {/if}
             <select name="orientation" onchange="setOrientation(this.value);">
-                <option label="Portrait" value="portrait" selected="selected">Portrait</option>
-                <option label="Landscape" value="landscape">Landscape</option>
+                {if $language == "de"}
+                    {assign var="label" value="Hochformat"}
+                {elseif $language == "nl"}
+                    {assign var="label" value="WRITE ME"}
+                {else}
+                    {assign var="label" value="Portrait"}
+                {/if}
+                <option label="{$label}" value="portrait" selected="selected">{$label}</option>
+
+                {if $language == "de"}
+                    {assign var="label" value="Querformat"}
+                {elseif $language == "nl"}
+                    {assign var="label" value="WRITE ME"}
+                {else}
+                    {assign var="label" value="Landscape"}
+                {/if}
+                <option label="{$label}" value="landscape">{$label}</option>
             </select>
     
             <input class="mac-button" type="submit" name="action" value="Make" />
         </p>
     </form>
 
-    <h2>Recent Prints</h2>
+    <h2>{strip}
+        {if $language == "de"}
+            Zuletzt gedruckt
+        {elseif $language == "nl"}
+            WRITE ME
+        {else}
+            Recent Prints
+        {/if}
+    {/strip}</h2>
     
     <ol>
         {foreach from=$prints item="rprint"}
@@ -211,9 +243,17 @@
         {/foreach}
     </ol>
     
-    <p>
-        <a href="{$base_dir}/prints.php">More recent prints...</a>
-    </p>
+    <p>{strip}
+        <a href="{$base_dir}/prints.php">
+            {if $language == "de"}
+                Weitere Drucke...
+            {elseif $language == "nl"}
+                WRITE ME
+            {else}
+                More recent prints...
+            {/if}
+        </a>
+    {/strip}</p>
     
     {include file="footer.htmlf.tpl"}
     

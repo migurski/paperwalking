@@ -3,10 +3,10 @@ Als je geen eigen printer hebt, stuur ons dan een aan jezelf gerichte envelope m
 </p>
  
 <blockquote>
-Stichting OpenGeo<br />
-Onder vermelding van: "Walking Papers"<br />
-Spinellihof 44<br />
-4463 GP Goes, Nederland
+    Walking Papers<br />
+    c/o Stamen Design<br />
+    2017 Mission St. #300<br />
+    San Francisco, CA 94110
 </blockquote>
  
 <p>

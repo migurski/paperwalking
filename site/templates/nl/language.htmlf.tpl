@@ -1,64 +1,62 @@
-{* nl: WRITE ME *}
-
-<h2>Localization</h2>
+<h2>Vertaling</h2>
 
 <p>
-    Help us make Walking Papers available in a variety of languages. The <a href="http://github.com/migurski/paperwalking">project source code is hosted at Github</a>, corrections and complete translations can be performed by <a href="http://github.com/guides/fork-a-project-and-submit-your-modifications">forking the project code</a> and sending a pull request.
+    Help mee om Walking Papers beschikbaar te maken in andere talen! De <a href="http://github.com/migurski/paperwalking">project source code is beschikbaar op Github</a>, correcties en complete vertalingen kunnen worden uitgevoerd door een eigen Walking Papers <a href="http://github.com/guides/fork-a-project-and-submit-your-modifications">fork</a> te maken en wanneer je gereed bent een pull request aan de centrale repository te sturen.
 </p>
 
 <p>
-    We currently have translations in these languages:
+    Walking Papers is tot nu toe vertaald in:
 </p>
 
 <ul>
     <li>
-        <strong>English</strong>
+        <strong>Engels</strong>
         <br/>
-        Original by <a href="http://github.com/migurski">Michal Migurski</a>
+        Origineel door <a href="http://github.com/migurski">Michal Migurski</a>
     </li>
     <li>
-        <strong>German</strong>
+        <strong>Duits</strong>
         <br/>
-        Translation by <a href="http://github.com/John07">Jonas Krückel</a>
+        Vertaald door <a href="http://github.com/John07">Jonas Krückel</a>
     </li>
     <li>
-        <strong>Dutch</strong>
+        <strong>Nederlands</strong>
         <br/>
-        Translation by <a href="http://github.com/milovanderlinden">Milo van der Linden</a>
+        Vertaald door <a href="http://github.com/milovanderlinden">Milo van der Linden</a>
     </li>
     <li>
-        <strong>French</strong>
+        <strong>Frans</strong>
         <br/>
-        Translation by <a href="http://github.com/jfretin">Jonathan Fretin</a>
+        Vertaald door <a href="http://github.com/jfretin">Jonathan Fretin</a>
     </li>
     <li>
-        <strong>Spanish</strong>
+        <strong>Spaans</strong>
         <br/>
-        Translation by <a href="http://github.com/mort">Manuel González Noriega</a>
+        Vertaald door <a href="http://github.com/mort">Manuel González Noriega</a>
     </li>
     <li>
-		<strong>Japanese (日本語)</strong>
+		<strong>Japans</strong>
 		<br/>
-		Translation by <a href="http://github.com/miurahr">Hiroshi Miura(三浦広志)</a>
+		Vertaald door <a href="http://github.com/miurahr">Hiroshi Miura</a>
     </li>
     <li>
-        <strong>Italian</strong>
+        <strong>Italiaans</strong>
         <br/>
-        Translation by <a href="http://github.com/ecarnevale">Emanuel Carnevale</a>
+        Vertaald door <a href="http://github.com/ecarnevale">Emanuel Carnevale</a>
     </li>
     <li>
-        <strong>Turkish</strong>
+        <strong>Turks</strong>
         <br/>
-        Translation by <a href="http://github.com/alerque">Caleb Maclennan</a>.
+        Vertaald door <a href="http://github.com/alerque">Caleb Maclennan</a>.
     </li>
     <li>
-        <strong>Russian</strong>
+        <strong>Russisch</strong>
         <br/>
-        Translation by <a href="http://github.com/simgislab">Maxim Dubinin</a> (<a href="http://gis-lab.info/">GIS-Lab.info</a>)
+        Vertaald door <a href="http://github.com/simgislab">Maxim Dubinin</a> (<a href="http://gis-lab.info/">GIS-Lab.info</a>)
     </li>
     <li>
-        <strong>Swedish</strong>
+        <strong>Zweeds</strong>
         <br/>
-        Translation by <a href="http://github.com/knarf-se">Frank M. Eriksson</a> (<a href="http://knarf.se/">knarF.se</a>)
+        Vertaald door <a href="http://github.com/knarf-se">Frank M. Eriksson</a> (<a href="http://knarf.se/">knarF.se</a>)
     </li>
 </ul>

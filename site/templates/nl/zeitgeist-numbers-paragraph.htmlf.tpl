@@ -1,6 +1,3 @@
 <p>
-    {* nl: WRITE ME *}
-    Why are there so many prints? It’s easy to create a print and less-easy to make a scan. We’re in the early days of this site,
-    and I imagine that it may take some time for the initial excitement of printing out paper maps to translate into submitted,
-    annotated scanned images. Bring it on!
+    Waarom zijn er zoveel afdrukken? Het is eenvoudig om een afdruk te maken, maar lastiger om te scannen. Het gebruik van deze website moet groeien, maar we spreken de hoop uit dat op een dag alle afdrukken hun weg terug vinden naar Walking Papers in de vorm van scans. Doe mee en scan jou bewerkte afdruk!
 </p>

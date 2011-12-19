@@ -32,6 +32,9 @@
     $provider = $_POST['provider'] ? $_POST['provider'] : null;
     $layout = $_POST['layout'] ? $_POST['layout'] : null;
     
+    if($_POST['license'] == 'on')
+        $provider .= ",http://tile.stamen.com/license-overlay/{Z}/{X}/{Y}.png";
+    
     switch(strtolower($_POST['grid']))
     {
         case 'utm':

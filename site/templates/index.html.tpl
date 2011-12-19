@@ -547,6 +547,16 @@
                 <input type="radio" name="grid" value="utm" /> UTM
                 <input type="radio" name="grid" value="mgrs" /> MGRS/USNG
             </p>
+            <p>
+                License status overlay:
+                <input type="radio" name="license" value="" checked="checked" /> Off
+                <input type="radio" name="license" value="on" /> On
+                <br/>
+                <a href="http://www.osmfoundation.org/wiki/License/We_Are_Changing_The_License">OpenStreetMap is changing to a new license</a>,
+                and some data may be lost as part of the transition in April, 2012.
+                The license status overlay marks data that will be reverted
+                or removed on that day, and should be re-surveyed.
+            </p>
         {/if}
     </form>
 

@@ -34,7 +34,7 @@
     define('TILE_PROVIDERS', <<<PROVIDERS_LIST
 
 http://tile.openstreetmap.org/{Z}/{X}/{Y}.png	OpenStreetMap
-http://andy.sandbox.cloudmade.com/tiles/cycle/{Z}/{X}/{Y}.png	OpenStreetMap: CycleMap
+http://tile.opencyclemap.org/cycle/{Z}/{X}/{Y}.png	OpenStreetMap: CycleMap
 http://tah.openstreetmap.org/Tiles/tile/{Z}/{X}/{Y}.png	OpenStreetMap: Osmarender
 
 PROVIDERS_LIST

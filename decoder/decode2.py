@@ -3,10 +3,8 @@ from StringIO import StringIO
 from subprocess import Popen, PIPE
 from os.path import basename, dirname, join as pathjoin
 from os import close, write, unlink
-from xml.etree import ElementTree
 from urlparse import urlparse
 from tempfile import mkstemp
-from urllib import urlopen
 from random import random
 from shutil import move
 from glob import glob
@@ -23,7 +21,7 @@ else:
 from ModestMaps.Core import Point, Coordinate
 
 from geoutils import create_geotiff, generate_tiles
-from apiutils import append_scan_file, update_scan, update_step, ALL_FINISHED
+from apiutils import append_scan_file, update_scan, update_step, get_print_info, ALL_FINISHED
 from featuremath import MatchedFeature, blobs2features, blobs2feats_limited, blobs2feats_fitted, theta_ratio_bounds
 from imagemath import imgblobs, extract_image, open as imageopen
 from matrixmath import Transform, quad2quad
@@ -277,30 +275,20 @@ def read_code(image):
     if not decoded.startswith('http://'):
         raise CodeReadException('Attempt to read QR code failed')
     
-    html = ElementTree.parse(urlopen(decoded))
+    print_id, north, west, south, east, paper, orientation, layout = get_print_info(decoded)
     
-    print_id, paper, orientation = None, None, None
-    north, west, south, east = None, None, None, None
-    
-    for span in html.findall('body/span'):
-        if span.get('id') == 'print-info':
-            for subspan in span.findall('span'):
-                if subspan.get('class') == 'print':
-                    print_id = subspan.text
-                elif subspan.get('class') == 'north':
-                    north = float(subspan.text)
-                elif subspan.get('class') == 'south':
-                    south = float(subspan.text)
-                elif subspan.get('class') == 'east':
-                    east = float(subspan.text)
-                elif subspan.get('class') == 'west':
-                    west = float(subspan.text)
-                elif subspan.get('class') == 'paper-size':
-                    paper = subspan.text
-                elif subspan.get('class') == 'orientation':
-                    orientation = subspan.text
+    if layout == 'half-page' and orientation == 'landscape':
+        east += (east - west)
+        print >> stderr, 'Adjusted', orientation, layout, 'bounds to %.6f, %.6f, %.6f, %.6f' % (north, west, south, east)
 
-    return print_id, north, west, south, east, paper, orientation
+    elif layout == 'half-page' and orientation == 'portrait':
+        south += (south - north)
+        print >> stderr, 'Adjusted', orientation, layout, 'bounds to %.6f, %.6f, %.6f, %.6f' % (north, west, south, east)
+    
+    else:
+        print >> stderr, 'Kept', orientation, layout, 'bounds at %.6f, %.6f, %.6f, %.6f' % (north, west, south, east)
+
+    return print_id, north, west, south, east, paper, orientation, layout
 
 def get_paper_size(paper, orientation):
     """
@@ -417,7 +405,7 @@ def main(apibase, password, scan_id, url, old_decode_markers):
         _update_step(STEP_READING_QR_CODE)
 
         try:
-            print_id, north, west, south, east, _paper, _orientation = read_code(qrcode_img)
+            print_id, north, west, south, east, _paper, _orientation, _layout = read_code(qrcode_img)
         except CodeReadException:
             print >> stderr, 'could not read the QR code.'
             continue

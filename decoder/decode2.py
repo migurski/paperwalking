@@ -482,6 +482,8 @@ def main(apibase, password, scan_id, url, old_decode_markers):
         print >> stderr, 'done.'
         print >> stderr, 'tiles...',
         
+        yield 5*60
+        
         minrow, mincol, minzoom = 2**20, 2**20, 20
         maxrow, maxcol, maxzoom = 0, 0, 0
 

@@ -1,4 +1,5 @@
 from sys import stderr
+from time import sleep
 from urllib import urlopen
 from urlparse import urljoin, urlparse
 from os.path import dirname, basename, relpath
@@ -32,7 +33,7 @@ html_template = """<!DOCTYPE html>
 def main(apibase, password, scan_url, index_url, s3_access, s3_secret, bucket_name):
     """
     """
-    yield 10
+    yield 15
     
     scan_id, place_woeid, place_name = get_scan_info(scan_url)
     
@@ -51,20 +52,22 @@ def main(apibase, password, scan_url, index_url, s3_access, s3_secret, bucket_na
     
     try:
         bucket = conn.create_bucket(bucket_name, headers=meta)
+        
+        # sleep while archive.org figures out that it really does have a bucket.
+        sleep(5)
+
     except S3CreateError:
-        print >> stderr, 'wtf?'
         bucket = conn.get_bucket(bucket_name)
     
     tile_size = -1
     
     print >> stderr, 'Archiving',
     
+    yield 5*60
+    
     s, index_host, index_path, q, p, f = urlparse(index_url)
     
     for (index, line) in enumerate(urlopen(index_url)):
-        if index % 10 == 0:
-            yield 20
-    
         item_url = urljoin(index_url, line.strip())
         
         s, item_host, item_path, q, p, f = urlparse(item_url)

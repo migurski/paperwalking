@@ -210,6 +210,25 @@ def get_print_info(print_url):
     
     return print_id, north, west, south, east, paper, orientation, layout, pdf_url
 
+def get_scan_info(scan_url):
+    """
+    """
+    s, host, path, p, query, f = urlparse(scan_url)
+    host, port = (':' in host) and host.split(':') or (host, 80)
+    
+    req = HTTPConnection(host, port)
+    req.request('GET', path + '?' + query, headers=dict(Accept='application/paperwalking+xml'))
+    res = req.getresponse()
+    
+    scan_ = ElementTree.parse(res).getroot()
+    scan_id = scan_.attrib['id']
+    
+    print_ = scan_.find('print')
+    place_woeid = print_.find('place').attrib.get('woeid', None)
+    place_name = print_.find('place').text
+    
+    return scan_id, place_woeid, place_name
+
 def encode_multipart_formdata(fields, files):
     """ fields is a sequence of (name, value) elements for regular form fields.
         files is a sequence of (name, filename, value) elements for data to be uploaded as files

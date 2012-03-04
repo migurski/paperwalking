@@ -275,7 +275,7 @@ def read_code(image):
     if not decoded.startswith('http://'):
         raise CodeReadException('Attempt to read QR code failed')
     
-    print_id, north, west, south, east, paper, orientation, layout = get_print_info(decoded)
+    print_id, north, west, south, east, paper, orientation, layout, pdf_url = get_print_info(decoded)
     
     if layout == 'half-page' and orientation == 'landscape':
         east += (east - west)
@@ -288,7 +288,7 @@ def read_code(image):
     else:
         print >> stderr, 'Kept', orientation, layout, 'bounds at %.6f, %.6f, %.6f, %.6f' % (north, west, south, east)
 
-    return print_id, north, west, south, east, paper, orientation, layout
+    return print_id, north, west, south, east, paper, orientation, pdf_url
 
 def get_paper_size(paper, orientation):
     """
@@ -341,7 +341,13 @@ def main(apibase, password, scan_id, url, old_decode_markers):
     #
     # Prepare a shorthand for pushing data.
     #
-    _append_file = lambda name, body: scan_id and append_scan_file(scan_id, name, body, apibase, password) or None
+    appended_files = [url]
+    
+    def _append_file(name, body):
+        if scan_id:
+            append_scan_file(scan_id, name, body, apibase, password)
+            appended_files.append(name)
+    
     _update_step = lambda step_number: scan_id and update_step(apibase, password, scan_id, step_number) or None
     
     def _append_image(filename, image):
@@ -405,7 +411,7 @@ def main(apibase, password, scan_id, url, old_decode_markers):
         _update_step(STEP_READING_QR_CODE)
 
         try:
-            print_id, north, west, south, east, _paper, _orientation, _layout = read_code(qrcode_img)
+            print_id, north, west, south, east, _paper, _orientation, pdf_url = read_code(qrcode_img)
         except CodeReadException:
             print >> stderr, 'could not read the QR code.'
             continue
@@ -413,6 +419,8 @@ def main(apibase, password, scan_id, url, old_decode_markers):
         if (_paper, _orientation) != (paper, orientation):
             continue
         
+        appended_files.append(pdf_url)
+
         _update_step(STEP_TILING_UPLOADING)
 
         draw_postblobs(postblob_img, blobs_abcde)
@@ -502,6 +510,8 @@ def main(apibase, password, scan_id, url, old_decode_markers):
         
         min_coord = Coordinate(minrow, mincol, minzoom)
         max_coord = Coordinate(maxrow, maxcol, maxzoom)
+        
+        _append_file('manifest.txt', '\n'.join(appended_files))
         
         update_scan(apibase, password, scan_id, uploaded_file, print_id, min_coord, max_coord, img_bounds)
 

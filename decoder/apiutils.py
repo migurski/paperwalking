@@ -206,7 +206,9 @@ def get_print_info(print_url):
     east = float(print_.find('bounds').find('east').text)
     west = float(print_.find('bounds').find('west').text)
     
-    return print_id, north, west, south, east, paper, orientation, layout
+    pdf_url = urljoin(print_url, print_.find('pdf').attrib['href'])
+    
+    return print_id, north, west, south, east, paper, orientation, layout, pdf_url
 
 def encode_multipart_formdata(fields, files):
     """ fields is a sequence of (name, value) elements for regular form fields.

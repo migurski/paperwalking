@@ -63,7 +63,7 @@ def main(apibase, password, scan_url, index_url, s3_access, s3_secret, bucket_na
     
     print >> stderr, 'Archiving',
     
-    yield 5*60
+    yield 15*60
     
     s, index_host, index_path, q, p, f = urlparse(index_url)
     

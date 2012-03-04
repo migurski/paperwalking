@@ -86,6 +86,7 @@
                 
                 $message = array('action' => 'archive',
                                  'manifest' => "{$scan['base_url']}/manifest.txt",
+                                 'href' => 'http://'.get_domain_name().get_base_dir().'/scan.php?id='.urlencode($scan['id']),
                                  'access' => ARCHIVE_ACCESS_KEY,
                                  'secret' => ARCHIVE_SECRET_KEY,
                                  'bucket' => "walkingpapers-scan-{$scan['id']}-by-{$scan['user_id']}");

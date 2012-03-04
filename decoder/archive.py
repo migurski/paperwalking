@@ -17,6 +17,8 @@ html_template = """<!DOCTYPE html>
         <title>%(bucket_name)s</title>
     </head>
     <body>
+        <h1><a href="%(scan_url)s">Scan</a></h1>
+        <p>From <a href="%(site_url)s">%(scan_host)s</a>.</p>
         <ul>
             <li><a href="%(print_href)s">Print PDF</a></li>
             <li><a href="%(geotiff_href)s">GeoTIFF</a></li>
@@ -26,10 +28,13 @@ html_template = """<!DOCTYPE html>
     </body>
 </html>"""
 
-def main(apibase, password, index_url, s3_access, s3_secret, bucket_name):
+def main(apibase, password, scan_url, index_url, s3_access, s3_secret, bucket_name):
     """
     """
     yield 1
+    
+    s, scan_host, scan_path, q, p, f = urlparse(scan_url)
+    site_url = 'http://' + scan_host + dirname(scan_path).rstrip('/') + '/'
     
     s, index_host, index_path, q, p, f = urlparse(index_url)
     

@@ -164,7 +164,7 @@ if __name__ == '__main__':
                     
                     elif action == 'archive':
                         print >> sys.stderr, datetime.datetime.now(), 'Decoding message id', message_id, '- archive', msg['manifest']
-                        progress = archive.main(apibase, password, msg['manifest'], msg['access'], msg['secret'], msg['bucket'])
+                        progress = archive.main(apibase, password, msg['href'], msg['manifest'], msg['access'], msg['secret'], msg['bucket'])
                 
                 try:
                     for timeout in progress:

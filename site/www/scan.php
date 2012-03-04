@@ -86,9 +86,12 @@
                 
                 $message = array('action' => 'archive',
                                  'manifest' => "{$scan['base_url']}/manifest.txt",
+                                 'access' => ARCHIVE_ACCESS_KEY,
+                                 'secret' => ARCHIVE_SECRET_KEY,
                                  'bucket' => "walkingpapers-scan-{$scan['id']}-by-{$scan['user_id']}");
                 
-                add_message($dbh, json_encode($message));
+                if(ARCHIVE_SECRET_KEY)
+                    add_message($dbh, json_encode($message));
                 
                 $dbh->query('COMMIT');
             }

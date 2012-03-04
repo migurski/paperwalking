@@ -8,10 +8,7 @@ from boto.exception import S3CreateError
 
 from apiutils import ALL_FINISHED
 
-s3_access = '*** Get yours via http://www.archive.org/help/abouts3.txt ***'
-s3_secret = '*** Get yours via http://www.archive.org/help/abouts3.txt ***'
-
-def main(apibase, password, index_url, bucket_name):
+def main(apibase, password, index_url, s3_access, s3_secret, bucket_name):
     """
     """
     yield 1

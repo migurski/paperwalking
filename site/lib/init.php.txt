@@ -20,6 +20,11 @@
     define('AWS_SECRET_KEY', '');
     define('S3_BUCKET_ID',   '');
     
+    // Archive S3
+    // 
+    define('ARCHIVE_ACCESS_KEY', '*** http://www.archive.org/help/abouts3.txt ***');
+    define('ARCHIVE_SECRET_KEY', '');
+    
     // Master on/off switch for the whole site.
     // Displays a "go away" message for any page when turned off.
     define('MASTER_ON_OFF_SWITCH', 1);

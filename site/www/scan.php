@@ -81,19 +81,7 @@
                 add_log($dbh, "Posting additional details to scan {$print['id']}");
         
                 $dbh->query('START TRANSACTION');
-                
                 $scan = set_scan($dbh, $scan);
-                
-                $message = array('action' => 'archive',
-                                 'manifest' => "{$scan['base_url']}/manifest.txt",
-                                 'href' => 'http://'.get_domain_name().get_base_dir().'/scan.php?id='.urlencode($scan['id']),
-                                 'access' => ARCHIVE_ACCESS_KEY,
-                                 'secret' => ARCHIVE_SECRET_KEY,
-                                 'bucket' => "walkingpapers-scan-{$scan['id']}-by-{$scan['user_id']}");
-                
-                if(ARCHIVE_SECRET_KEY)
-                    add_message($dbh, json_encode($message));
-                
                 $dbh->query('COMMIT');
             }
         }

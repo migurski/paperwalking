@@ -70,6 +70,20 @@
             } else {
                 add_log($dbh, "Adding step {$step_number} to scan {$scan_id}");
                 add_step($dbh, $scan_id, $step_number);
+                
+                if(ARCHIVE_SECRET_KEY && $step_number == STEP_FINISHED)
+                {
+                    $scan = get_scan($dbh, $scan_id);
+                    
+                    $message = array('action' => 'archive',
+                                     'manifest' => "{$scan['base_url']}/manifest.txt",
+                                     'href' => 'http://'.get_domain_name().get_base_dir().'/scan.php?id='.urlencode($scan['id']),
+                                     'access' => ARCHIVE_ACCESS_KEY,
+                                     'secret' => ARCHIVE_SECRET_KEY,
+                                     'bucket' => "paperwalking-scan-{$scan['id']}-by-{$scan['user_id']}");
+                    
+                    add_message($dbh, json_encode($message));
+                }
             }
             
             echo "OK\n";

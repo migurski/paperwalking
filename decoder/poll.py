@@ -10,7 +10,7 @@ import datetime
 import urlparse
 import optparse
 
-import compose2, decode2
+import compose2, decode2, archive
 from apiutils import ALL_FINISHED
 
 from decode import Marker
@@ -161,6 +161,10 @@ if __name__ == '__main__':
     
                         print >> sys.stderr, datetime.datetime.now(), 'Decoding message id', message_id, '- print', msg['print_id']
                         progress = compose2.main(apibase, password, msg['print_id'], **kwargs)
+                    
+                    elif action == 'archive':
+                        print >> sys.stderr, datetime.datetime.now(), 'Decoding message id', message_id, '- archive', msg['manifest']
+                        progress = archive.main(apibase, password, msg['manifest'], msg['bucket'])
                 
                 try:
                     for timeout in progress:

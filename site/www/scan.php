@@ -81,7 +81,15 @@
                 add_log($dbh, "Posting additional details to scan {$print['id']}");
         
                 $dbh->query('START TRANSACTION');
+                
                 $scan = set_scan($dbh, $scan);
+                
+                $message = array('action' => 'archive',
+                                 'manifest' => "{$scan['base_url']}/manifest.txt",
+                                 'bucket' => "walkingpapers-scan-{$scan['id']}-by-{$scan['user_id']}");
+                
+                add_message($dbh, json_encode($message));
+                
                 $dbh->query('COMMIT');
             }
         }

@@ -25,6 +25,8 @@
             Senaste Utskrifter
         {elseif $language == "id"}
             Terakhir Cetak
+        {elseif $language == "zh"}
+            最近的列印圖
         {else}
             Recent Prints
         {/if}
@@ -57,6 +59,8 @@
             Senaste Utskrifter
         {elseif $language == "id"}
             Terakhir Cetak
+		{elseif $language == "zh"}
+            最近的列印圖
         {else}
             Recent Prints
         {/if}

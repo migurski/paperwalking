@@ -25,6 +25,8 @@
             О сервисе
         {elseif $language == "id"}
             Tentang
+        {elseif $language == "xh"}
+            關於
         {else}
             About
         {/if}

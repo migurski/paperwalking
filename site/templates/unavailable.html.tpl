@@ -24,7 +24,9 @@
         {elseif $language == "sv"}
             Site Unavailable
         {elseif $language == "id"}
-						Situs Tidak Tersedia
+			Situs Tidak Tersedia
+        {elseif $language == "zh"}
+			位置不能取得
         {else}
             Site Unavailable
         {/if}

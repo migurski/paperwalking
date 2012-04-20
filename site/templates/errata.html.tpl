@@ -54,6 +54,10 @@
             page or slip of paper, in a book or other publication.</i>
         {elseif $language = "ja"}
             "訂正"ページを提供しているけれども、間違いとその訂正が一覧になっている本などによく入っている、いわゆる正誤表とはちがいます。 
+        {elseif $language ="zh"}
+            我被通知勘誤表 “Errata” 並非字典中這個字的意思:
+            <i><a href="http://dictionary.reference.com/search?q=errata">Errata</a> -
+            一列的錯誤和插入他們的修正，通常使用在區別出的一頁或一堆文件、一本書或其它出版。</i>
         {else}
             I have been informed that “Errata” does not mean what I thought it meant:
             <i><a href="http://dictionary.reference.com/search?q=errata">Errata</a> -
@@ -71,6 +75,8 @@
             So, this page has <a href="{$base_dir}/zeitgeist.php">moved to “zeitgeist”</a>.
         {elseif $language == "ja"}
             このページは、<a href="{$base_dir}/zeitgeist.php">moved to “zeitgeist”</a>に移動しました。
+        {elseif $language == "zh"}
+            我想過它更像一個隨機列表，奇怪的東西不適於任何地方，所以將這個頁移到<a href="{$base_dir}/zeitgeist.php">統計</a>
         {else}
             I thought it was more like a list of random, “erratic” stuff that didn’t fit anyplace else.
             So, this page has <a href="{$base_dir}/zeitgeist.php">moved to “zeitgeist”</a>.

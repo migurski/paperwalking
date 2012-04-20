@@ -25,6 +25,8 @@
             Skannad Karta #{$scan.id|escape}
         {elseif $language == "id"}
             Peta yang telah discan #{$scan.id|escape}
+        {elseif $language == "zh"}
+            掃瞄的地圖 #{$scan.id|escape}
         {else}
             Scanned Map #{$scan.id|escape}
         {/if}

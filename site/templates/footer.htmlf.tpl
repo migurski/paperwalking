@@ -230,7 +230,38 @@
 		<br />
         Turkisk översättning av Caleb Maclennan
 		<br />
-        
+
+    {elseif $language == "zh"}
+        Walking Papers &#xA9; <a href="http://mike.teczno.com">Michal Migurski</a>, <a href="http://stamen.com">Stamen Design</a>
+		<br />
+        進一步連絡<a href="mailto:info@walking-papers.org">info@walking-papers.org</a>
+		<br />
+        地圖資料 <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>
+			<a href="http://openstreetmap.org">OpenStreetMap</a>
+		<br />
+        網路和列印地圖 &#xA9; <a href="http://cloudmade.com">Cloudmade</a>
+		<br />
+        荷蘭語翻譯 Milo van der Linden
+		<br />
+        法語翻譯 Jonathan Fretin
+		<br />
+        德語翻譯 Jonas Krückel
+		<br />
+        義大利語翻譯 Emanuel Carnevale
+		<br />
+        日本語翻譯 Hiroshi Miura
+		<br />
+        俄羅斯語翻譯 Maxim Dubinin
+		<br />
+        西班牙語翻譯 Manuel González Noriega
+		<br />
+        瑞典語翻譯 Frank Eriksson
+		<br />
+        土耳其語翻譯 Caleb Maclennan
+		<br />
+        印尼語 Va Santhi and Emir Hartato   
+		<br />
+        中文 Dongpo Deng
     {else}
         Walking Papers &#xA9; <a href="http://mike.teczno.com">Michal Migurski</a>, <a href="http://stamen.com">Stamen Design</a>
 		<br />
@@ -260,7 +291,8 @@
         Turkish translation by Caleb Maclennan
 		<br />
         Indonesian translation by Va Santhi and Emir Hartato
-		
+		<br />
+        Chinese translation by Dongpo Deng
     {/if}
 </p>
 

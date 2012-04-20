@@ -26,6 +26,8 @@
             Lokalisering
         {elseif $language == "id"}
             Lokalisasi
+        {elseif $language == "zh"}
+            地方化
         {else}
             Localization
         {/if}

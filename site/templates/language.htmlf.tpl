@@ -31,6 +31,8 @@
             (<a href="{$base_dir}/language.php"><abbr title="Yerelleştirme">l10n</abbr></a>)
         {elseif $language == "sv"}
             (<a href="{$base_dir}/language.php"><abbr title="Lokalisering">l10n</abbr></a>)
+        {elseif $language == "zh"}
+            (<a href="{$base_dir}/language.php"><abbr title="地方化">l10n</abbr></a>)
         {else}
             (<a href="{$base_dir}/language.php"><abbr title="Localization">l10n</abbr></a>)
         {/if}

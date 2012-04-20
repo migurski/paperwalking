@@ -112,7 +112,7 @@
                             {assign var="label" value="Redigera"}
                         {elseif $language == "id"}
                             {assign var="label" value="Edit"}
-                        {elseif $language == "id"}
+                        {elseif $language == "zh"}
                             {assign var="label" value="編輯"}                            
                         {else}
                             {assign var="label" value="Edit"}

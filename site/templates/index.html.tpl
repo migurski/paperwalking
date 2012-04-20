@@ -75,7 +75,7 @@
                 Fler inskanningar
             {elseif $language == "id"}
                 Hasil Scan Berikutnya
-            {elseif $language == "id"}
+            {elseif $language == "zh"}
                 更多最近掃瞄圖
             {else}
                 More recent scans
@@ -105,7 +105,7 @@
                 Gör en utskrift
             {elseif $language == "id"}
                 Mencetak Walking Paper
-            {elseif $language == "id"}
+            {elseif $language == "zh"}
                 製作一個列印圖
             {else}
                 Make A Print
@@ -194,7 +194,7 @@
 				    En zoom-nivå på <b>14 eller mer</b> är rekommenderat för kartläggning på gatunivå.
             {elseif $language == "id"}
 				    Perbesaran pada level <b>14 atau lebih</b> lebih disarankan untuk pemetaan jalan.
-             {elseif $language == "id"}
+            {elseif $language == "zh"}
 				    推薦用縮放尺度在<b>14 或更高</b>，這對於街道尺度製圖較好。
             {else}
                 A zoom level of <b>14 or more</b> is recommended for street-level mapping.
@@ -683,6 +683,7 @@
             <a href="http://www.flickr.com/photos/junipermarie/">Flickr'da ricajimarie</a> tarafından <a href="http://www.flickr.com/photos/junipermarie/4133315811/" title="IMG_4806.JPG by ricajimarie, on Flickr">Kibera'da Walking Papers</a>
         {elseif $language == "ru"}
             <a href="http://www.flickr.com/photos/junipermarie/4133315811/" title="IMG_4806.JPG, Автор: ricajimarie, на Flickr">Walking Papers в Кибере</a> by <a href="http://www.flickr.com/photos/junipermarie/">ricajimarie на Flickr</a>
+        {else}
             <a href="http://www.flickr.com/photos/junipermarie/4133315811/" title="IMG_4806.JPG by ricajimarie, on Flickr">Walking Papers in Kibera</a> by <a href="http://www.flickr.com/photos/junipermarie/">ricajimarie on Flickr</a>
         {/if}
     </p>

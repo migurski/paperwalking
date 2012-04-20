@@ -25,7 +25,7 @@
             О сервисе
         {elseif $language == "id"}
             Tentang
-        {elseif $language == "xh"}
+        {elseif $language == "zh"}
             關於
         {else}
             About

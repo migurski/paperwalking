@@ -189,9 +189,9 @@
                     {elseif $language == "id"}
                         {assign var="label" value="Ya"}
                     {elseif $language == "zh"}
-                        {assign var="label" value="Ya"}
-                    {else}
                         {assign var="label" value="是"}
+                    {else}
+                        {assign var="label" value="Yes"}
                     {/if}    
                     <option label="{$label}" value="yes" {if $scan.will_edit == 'yes'}selected="selected"{/if}>{$label}</option>
                     {if $language == "de"}

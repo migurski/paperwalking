@@ -25,6 +25,8 @@
         	Utskrift #{$print.id|escape}
         {elseif $language == "id"}
         	Cetak #{$print.id|escape}
+        {elseif $language == "zh"}
+        	列印 #{$print.id|escape}
         {else}
             Print #{$print.id|escape}
         {/if}
@@ -101,6 +103,8 @@
                             Är detta fel karta, eller föråldrad?
                         {elseif $language == "id"}
                             Apakah peta ini tidak tepat, atau sudah tidak berlaku?
+                        {elseif $language == "zh"}
+                            這個地圖有錯誤, 或過舊? 
                         {else}
                             Is this map wrong, or out of date?
                         {/if}
@@ -126,6 +130,8 @@
                             {assign var="label" value="Gör om"}
                         {elseif $language == "id"}
                             {assign var="label" value="Ulangi"}
+                        {elseif $language == "zh"}
+                            {assign var="label" value="重做"}
                         {else}
                             {assign var="label" value="Redo"}
                         {/if}

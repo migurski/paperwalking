@@ -25,6 +25,8 @@
             Ladda upp en inskanning
         {elseif $language == "id"}
             Unggah Hasil Scan
+        {elseif $language == "zh"}
+            上傳掃瞄圖
         {else}
             Upload Scan
         {/if}
@@ -59,6 +61,8 @@
         {assign var="label" value="Skicka"}
     {elseif $language == "id"}
         {assign var="label" value="Kirim"}
+    {elseif $language == "zh"}
+        {assign var="label" value="送出"}
     {else}
         {assign var="label" value="Send"}
     {/if}

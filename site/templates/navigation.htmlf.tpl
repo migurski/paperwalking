@@ -89,7 +89,13 @@
         <a href="{$base_dir}/upload.php">Unggah</a>
         <a href="{$base_dir}/zeitgeist.php">Statistik</a>
         <a href="{$base_dir}/about.php">Tentang</a>
-
+	{elseif $language == "zh"}
+	<a href="{$base_dir}/">主頁面</a>
+        <a href="{$base_dir}/prints.php">列印圖</a>
+        <a href="{$base_dir}/scans.php">掃瞄圖</a>
+        <a href="{$base_dir}/upload.php">上傳</a>
+        <a href="{$base_dir}/zeitgeist.php">統計</a>
+        <a href="{$base_dir}/about.php">關於</a>
     {else}
         <a href="{$base_dir}/">Home</a>
         <a href="{$base_dir}/prints.php">Prints</a>

@@ -25,6 +25,8 @@
         	Uppladdad inskanning
         {elseif $language == "id"}
         	Hasil scan yang telah diunggah
+       	{elseif $language == "zh"}
+        	上傳的掃瞄圖
         {else}
             Uploaded Scan
         {/if}
@@ -66,6 +68,8 @@
         	Du har laddat upp en inskannad karta
         {elseif $language == "id"}
         	Anda Telah Mengunggah Peta Hasil Scan
+        {elseif $language == "zh"}
+        	你已經上傳了一個掃瞄圖
         {else}
             You’ve Uploaded A Scanned Map
         {/if}    
@@ -96,6 +100,8 @@
             lite mer information om den innan du kan fortsätta.
         {elseif $language == "id"}
             Anda baru saja mengunggah peta yang telah discan, berikutnya Anda akan menambahkan sedikit informasi mengenai peta tersebut sebelum ditandai.
+        {elseif $language == "zh"}
+			你剛剛上傳了一個掃瞄圖，接著加入一些資訊關於這個圖在你開始追蹤它之前。
         {else}
             You’ve just uploaded a scanned map, and you’re about to add
             a few bits of information about it before you proceed to trace it.
@@ -125,6 +131,8 @@
             	privat?
             {elseif $language == "id"}
             	milik pribadi?
+            {elseif $language == "zh"}
+            	私人的?
             {else}
                 private?
             {/if}
@@ -153,7 +161,9 @@
 				{elseif $language == "sv"}
 					Tänker du redigera denna själv?
                 {elseif $language == "id"}
-										Apakah Anda berencana untuk mengedit kembali?
+					Apakah Anda berencana untuk mengedit kembali?
+				{elseif $language == "zh"}
+					你計畫自已編輯嗎?
                 {else}
                     Do you plan to edit this yourself?
                 {/if}
@@ -178,6 +188,8 @@
                         {assign var="label" value="Ja"}
                     {elseif $language == "id"}
                         {assign var="label" value="Ya"}
+                    {elseif $language == "zh"}
+                        {assign var="label" value="是"}
                     {else}
                         {assign var="label" value="Yes"}
                     {/if}    
@@ -202,6 +214,8 @@
                         {assign var="label" value="Nej"}
                     {elseif $language == "id"}
                         {assign var="label" value="Tidak"}
+                    {elseif $language == "zh"}
+                        {assign var="label" value="不是"}
                     {else}
                         {assign var="label" value="No"}
                     {/if}    
@@ -235,6 +249,8 @@
                 	så vet andra besökare vilka inskanningar de kan hjälpa till med.
                 {elseif $language == "id"}
                 	Anda tidak harus melakukan proses editing OpenStreetMap sendiri. Pilih "Tidak" berarti Anda memperbolehkan pengguna lain mengetahui hasil scan dan membantu dalam proses editing.
+                {elseif $language == "zh"}
+                	你沒有必要做你自已的OpenStreetMap編輯，回應“不”將使其它使用者知道有掃瞄圖他們或許可以幫上忙。
                 {else}
                     You don’t have to do your own OpenStreetMap editing. Saying “no”
                     will let other visitors know about scans they can help with.
@@ -263,6 +279,8 @@
                     Beskriv dina tillägg.
                 {elseif $language == "id"}
                     Jelaskan tambahan yang Anda buat.
+                {elseif $language == "zh"}
+                    描梴你的附加資訊。
                 {else}
                     Describe your additions.
                 {/if}
@@ -292,8 +310,10 @@
                 {elseif $language == "sv"}
                     La du till affärer, korrigerade gångvägar, markerade trafikljus, ritade in en park,
                     eller placerade brevlådor? Skriv några få ord om ändringarna på detta område.
-								{elseif $language == "id"}
+				{elseif $language == "id"}
                     Apakah Anda menambahkan objek bisnis, memperbaiki jalan setapak, menandai lampu lalu lintas, menandai kawasan taman, menandai kotak surat? Tulis beberapa kata mengenai perubahan yang Anda buat pada wilayah ini.
+                {elseif $language == " zh"}
+                你加入公司行號、固定的步行路徑、交通號誌、公園外框、郵筒？寫下一些文字來描述這個區域的改變。
                 {else}
                     Did you add businesses, fix footpaths, mark traffic lights, outline parks,
                     place mailboxes? Write a few words about the changes to this area.
@@ -323,6 +343,8 @@
             {assign var="label" value="Spara"}
         {elseif $language == "id"}
             {assign var="label" value="Simpan"}
+        {elseif $language == "zh"}
+            {assign var="label" value="儲存"}
         {else}
             {assign var="label" value="Save"}
         {/if}

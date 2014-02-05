@@ -25,6 +25,8 @@
             Skannad Karta #{$scan.id|escape}
         {elseif $language == "id"}
             Peta yang telah discan #{$scan.id|escape}
+        {elseif $language == "zh"}
+            掃瞄的地圖 #{$scan.id|escape}
         {else}
             Scanned Map #{$scan.id|escape}
         {/if}
@@ -110,6 +112,8 @@
                             {assign var="label" value="Redigera"}
                         {elseif $language == "id"}
                             {assign var="label" value="Edit"}
+                        {elseif $language == "zh"}
+                            {assign var="label" value="編輯"}                            
                         {else}
                             {assign var="label" value="Edit"}
                         {/if}

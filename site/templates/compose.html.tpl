@@ -23,6 +23,8 @@
         	Sammanställning
         {elseif $language == "id"}
         	Buat Baru
+        {elseif $language == "zh"}
+        	構成      	
         {else}
             Componer
         {/if}

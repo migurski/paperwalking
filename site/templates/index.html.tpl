@@ -44,6 +44,8 @@
             Senaste inskanningar
         {elseif $language == "id"}
             Hasil Scan Terbaru
+        {elseif $language == "zh"}
+            最近掃瞄圖
         {else}
             Recent Scans
         {/if}
@@ -73,6 +75,8 @@
                 Fler inskanningar
             {elseif $language == "id"}
                 Hasil Scan Berikutnya
+            {elseif $language == "zh"}
+                更多最近掃瞄圖
             {else}
                 More recent scans
             {/if}
@@ -101,6 +105,8 @@
                 Gör en utskrift
             {elseif $language == "id"}
                 Mencetak Walking Paper
+            {elseif $language == "zh"}
+                製作一個列印圖
             {else}
                 Make A Print
             {/if}
@@ -132,6 +138,8 @@
             {assign var="label" value="Hitta"}
         {elseif $language == "id"}
             {assign var="label" value="Cari"}
+        {elseif $language == "zh"}
+            {assign var="label" value="尋找"}
         {else}
             {assign var="label" value="Find"}
         {/if}
@@ -186,6 +194,8 @@
 				    En zoom-nivå på <b>14 eller mer</b> är rekommenderat för kartläggning på gatunivå.
             {elseif $language == "id"}
 				    Perbesaran pada level <b>14 atau lebih</b> lebih disarankan untuk pemetaan jalan.
+            {elseif $language == "zh"}
+				    推薦用縮放尺度在<b>14 或更高</b>，這對於街道尺度製圖較好。
             {else}
                 A zoom level of <b>14 or more</b> is recommended for street-level mapping.
             {/if}
@@ -238,6 +248,8 @@
                 	alert("Tyvärr, Jag kunde inte hitta en plats med det namnet.");
                 {elseif $language == "id"}
                 	alert("Maaf, kami tidak dapat menemukan tempat dengan nama tersebut.");
+                {elseif $language == "zh"}
+                	alert("抱歉, 我不能以找到你輸入的地名。");
                 {else}
                     alert("Sorry, I couldn't find a place by that name.");
                 {/if}
@@ -396,6 +408,8 @@
                 Orientering:
             {elseif $language == "id"}
                 Orientasi:
+            {elseif $language == "zh"}
+                列印方向：           
             {else}
                 Orientation:
             {/if}
@@ -420,6 +434,8 @@
                         {assign var="label" value="Портрет ($size)"}
                     {elseif $language == "sv"}
                         {assign var="label" value="Porträtt ($size)"}
+                    {elseif $language == "zh"}
+                        {assign var="label" value="縱向 ($size)"}
                     {else}
                         {assign var="label" value="Portrait ($size)"}
                     {/if}
@@ -445,6 +461,8 @@
                         {assign var="label" value="Альбом ($size)"}
                     {elseif $language == "sv"}
                         {assign var="label" value="Landskap ($size)"}
+                    {elseif $language == "zh"}
+                        {assign var="label" value="橫向 ($size)"}
                     {else}
                         {assign var="label" value="Landscape ($size)"}
                     {/if}
@@ -472,6 +490,8 @@
                 {assign var="label" value="Skapa"}
             {elseif $language == "id"}
                 {assign var="label" value="Buat"}
+            {elseif $language == "zh"}
+                {assign var="label" value="製作"}                
             {else}
                 {assign var="label" value="Make"}
             {/if}
@@ -521,6 +541,8 @@
                 	Kartstil:
                 {elseif $language == "id"}
                 	Penyedia:
+                {elseif $language == "zh"}
+                	地圖提供者:                
                 {else}
                     Provider:
                 {/if}
@@ -590,6 +612,8 @@
         	Senaste utskrifter
         {elseif $language == "id"}
         	Terakhir Cetak
+        {elseif $language == "zh"}
+        	最近的列印圖
         {else}
             Recent Prints
         {/if}
@@ -642,6 +666,8 @@
                 Fler utskrifter...
             {elseif $language == "id"}
                 Hasil cetak berikutnya...
+            {elseif $language == "zh"}
+                更多最近的列印圖 ...             
             {else}
                 More recent prints...
             {/if}

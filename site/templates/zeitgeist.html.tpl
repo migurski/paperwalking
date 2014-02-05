@@ -23,6 +23,8 @@
             Statistik
         {elseif $language == "ru"}
             Статистика
+        {elseif $language == "zh"}
+            統計
         {else}
             Zeitgeist
         {/if}
@@ -53,6 +55,8 @@
             Statistik
         {elseif $language == "ru"}
             Статистика
+        {elseif $language == "zh"}
+            統計
         {else}
             Zeitgeist
         {/if}

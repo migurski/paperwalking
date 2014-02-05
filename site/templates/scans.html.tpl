@@ -25,6 +25,8 @@
             Senast inskannat
         {elseif $language == "id"}
             Hasil Scan Terbaru
+        {elseif $language == "zh"}
+            最近的掃瞄圖
         {else}
             Recent Scans
         {/if}
@@ -62,6 +64,8 @@
             Недавние сканы
         {elseif $language == "sv"}
             Senaste inskanningarna
+        {elseif $language == "zh"}
+            最近的掃瞄圖
         {else}
             Recent Scans
         {/if}

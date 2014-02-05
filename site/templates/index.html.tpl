@@ -287,6 +287,7 @@
             map.parent.style.width = parseInt(map.dimensions.x) + 'px';
             map.parent.style.height = parseInt(map.dimensions.y) + 'px';
             map.draw();
+            onMapChanged(map);
         }
         
         function setLayout(layout)

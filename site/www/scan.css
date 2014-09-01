@@ -1,0 +1,11 @@
+#editor
+{
+    width: 960px;
+    height: 600px;
+    border: 8px solid #ddd;
+    background-color: #f8f8f8;
+    margin: 1em auto;
+}
+
+ol.steps li { color: silver; }
+ol.steps li.on { color: black; }

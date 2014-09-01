@@ -1,0 +1,276 @@
+body
+{
+    font-size: 62.5%;
+    line-height: 2em;
+    font-family: Helvetica, Arial, sans-serif;
+    background-color: white;
+    color: black;
+}
+
+h1, h2, h3, p, form, ol, ul, blockquote
+{
+    margin: 1em auto;
+    width: 408px;
+}
+
+h1
+{
+    font-size: 24px;
+    margin-top: 4em;
+}
+
+h1 a
+{
+    padding: 0 .25em;
+    margin-left: -.25em;
+    text-decoration: none;
+    color: black;
+}
+
+h1 a:hover,
+h1 a:active
+{
+    background-color: black;
+    color: white;
+}
+
+h2
+{
+    font-size: 1.9em;
+}
+
+h3
+{
+    font-size: 1.6em;
+}
+
+p, ol, ul, blockquote, table
+{
+    font-size: 1.5em;
+}
+
+li
+{
+    margin-bottom: .5em;
+}
+
+blockquote
+{
+    padding-left: 2em;
+}
+
+p textarea
+{
+    width: 100%;
+}
+
+/*
+input.mac-button
+{
+    cursor: pointer;
+    font-family: Chicago, Verdana, sans-serif;
+    font-size: 12px !important;
+    background: url('print-button.png');
+    border: none;
+    width: 50px;
+    height: 20px;
+}
+*/
+
+input[name=qrcode_contents]
+{
+    width: 75%;
+}
+
+form.language
+{
+    color: silver;
+}
+
+    form.language button,
+    form.language button.selected,
+    form.language a
+    {
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 1em;
+        text-decoration: underline;
+        color: silver;
+        overflow: visible;
+        width: auto;
+        background: none;
+        margin: 0;
+        padding: 0;
+        border: none;
+        cursor: pointer;
+    }
+        
+        form.language button.selected
+        {
+            font-weight: bold;
+        }
+        
+#navigation
+{
+    margin-top: 1em;
+    padding-bottom: 1em;
+    margin-bottom: 2em;
+    border-bottom: 1px solid gray;
+    white-space: nowrap;
+}
+
+    #navigation a
+    {
+    	padding: .25em .5em;
+    	margin: 0 .2em 0 -.5em;
+    	text-decoration: none;
+    	color: black;
+    }
+
+    #navigation a:hover,
+    #navigation a:active
+    {
+        background-color: black;
+        color: white;
+    }
+    
+#mini-map
+{
+    width: 408px;
+    height: 252px;
+    border: solid 1px black;
+    background-color: #ccc;
+    position: relative;
+}
+
+    #mini-map .doc
+    {
+        z-index: 99;
+        position: absolute;
+        top: 112px;
+        left: 195px;
+    }
+
+.sheet
+{
+    margin: 1em auto;
+    position: relative;
+    background: white;
+    border: 1px solid black;
+    padding: 24px;
+}
+
+.sheet .dummy-qrcode
+{
+    position: absolute;
+    background: white;
+    color: white;
+    width: 44px;
+    height: 44px;
+    padding: 4px;
+    top: 432px;
+    left: 336px;
+}
+
+.sheet .slippy-nav
+{
+    width: 43px;
+    height: 57px;
+    position: absolute;
+    left: 8px;
+    top: 6px;
+}
+
+.sheet .dog-ear
+{
+    background: url('dog-ear.png');
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    left: 379px;
+    top: -1px;
+}
+
+    .sheet
+    {
+        width: 360px;
+        height: 456px;
+    }
+
+    .sheet.a4 { height: 505px; }
+    .sheet.a3 { height: 506px; }
+    
+    .sheet.a4 .dummy-qrcode { top: 481px; }
+    .sheet.a3 .dummy-qrcode { top: 482px; }
+
+    .sheet.landscape
+    {
+        width: 480px;
+        height: 336px;
+    }
+    
+    .sheet.landscape.a4 { height: 304px; }
+    .sheet.landscape.a3 { height: 315px; }
+    
+    .sheet.landscape .dummy-qrcode
+    {
+        top: 312px;
+        left: 456px;
+    }
+    
+    .sheet.landscape.a4 .dummy-qrcode { top: 280px; }
+    .sheet.landscape.a3 .dummy-qrcode { top: 291px; }
+    
+    .sheet.landscape .dog-ear
+    {
+        left: 499px;
+    }
+
+.pagination
+{
+    text-align: right;
+}
+
+.pagination .newer
+{
+    display: block;
+    float: left;
+}
+
+table.scans
+{
+    margin: 1em auto;
+    width: 816px;
+    border-collapse: collapse;
+}
+
+table.scans tr td
+{
+    width: 204px;
+    padding: 0 10px 10px 0;
+    vertical-align: top;
+}
+
+table.scans tr.preview td
+{
+    padding-top: 20px;
+    vertical-align: bottom;
+}
+
+table.scans tr.preview td img
+{
+    width: 80%;
+}
+
+p.wide
+{
+    width: 960px;
+    text-align: center;
+}
+    
+#footer
+{
+    margin-top: 4em;
+    padding-top: 1em;
+    margin-bottom: 4em;
+    border-top: 1px solid gray;
+}
